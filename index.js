@@ -1,11 +1,9 @@
-'use strict';
-
-var discogs = module.exports = {};
+var discogs = (module.exports = {});
 
 /**
  * Expose Discogs utility function library
  */
- 
+
 discogs.util = require('./lib/util.js');
 
 /**
