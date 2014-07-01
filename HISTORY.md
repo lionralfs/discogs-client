@@ -1,6 +1,10 @@
-Unreleased
-==========
-  * Fixed a litte bug in request queue remaining slots calculation
+0.3.2 / 2014-07-01
+==================
+  * Added `about()` function to get general info about the Discogs API and the `disconnect` client
+
+0.3.1 / 2014-06-26
+==================
+  * Fixed a litte bug in the calculation of free positions in the request queue
   * Started adding unit tests using `wru`
 
 0.3.0 / 2014-06-24
@@ -15,7 +19,7 @@ Unreleased
 
 0.2.0 / 2014-06-19
 ==================
-  * Implemented/fixed broken `database.image` function from `0.1.1`
+  * Implemented/fixed broken `database.image()` function from `0.1.1`
   * Added rate limiting header info to the callback params
 
 0.1.1 / 2014-06-18
