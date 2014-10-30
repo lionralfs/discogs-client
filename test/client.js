@@ -1,7 +1,6 @@
 var wru = require('wru'),
     nock = require('nock'),
-    DiscogsClient = require('../lib/client.js'),
-    queue = require('../lib/queue.js');
+    DiscogsClient = require('../lib/client.js');
 
 var tests = (module.exports = [
     {
@@ -49,4 +48,6 @@ var tests = (module.exports = [
     },
 ]);
 
-!module.parent && wru.test(tests);
+if (!module.parent) {
+    wru.test(tests);
+}
