@@ -1,3 +1,17 @@
+0.6.4 / 2015-07-09
+==================
+  * Prevent `JSON.parse()` crash when the Discogs API returns HTML instead of json (maintainance mode)
+  * Added Discogs API version to `DiscogsClient` config (only the default `v2` is supported at the moment)
+
+0.6.3 / 2015-05-28
+==================
+  * Updated `oauth-1.0a` dependency
+
+0.6.2 / 2015-02-25
+==================
+  * `database().image()` now requires the full image url as the first parameter due to the new Discogs image cluster
+  * Local request throttling by `disconnect` has been disabled for `database().image()`
+
 0.6.1 / 2015-02-17
 ==================
   * Added setting output format for user, artist and label profiles through `DiscogsClient.setConfig({outputFormat: 'html'})`
