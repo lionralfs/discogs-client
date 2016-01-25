@@ -3,7 +3,7 @@ var wru = require('wru'),
 
 var tests = (module.exports = [
     {
-        name: 'Test util.stripVariation()',
+        name: 'Util: Test stripVariation()',
         test: function () {
             var stripped = util.stripVariation('Artist (2)');
             wru.log('Artist name "Artist (2)" becomes: ' + stripped);
@@ -11,7 +11,7 @@ var tests = (module.exports = [
         },
     },
     {
-        name: 'Test util.escape()',
+        name: 'Util: Test escape()',
         test: function () {
             var escaped = util.escape('!@#$%^&*()+');
             wru.log('Escaped string: ' + escaped);
@@ -19,7 +19,7 @@ var tests = (module.exports = [
         },
     },
     {
-        name: 'Test util.addParams()',
+        name: 'Util: Test addParams()',
         test: function () {
             wru.assert(
                 'URL with no query string',
