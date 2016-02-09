@@ -1,3 +1,11 @@
+0.7.2 / 2016-02-09
+==================
+  * Fixed default maximum number of requests per minute
+
+0.7.1 / 2016-01-26
+==================
+  * Added `database().labelReleases()` function
+
 0.7.0 / 2016-01-25
 ==================
   * The `util.queue` object literal has been replaced by a minimal `util.Queue` class
