@@ -30,6 +30,7 @@ require('disconnect') -> new Client() -> oauth()
                                       -> marketplace()
                                       -> user() -> collection()
                                                 -> wantlist()
+                                                -> list()
                       -> util
 ```
 
