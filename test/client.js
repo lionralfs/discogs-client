@@ -30,7 +30,7 @@ test.serial('DiscogsClient: Test get()', async t => {
     );
     let client = new DiscogsClient();
     let data = await client.get({ url: '/labels/1' });
-    t.is(data?.id, 1, 'Correct response data');
+    t.is(data.id, 1, 'Correct response data');
 });
 
 test.serial('DiscogsClient: Test Promise', async t => {
@@ -56,5 +56,5 @@ test.serial('DiscogsClient: Test custom configuration', async t => {
     let client = new DiscogsClient().setConfig({ host: 'www.example.com' });
     let data = await client.get({ url: '/labels/1' });
 
-    t.is(data?.result, 'success', 'Correct response data');
+    t.is(data.result, 'success', 'Correct response data');
 });

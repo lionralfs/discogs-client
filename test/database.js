@@ -27,7 +27,7 @@ test.serial('Database: Test search without query but with params', async t => {
     let client = new DiscogsClient('agent', { consumerKey: 'u', consumerSecret: 'p' });
     let db = client.database();
     let data = await db.search({ artist: 'X', title: 'Y' });
-    t.is(data?.result, 'success', 'Correct response data');
+    t.is(data.result, 'success', 'Correct response data');
 });
 
 test.serial('Database: Test search with query and params', async t => {
@@ -44,7 +44,7 @@ test.serial('Database: Test search with query and params', async t => {
     let client = new DiscogsClient('agent', { consumerKey: 'u', consumerSecret: 'p' });
     let db = client.database();
     let data = await db.search('somequery', { artist: 'X', title: 'Y' });
-    t.is(data?.result, 'success', 'Correct response data');
+    t.is(data.result, 'success', 'Correct response data');
 });
 
 test.serial('Database: Test search with query only', async t => {
@@ -58,5 +58,5 @@ test.serial('Database: Test search with query only', async t => {
     let client = new DiscogsClient('agent', { consumerKey: 'u', consumerSecret: 'p' });
     let db = client.database();
     let data = await db.search('somequery');
-    t.is(data?.result, 'success', 'Correct response data');
+    t.is(data.result, 'success', 'Correct response data');
 });

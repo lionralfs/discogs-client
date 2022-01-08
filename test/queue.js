@@ -32,7 +32,7 @@ test('Queue: Test add() + getLength() + clear()', async t => {
         }
 
         function t2(err, remainingFree, remainingStack) {
-            t.is(err?.statusCode, 429, 'Too many requests, err.statusCode === 429');
+            t.is(err.statusCode, 429, 'Too many requests, err.statusCode === 429');
             resolve();
         }
         queue.add(dummy); //  1
