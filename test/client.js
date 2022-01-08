@@ -1,18 +1,18 @@
-var wru = require('wru'),
-    nock = require('nock'),
-    DiscogsClient = require('../lib/client.js');
+import { assert, async, test as _test } from 'wru';
+import nock, { cleanAll } from 'nock';
+import DiscogsClient from '../lib/client.js';
 
 var tests = (module.exports = [
     {
         name: 'DiscogsClient: Test instance',
         test: function () {
-            wru.assert('Instance of DiscogsClient', new DiscogsClient() instanceof DiscogsClient);
+            assert('Instance of DiscogsClient', new DiscogsClient() instanceof DiscogsClient);
         },
     },
     {
         name: 'DiscogsClient: Test authenticated()',
         test: function () {
-            wru.assert('Authentication level 1 === false', new DiscogsClient().authenticated(1) === false);
+            assert('Authentication level 1 === false', new DiscogsClient().authenticated(1) === false);
         },
     },
     {
@@ -21,9 +21,9 @@ var tests = (module.exports = [
             var client = new DiscogsClient();
             client.get(
                 { url: '/labels/1' },
-                wru.async(function (err, data) {
-                    wru.assert('No error', !err);
-                    wru.assert('Correct response data', data && data.id === 1);
+                async(function (err, data) {
+                    assert('No error', !err);
+                    assert('Correct response data', data && data.id === 1);
                 })
             );
         },
@@ -34,11 +34,11 @@ var tests = (module.exports = [
             var client = new DiscogsClient();
             var promise = client.about();
             var isPromise = typeof promise.then === 'function';
-            wru.assert('Returns Promise', isPromise);
+            assert('Returns Promise', isPromise);
             if (isPromise) {
                 promise.then(
-                    wru.async(function (data) {
-                        wru.assert('Promis resolved', typeof data.disconnect !== 'undefined');
+                    async(function (data) {
+                        assert('Promis resolved', typeof data.disconnect !== 'undefined');
                     })
                 );
             }
@@ -52,18 +52,18 @@ var tests = (module.exports = [
             var client = new DiscogsClient().setConfig({ host: 'www.example.com' });
             client.get(
                 { url: '/labels/1' },
-                wru.async(function (err, data) {
-                    wru.assert('No error', !err);
-                    wru.assert('Correct response data', data && data.result === 'success');
+                async(function (err, data) {
+                    assert('No error', !err);
+                    assert('Correct response data', data && data.result === 'success');
                 })
             );
         },
         teardown: function () {
-            nock.cleanAll();
+            cleanAll();
         },
     },
 ]);
 
 if (!module.parent) {
-    wru.test(tests);
+    _test(tests);
 }
