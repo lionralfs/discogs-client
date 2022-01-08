@@ -8,6 +8,7 @@
   "license": "MIT",
   "author": "Bart van Eijck <voodoo107@hotmail.com>",
   "main": "index.js",
+  "type": "module",
   "directories": {
     "lib": "./lib"
   },
