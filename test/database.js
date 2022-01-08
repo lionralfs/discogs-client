@@ -1,6 +1,6 @@
-var wru = require('wru'),
-    nock = require('nock'),
-    DiscogsClient = require('../lib/client.js');
+import { async, assert, test as _test } from 'wru';
+import nock, { cleanAll } from 'nock';
+import DiscogsClient from '../lib/client.js';
 
 var tests = (module.exports = [
     {
@@ -14,14 +14,14 @@ var tests = (module.exports = [
             var db = client.database();
             db.search(
                 { artist: 'X', title: 'Y' },
-                wru.async(function (err, data) {
-                    wru.assert('No error', !err);
-                    wru.assert('Correct response data', data && data.result === 'success');
+                async(function (err, data) {
+                    assert('No error', !err);
+                    assert('Correct response data', data && data.result === 'success');
                 })
             );
         },
         teardown: function () {
-            nock.cleanAll();
+            cleanAll();
         },
     },
     {
@@ -36,14 +36,14 @@ var tests = (module.exports = [
             db.search(
                 'somequery',
                 { artist: 'X', title: 'Y' },
-                wru.async(function (err, data) {
-                    wru.assert('No error', !err);
-                    wru.assert('Correct response data', data && data.result === 'success');
+                async(function (err, data) {
+                    assert('No error', !err);
+                    assert('Correct response data', data && data.result === 'success');
                 })
             );
         },
         teardown: function () {
-            nock.cleanAll();
+            cleanAll();
         },
     },
     {
@@ -55,18 +55,18 @@ var tests = (module.exports = [
             var db = client.database();
             db.search(
                 'somequery',
-                wru.async(function (err, data) {
-                    wru.assert('No error', !err);
-                    wru.assert('Correct response data', data && data.result === 'success');
+                async(function (err, data) {
+                    assert('No error', !err);
+                    assert('Correct response data', data && data.result === 'success');
                 })
             );
         },
         teardown: function () {
-            nock.cleanAll();
+            cleanAll();
         },
     },
 ]);
 
 if (!module.parent) {
-    wru.test(tests);
+    _test(tests);
 }
