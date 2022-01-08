@@ -22,13 +22,15 @@
     "url": "https://github.com/bartve/disconnect.git"
   },
   "scripts": {
-    "test": "ava"
+    "test": "ava",
+    "prettier": "prettier --check **/**.js"
   },
   "dependencies": {
     "oauth-1.0a": "2.x.x"
   },
   "devDependencies": {
     "ava": "^4.0.1",
-    "msw": "^0.36.3"
+    "msw": "^0.36.3",
+    "prettier": "^2.5.1"
   }
 }
