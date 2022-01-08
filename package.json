@@ -2,7 +2,12 @@
   "name": "disconnect",
   "description": "A full-featured Discogs API v2.0 client library",
   "version": "1.2.2",
-  "keywords": ["discogs", "api", "client", "oauth"],
+  "keywords": [
+    "discogs",
+    "api",
+    "client",
+    "oauth"
+  ],
   "homepage": "https://github.com/bartve/disconnect",
   "bugs": "https://github.com/bartve/disconnect/issues",
   "license": "MIT",
@@ -17,16 +22,13 @@
     "url": "https://github.com/bartve/disconnect.git"
   },
   "scripts": {
-    "test": "node test/all.js"
+    "test": "ava"
   },
   "dependencies": {
     "oauth-1.0a": "2.x.x"
   },
   "devDependencies": {
-    "nock": "2.x.x",
-    "wru": "0.x.x"
-  },
-  "engines": {
-    "node": ">= 0.12.0"
+    "ava": "^4.0.1",
+    "msw": "^0.36.3"
   }
 }
