@@ -1,5 +1,3 @@
-'use strict';
-
 var discogs = (module.exports = {});
 
 /**
