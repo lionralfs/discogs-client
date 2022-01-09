@@ -79,5 +79,5 @@ test.serial('Collection: Delete folder', async t => {
 
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
     let data = await client.user().collection().deleteFolder('rodneyfool', 3);
-    t.is(data, '')
+    t.is(data, '');
 });
