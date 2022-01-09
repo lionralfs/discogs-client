@@ -1,3 +1,4 @@
+// @ts-check
 import test from 'ava';
 import { rest } from 'msw';
 import { DiscogsClient } from '../lib/client.js';
@@ -14,38 +15,25 @@ test('DiscogsClient: Test authenticated()', t => {
 });
 
 test.serial('DiscogsClient: Test get()', async t => {
+    t.plan(1);
     server.use(
         rest.get('https://api.discogs.com/labels/1', (req, res, ctx) => {
-            return res(ctx.status(200), ctx.json({ result: 'success', id: 1 }));
-        })
-    );
-    let client = new DiscogsClient();
-    let data = await client.get({ url: '/labels/1' });
-    t.is(data.id, 1, 'Correct response data');
-});
-
-test.serial('DiscogsClient: Test Promise', async t => {
-    server.use(
-        rest.get('https://api.discogs.com/', (req, res, ctx) => {
+            t.pass();
             return res(ctx.status(200), ctx.json({}));
         })
     );
     let client = new DiscogsClient();
-    let promise = client.about();
-    t.is(typeof promise.then, 'function');
-
-    let data = await promise;
-    t.not(typeof data.disconnect, 'undefined', 'Promise resolved');
+    await client.get({ url: '/labels/1' });
 });
 
 test.serial('DiscogsClient: Test custom configuration', async t => {
+    t.plan(1);
     server.use(
         rest.get('https://www.example.com/labels/1', (req, res, ctx) => {
-            return res(ctx.status(200), ctx.json({ result: 'success' }));
+            t.pass();
+            return res(ctx.status(200), ctx.json({}));
         })
     );
     let client = new DiscogsClient().setConfig({ host: 'www.example.com' });
-    let data = await client.get({ url: '/labels/1' });
-
-    t.is(data.result, 'success', 'Correct response data');
+    await client.get({ url: '/labels/1' });
 });
