@@ -156,3 +156,18 @@ test.serial('Database: Get Release Stats', async t => {
     let data = await client.database().getReleaseStats(249504);
     t.is(data.release_id, 249504);
 });
+
+test.serial('Database: Get Master Release', async t => {
+    t.plan(2);
+
+    server.use(
+        rest.get('https://api.discogs.com/masters/1000', (req, res, ctx) => {
+            t.pass();
+            return res(ctx.status(200), ctx.json({ release_id: 1000 }));
+        })
+    );
+
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let data = await client.database().getMaster(1000);
+    t.is(data.release_id, 1000);
+});
