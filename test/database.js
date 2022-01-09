@@ -96,3 +96,33 @@ test.serial('Database: Get a users release rating', async t => {
     let data = await client.database().getReleaseRating(249504, 'someuser');
     t.is(data.release_id, 249504);
 });
+
+test.serial('Database: Give release rating as current user', async t => {
+    t.plan(2);
+
+    server.use(
+        rest.put('https://api.discogs.com/releases/249504/rating/someuser', (req, res, ctx) => {
+            t.deepEqual(req.body, { rating: 2 });
+            return res(ctx.status(200), ctx.json({ release_id: 249504, username: 'someuser', rating: 2 }));
+        })
+    );
+
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let data = await client.database().setReleaseRating(249504, 'someuser', 2);
+    t.is(data.release_id, 249504);
+});
+
+test.serial('Database: Remove release rating as current user', async t => {
+    t.plan(2);
+
+    server.use(
+        rest.delete('https://api.discogs.com/releases/249504/rating/someuser', (req, res, ctx) => {
+            t.pass();
+            return res(ctx.status(200));
+        })
+    );
+
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let data = await client.database().setReleaseRating(249504, 'someuser', null);
+    t.is(data, '');
+});
