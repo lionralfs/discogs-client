@@ -1,0 +1,12 @@
+{
+    "include": ["lib/*", "index.js"],
+    "exclude": ["test/**/*.js"],
+    "compilerOptions": {
+        "outDir": "types",
+        "allowJs": true,
+        "declaration": true,
+        "noEmit": false,
+        "emitDeclarationOnly": true,
+        "strict": true
+    }
+}

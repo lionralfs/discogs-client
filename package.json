@@ -17,13 +17,15 @@
   "directories": {
     "lib": "./lib"
   },
+  "types": "types/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/bartve/disconnect.git"
   },
   "scripts": {
     "test": "ava",
-    "prettier": "prettier --check **/**.js"
+    "prettier": "prettier --check **/**.js",
+    "declaration:build": "rm -rf types && tsc -p tsconfig.json"
   },
   "dependencies": {
     "oauth-1.0a": "2.x.x"
@@ -31,6 +33,7 @@
   "devDependencies": {
     "ava": "^4.0.1",
     "msw": "^0.36.3",
-    "prettier": "^2.5.1"
+    "prettier": "^2.5.1",
+    "typescript": "^4.5.4"
   }
 }
