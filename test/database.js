@@ -206,3 +206,17 @@ test.serial('Database: Get Master Release Versions', async t => {
         sort_order: 'asc',
     });
 });
+
+test.serial('Database: Get Artist', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.get('https://api.discogs.com/artists/108713', (req, res, ctx) => {
+            t.pass();
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    await client.database().getArtist(108713);
+});
