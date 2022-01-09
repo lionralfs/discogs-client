@@ -51,3 +51,34 @@ test.serial('Database: Test search with query only', async t => {
     let data = await db.search('somequery');
     t.is(data.result, 'success', 'Correct response data');
 });
+
+test.serial('Database: Get release', async t => {
+    t.plan(2);
+    server.use(
+        rest.get('https://api.discogs.com/releases/249504', (req, res, ctx) => {
+            let params = req.url.searchParams;
+            t.is([...params.entries()].length, 0);
+            return res(ctx.status(200), ctx.json({ id: 249504 }));
+        })
+    );
+
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let data = await client.database().getRelease(249504);
+    t.is(data.id, 249504);
+});
+
+test.serial('Database: Get release with currency', async t => {
+    t.plan(3);
+    server.use(
+        rest.get('https://api.discogs.com/releases/249504', (req, res, ctx) => {
+            let params = req.url.searchParams;
+            t.is([...params.entries()].length, 1);
+            t.is(params.get('curr_abbr'), 'USD');
+            return res(ctx.status(200), ctx.json({ id: 249504 }));
+        })
+    );
+
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let data = await client.database().getRelease(249504, 'USD');
+    t.is(data.id, 249504);
+});
