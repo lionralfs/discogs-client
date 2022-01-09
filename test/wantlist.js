@@ -58,3 +58,17 @@ test.serial('Wantlist: Edit wantlist notes for release', async t => {
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
     await client.user().wantlist().editNotes('rodneyfool', 130076, { notes: 'My favorite release', rating: 4 });
 });
+
+test.serial('Wantlist: Remove release from wantlist', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.delete('https://api.discogs.com/users/rodneyfool/wants/130076', (req, res, ctx) => {
+            t.pass();
+            return res(ctx.status(204), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    await client.user().wantlist().removeRelease('rodneyfool', 130076);
+});
