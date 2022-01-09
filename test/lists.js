@@ -24,3 +24,17 @@ test.serial("Lists: Get user's list", async t => {
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
     await client.user().getLists('rodneyfool', { page: 3, per_page: 25 });
 });
+
+test.serial("Lists: Get items from user's list", async t => {
+    t.plan(1);
+
+    server.use(
+        rest.get('https://api.discogs.com/lists/123', (req, res, ctx) => {
+            t.pass();
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    await client.user().list().getItems(123);
+});
