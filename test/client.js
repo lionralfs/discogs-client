@@ -1,18 +1,9 @@
 import test from 'ava';
 import { rest } from 'msw';
-import { setupServer } from 'msw/node/lib/index.js';
 import { DiscogsClient } from '../lib/client.js';
+import { setupMockAPI } from './_setup.js';
 
-const server = setupServer();
-
-// Enable API mocking before tests.
-test.before(() => server.listen());
-
-// Reset any runtime request handlers we may add during the tests.
-test.afterEach.always(() => server.resetHandlers());
-
-// Disable API mocking after the tests are done.
-test.after(() => server.close());
+const server = setupMockAPI();
 
 test('DiscogsClient: Test instance', t => {
     t.true(new DiscogsClient() instanceof DiscogsClient);
