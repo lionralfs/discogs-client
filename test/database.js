@@ -241,3 +241,17 @@ test.serial('Database: Get Artist Releases', async t => {
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
     await client.database().getArtistReleases(108713, { page: 2, sort: 'year', sort_order: 'asc' });
 });
+
+test.serial('Database: Get Label', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.get('https://api.discogs.com/labels/1', (req, res, ctx) => {
+            t.pass();
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    await client.database().getLabel(1);
+});
