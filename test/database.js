@@ -220,3 +220,24 @@ test.serial('Database: Get Artist', async t => {
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
     await client.database().getArtist(108713);
 });
+
+test.serial('Database: Get Artist Releases', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.get('https://api.discogs.com/artists/108713/releases', (req, res, ctx) => {
+            t.deepEqual(
+                [...req.url.searchParams.entries()],
+                [
+                    ['page', '2'],
+                    ['sort', 'year'],
+                    ['sort_order', 'asc'],
+                ]
+            );
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    await client.database().getArtistReleases(108713, { page: 2, sort: 'year', sort_order: 'asc' });
+});
