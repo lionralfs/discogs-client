@@ -1,3 +1,4 @@
+// @ts-check
 import test from 'ava';
 import { rest } from 'msw';
 import { DiscogsClient } from '../lib/client.js';
@@ -6,110 +7,152 @@ import { setupMockAPI } from './_setup.js';
 const server = setupMockAPI();
 
 test.serial('Database: Test search without query but with params', async t => {
+    t.plan(3);
     server.use(
         rest.get('https://api.discogs.com/database/search', (req, res, ctx) => {
-            let success =
-                [...req.url.searchParams.entries()].length === 2 &&
-                req.url.searchParams.get('artist') === 'X' &&
-                req.url.searchParams.get('title') === 'Y';
-            return res(ctx.status(200), ctx.json({ result: success ? 'success' : 'error' }));
+            t.is([...req.url.searchParams.entries()].length, 2);
+            t.is(req.url.searchParams.get('artist'), 'X');
+            t.is(req.url.searchParams.get('title'), 'Y');
+
+            return res(ctx.status(200), ctx.json({}));
         })
     );
     let client = new DiscogsClient('agent', { consumerKey: 'u', consumerSecret: 'p' });
-    let db = client.database();
-    let data = await db.search({ artist: 'X', title: 'Y' });
-    t.is(data.result, 'success', 'Correct response data');
+    await client.database().search({ artist: 'X', title: 'Y' });
 });
 
 test.serial('Database: Test search with query and params', async t => {
+    t.plan(4);
     server.use(
         rest.get('https://api.discogs.com/database/search', (req, res, ctx) => {
-            let success =
-                [...req.url.searchParams.entries()].length === 3 &&
-                req.url.searchParams.get('artist') === 'X' &&
-                req.url.searchParams.get('title') === 'Y' &&
-                req.url.searchParams.get('q') === 'somequery';
-            return res(ctx.status(200), ctx.json({ result: success ? 'success' : 'error' }));
+            t.is([...req.url.searchParams.entries()].length, 3);
+            t.is(req.url.searchParams.get('q'), 'somequery');
+            t.is(req.url.searchParams.get('artist'), 'X');
+            t.is(req.url.searchParams.get('title'), 'Y');
+
+            return res(ctx.status(200), ctx.json({}));
         })
     );
     let client = new DiscogsClient('agent', { consumerKey: 'u', consumerSecret: 'p' });
-    let db = client.database();
-    let data = await db.search('somequery', { artist: 'X', title: 'Y' });
-    t.is(data.result, 'success', 'Correct response data');
+    await client.database().search({ query: 'somequery', artist: 'X', title: 'Y' });
 });
 
 test.serial('Database: Test search with query only', async t => {
+    t.plan(2);
     server.use(
         rest.get('https://api.discogs.com/database/search', (req, res, ctx) => {
-            let success =
-                [...req.url.searchParams.entries()].length === 1 && req.url.searchParams.get('q') === 'somequery';
-            return res(ctx.status(200), ctx.json({ result: success ? 'success' : 'error' }));
+            t.is([...req.url.searchParams.entries()].length, 1);
+            t.is(req.url.searchParams.get('q'), 'somequery');
+            return res(ctx.status(200), ctx.json({}));
         })
     );
     let client = new DiscogsClient('agent', { consumerKey: 'u', consumerSecret: 'p' });
-    let db = client.database();
-    let data = await db.search('somequery');
-    t.is(data.result, 'success', 'Correct response data');
+    await client.database().search({ query: 'somequery' });
+});
+
+test.serial('Database: Test with every option', async t => {
+    t.plan(19);
+    server.use(
+        rest.get('https://api.discogs.com/database/search', (req, res, ctx) => {
+            t.is([...req.url.searchParams.entries()].length, 18);
+            t.is(req.url.searchParams.get('q'), 'nirvana');
+            t.is(req.url.searchParams.get('type'), 'release');
+            t.is(req.url.searchParams.get('title'), 'nirvana - nevermind');
+            t.is(req.url.searchParams.get('release_title'), 'nevermind');
+            t.is(req.url.searchParams.get('credit'), 'kurt');
+            t.is(req.url.searchParams.get('artist'), 'nirvana');
+            t.is(req.url.searchParams.get('anv'), 'nirvana');
+            t.is(req.url.searchParams.get('label'), 'dgc');
+            t.is(req.url.searchParams.get('genre'), 'rock');
+            t.is(req.url.searchParams.get('style'), 'grunge');
+            t.is(req.url.searchParams.get('country'), 'canada');
+            t.is(req.url.searchParams.get('year'), '1991');
+            t.is(req.url.searchParams.get('format'), 'album');
+            t.is(req.url.searchParams.get('catno'), 'DGCD-24425');
+            t.is(req.url.searchParams.get('barcode'), '7 2064-24425-2 4');
+            t.is(req.url.searchParams.get('track'), 'smells like teen spirit');
+            t.is(req.url.searchParams.get('submitter'), 'milKt');
+            t.is(req.url.searchParams.get('contributor'), 'jerome99');
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+    let client = new DiscogsClient('agent', { consumerKey: 'u', consumerSecret: 'p' });
+    await client.database().search({
+        query: 'nirvana', // Your search query
+        type: 'release', // One of 'release', 'master', 'artist', 'label'
+        title: 'nirvana - nevermind', // Search by combined “Artist Name - Release Title” title field.
+        release_title: 'nevermind', // Search release titles.
+        credit: 'kurt', // Search release credits.
+        artist: 'nirvana', // Search artist names.
+        anv: 'nirvana', // Search artist ANV.
+        label: 'dgc', // Search label names.
+        genre: 'rock', // Search genres.
+        style: 'grunge', // Search styles.
+        country: 'canada', // Search release country.
+        year: '1991', // Search release year.
+        format: 'album', // Search formats.
+        catno: 'DGCD-24425', // Search catalog number.
+        barcode: '7 2064-24425-2 4', // Search barcodes.
+        track: 'smells like teen spirit', // Search track titles.
+        submitter: 'milKt', // Search submitter username.
+        contributor: 'jerome99', // Search contributor usernames.
+    });
 });
 
 test.serial('Database: Get release', async t => {
-    t.plan(2);
+    t.plan(1);
     server.use(
         rest.get('https://api.discogs.com/releases/249504', (req, res, ctx) => {
             let params = req.url.searchParams;
             t.is([...params.entries()].length, 0);
-            return res(ctx.status(200), ctx.json({ id: 249504 }));
+            return res(ctx.status(200), ctx.json({}));
         })
     );
 
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
-    let data = await client.database().getRelease(249504);
-    t.is(data.id, 249504);
+    await client.database().getRelease(249504);
 });
 
 test.serial('Database: Get release with currency', async t => {
-    t.plan(3);
+    t.plan(2);
     server.use(
         rest.get('https://api.discogs.com/releases/249504', (req, res, ctx) => {
             let params = req.url.searchParams;
             t.is([...params.entries()].length, 1);
             t.is(params.get('curr_abbr'), 'USD');
-            return res(ctx.status(200), ctx.json({ id: 249504 }));
+            return res(ctx.status(200), ctx.json({}));
         })
     );
 
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
-    let data = await client.database().getRelease(249504, 'USD');
-    t.is(data.id, 249504);
+    await client.database().getRelease(249504, 'USD');
 });
 
 test.serial('Database: Get a users release rating', async t => {
-    t.plan(2);
+    t.plan(1);
     server.use(
         rest.get('https://api.discogs.com/releases/249504/rating/someuser', (req, res, ctx) => {
             t.pass();
-            return res(ctx.status(200), ctx.json({ release_id: 249504, username: 'someuser', rating: 3 }));
+            return res(ctx.status(200), ctx.json({}));
         })
     );
 
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
-    let data = await client.database().getReleaseRating(249504, 'someuser');
-    t.is(data.release_id, 249504);
+    await client.database().getReleaseRating(249504, 'someuser');
 });
 
 test.serial('Database: Give release rating as current user', async t => {
-    t.plan(2);
+    t.plan(1);
 
     server.use(
         rest.put('https://api.discogs.com/releases/249504/rating/someuser', (req, res, ctx) => {
             t.deepEqual(req.body, { rating: 2 });
-            return res(ctx.status(200), ctx.json({ release_id: 249504, username: 'someuser', rating: 2 }));
+            return res(ctx.status(200), ctx.json({}));
         })
     );
 
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
-    let data = await client.database().setReleaseRating(249504, 'someuser', 2);
-    t.is(data.release_id, 249504);
+    await client.database().setReleaseRating(249504, 'someuser', 2);
 });
 
 test.serial('Database: Remove release rating as current user', async t => {
@@ -128,48 +171,45 @@ test.serial('Database: Remove release rating as current user', async t => {
 });
 
 test.serial('Database: Get Community Release Rating', async t => {
-    t.plan(2);
+    t.plan(1);
 
     server.use(
         rest.get('https://api.discogs.com/releases/249504/rating', (req, res, ctx) => {
             t.pass();
-            return res(ctx.status(200), ctx.json({ release_id: 249504 }));
+            return res(ctx.status(200), ctx.json({}));
         })
     );
 
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
-    let data = await client.database().getReleaseCommunityRating(249504);
-    t.is(data.release_id, 249504);
+    await client.database().getReleaseCommunityRating(249504);
 });
 
 test.serial('Database: Get Release Stats', async t => {
-    t.plan(2);
+    t.plan(1);
 
     server.use(
         rest.get('https://api.discogs.com/releases/249504/stats', (req, res, ctx) => {
             t.pass();
-            return res(ctx.status(200), ctx.json({ release_id: 249504 }));
+            return res(ctx.status(200), ctx.json({}));
         })
     );
 
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
-    let data = await client.database().getReleaseStats(249504);
-    t.is(data.release_id, 249504);
+    await client.database().getReleaseStats(249504);
 });
 
 test.serial('Database: Get Master Release', async t => {
-    t.plan(2);
+    t.plan(1);
 
     server.use(
         rest.get('https://api.discogs.com/masters/1000', (req, res, ctx) => {
             t.pass();
-            return res(ctx.status(200), ctx.json({ release_id: 1000 }));
+            return res(ctx.status(200), ctx.json({}));
         })
     );
 
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
-    let data = await client.database().getMaster(1000);
-    t.is(data.release_id, 1000);
+    await client.database().getMaster(1000);
 });
 
 test.serial('Database: Get Master Release Versions', async t => {
