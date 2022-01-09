@@ -65,3 +65,15 @@ test.serial('Collection: Delete folder', async t => {
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
     await client.user().collection().deleteFolder('rodneyfool', 3);
 });
+
+test.serial('Collection: Get instances of release in collection', async t => {
+    t.plan(1);
+    server.use(
+        rest.get('https://api.discogs.com/users/susan.salkeld/collection/releases/7781525', (req, res, ctx) => {
+            t.pass();
+            return res(ctx.status(200));
+        })
+    );
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    await client.user().collection().getReleaseInstances('susan.salkeld', 7781525);
+});
