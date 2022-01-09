@@ -82,3 +82,17 @@ test.serial('Database: Get release with currency', async t => {
     let data = await client.database().getRelease(249504, 'USD');
     t.is(data.id, 249504);
 });
+
+test.serial('Database: Get a users release rating', async t => {
+    t.plan(2);
+    server.use(
+        rest.get('https://api.discogs.com/releases/249504/rating/someuser', (req, res, ctx) => {
+            t.pass();
+            return res(ctx.status(200), ctx.json({ release_id: 249504, username: 'someuser', rating: 3 }));
+        })
+    );
+
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let data = await client.database().getReleaseRating(249504, 'someuser');
+    t.is(data.release_id, 249504);
+});
