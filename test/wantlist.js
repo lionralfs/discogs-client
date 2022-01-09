@@ -41,3 +41,20 @@ test.serial('Wantlist: Add release to wantlist', async t => {
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
     await client.user().wantlist().addRelease('rodneyfool', 130076, { notes: 'My favorite release', rating: 5 });
 });
+
+test.serial('Wantlist: Edit wantlist notes for release', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.post('https://api.discogs.com/users/rodneyfool/wants/130076', (req, res, ctx) => {
+            t.deepEqual(req.body, {
+                notes: 'My favorite release',
+                rating: 4,
+            });
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    await client.user().wantlist().editNotes('rodneyfool', 130076, { notes: 'My favorite release', rating: 4 });
+});
