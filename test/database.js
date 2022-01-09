@@ -171,3 +171,38 @@ test.serial('Database: Get Master Release', async t => {
     let data = await client.database().getMaster(1000);
     t.is(data.release_id, 1000);
 });
+
+test.serial('Database: Get Master Release Versions', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.get('https://api.discogs.com/masters/1000/versions', (req, res, ctx) => {
+            t.deepEqual(
+                [...req.url.searchParams.entries()],
+                [
+                    ['page', '2'],
+                    ['per_page', '25'],
+                    ['format', 'Vinyl'],
+                    ['label', 'Scorpio Music'],
+                    ['released', '1992'],
+                    ['country', 'Belgium'],
+                    ['sort', 'released'],
+                    ['sort_order', 'asc'],
+                ]
+            );
+            return res(ctx.status(200), ctx.json({ release_id: 1000 }));
+        })
+    );
+
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    await client.database().getMasterVersions(1000, {
+        page: 2,
+        per_page: 25,
+        format: 'Vinyl',
+        label: 'Scorpio Music',
+        released: '1992',
+        country: 'Belgium',
+        sort: 'released',
+        sort_order: 'asc',
+    });
+});
