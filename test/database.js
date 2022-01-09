@@ -141,3 +141,18 @@ test.serial('Database: Get Community Release Rating', async t => {
     let data = await client.database().getReleaseCommunityRating(249504);
     t.is(data.release_id, 249504);
 });
+
+test.serial('Database: Get Release Stats', async t => {
+    t.plan(2);
+
+    server.use(
+        rest.get('https://api.discogs.com/releases/249504/stats', (req, res, ctx) => {
+            t.pass();
+            return res(ctx.status(200), ctx.json({ release_id: 249504 }));
+        })
+    );
+
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let data = await client.database().getReleaseStats(249504);
+    t.is(data.release_id, 249504);
+});
