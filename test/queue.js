@@ -23,9 +23,9 @@ test('Queue: Test add() + getLength() + clear()', async t => {
         queue.setConfig(customConfig);
         t.plan(5);
 
-        var dummy = function () {
+        function dummy() {
             return true;
-        };
+        }
         function t1(err, remainingFree, remainingStack) {
             t.is(remainingFree, 0, 'Remaining free positions === 0');
             t.is(remainingStack, 2, 'Remaining stack positions === 2');
