@@ -190,7 +190,7 @@ test.serial('Database: Get Master Release Versions', async t => {
                     ['sort_order', 'asc'],
                 ]
             );
-            return res(ctx.status(200), ctx.json({ release_id: 1000 }));
+            return res(ctx.status(200), ctx.json());
         })
     );
 
