@@ -1,3 +1,4 @@
+// @ts-check
 import test from 'ava';
 import { rest } from 'msw';
 import { DiscogsClient } from '../lib/client.js';
