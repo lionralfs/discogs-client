@@ -95,3 +95,15 @@ test.serial('Collection: Collection items by folder', async t => {
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
     await client.user().collection().getReleases('rodneyfool', 3, { sort: 'artist', sort_order: 'desc' });
 });
+
+test.serial('Collection: Add release to folder', async t => {
+    t.plan(1);
+    server.use(
+        rest.post('https://api.discogs.com/users/rodneyfool/collection/folders/3/releases/130076', (req, res, ctx) => {
+            t.pass();
+            return res(ctx.status(201));
+        })
+    );
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    await client.user().collection().addRelease('rodneyfool', 130076, 3);
+});
