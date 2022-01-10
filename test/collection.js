@@ -77,3 +77,21 @@ test.serial('Collection: Get instances of release in collection', async t => {
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
     await client.user().collection().getReleaseInstances('susan.salkeld', 7781525);
 });
+
+test.serial('Collection: Collection items by folder', async t => {
+    t.plan(1);
+    server.use(
+        rest.get('https://api.discogs.com/users/rodneyfool/collection/folders/3/releases', (req, res, ctx) => {
+            t.deepEqual(
+                [...req.url.searchParams.entries()],
+                [
+                    ['sort', 'artist'],
+                    ['sort_order', 'desc'],
+                ]
+            );
+            return res(ctx.status(200));
+        })
+    );
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    await client.user().collection().getReleases('rodneyfool', 3, { sort: 'artist', sort_order: 'desc' });
+});
