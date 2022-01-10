@@ -107,3 +107,18 @@ test.serial('Collection: Add release to folder', async t => {
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
     await client.user().collection().addRelease('rodneyfool', 130076, 3);
 });
+
+test.serial('Collection: Edit release', async t => {
+    t.plan(1);
+    server.use(
+        rest.post(
+            'https://api.discogs.com/users/rodneyfool/collection/folders/4/releases/130076/instances/1',
+            (req, res, ctx) => {
+                t.pass();
+                return res(ctx.status(204));
+            }
+        )
+    );
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    await client.user().collection().editRelease('rodneyfool', 4, 130076, 1, { rating: 5, folder_id: 16 });
+});
