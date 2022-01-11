@@ -1,5 +1,5 @@
 {
-    "include": ["lib/*", "index.js"],
+    "include": ["lib/*"],
     "exclude": ["test/**/*.js"],
     "compilerOptions": {
         "outDir": "types",
