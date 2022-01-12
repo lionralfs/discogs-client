@@ -137,3 +137,15 @@ test.serial('Collection: Delete release from folder', async t => {
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
     await client.user().collection().removeRelease('rodneyfool', 3, 130076, 1);
 });
+
+test.serial('Collection: Get collection note fields', async t => {
+    t.plan(1);
+    server.use(
+        rest.get('https://api.discogs.com/users/rodneyfool/collection/fields', (req, res, ctx) => {
+            t.pass();
+            return res(ctx.status(200));
+        })
+    );
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    await client.user().collection().getFields('rodneyfool');
+});
