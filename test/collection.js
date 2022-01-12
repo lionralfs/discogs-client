@@ -164,3 +164,15 @@ test.serial('Collection: Update note on instance', async t => {
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
     await client.user().collection().editInstanceNote('rodneyfool', 3, 130076, 1, 8, 'foo');
 });
+
+test.serial('Collection: Get collection value', async t => {
+    t.plan(1);
+    server.use(
+        rest.get('https://api.discogs.com/users/rodneyfool/collection/value', (req, res, ctx) => {
+            t.pass();
+            return res(ctx.status(204));
+        })
+    );
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    await client.user().collection().getValue('rodneyfool');
+});
