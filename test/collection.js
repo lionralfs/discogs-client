@@ -122,3 +122,18 @@ test.serial('Collection: Edit release', async t => {
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
     await client.user().collection().editRelease('rodneyfool', 4, 130076, 1, { rating: 5, folder_id: 16 });
 });
+
+test.serial('Collection: Delete release from folder', async t => {
+    t.plan(1);
+    server.use(
+        rest.delete(
+            'https://api.discogs.com/users/rodneyfool/collection/folders/3/releases/130076/instances/1',
+            (req, res, ctx) => {
+                t.pass();
+                return res(ctx.status(204));
+            }
+        )
+    );
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    await client.user().collection().removeRelease('rodneyfool', 3, 130076, 1);
+});
