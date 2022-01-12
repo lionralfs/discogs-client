@@ -25,7 +25,7 @@
     },
     "scripts": {
         "test": "ava",
-        "prettier": "prettier --check **/**.js",
+        "prettier": "prettier --check **/**.{js,md,json}",
         "declaration:build": "rm -rf types && tsc -p tsconfig.json",
         "build": "rm -f commonjs/*.js && esbuild lib/index.js --format=cjs --bundle --platform=node --outfile=commonjs/index.js --target=node12"
     },
