@@ -149,3 +149,18 @@ test.serial('Collection: Get collection note fields', async t => {
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
     await client.user().collection().getFields('rodneyfool');
 });
+
+test.serial('Collection: Update note on instance', async t => {
+    t.plan(1);
+    server.use(
+        rest.post(
+            'https://api.discogs.com/users/rodneyfool/collection/folders/3/releases/130076/instances/1/fields/8',
+            (req, res, ctx) => {
+                t.is(req.url.searchParams.get('value'), 'foo');
+                return res(ctx.status(204));
+            }
+        )
+    );
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    await client.user().collection().editInstanceNote('rodneyfool', 3, 130076, 1, 8, 'foo');
+});
