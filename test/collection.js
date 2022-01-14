@@ -14,7 +14,7 @@ test.serial('Collection: Test get all folders', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient('agent', { token: 'test-token' });
+    let client = new DiscogsClient();
     await client.user().collection().getFolders('rodneyfool');
 });
 
@@ -26,7 +26,7 @@ test.serial('Collection: Test folder creation', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.user().collection().addFolder('rodneyfool', 'My favorites');
 });
 
@@ -38,7 +38,7 @@ test.serial('Collection: Get folder metadata', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.user().collection().getFolder('rodneyfool', 3);
 });
 
@@ -50,7 +50,7 @@ test.serial('Collection: Edit folder name', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.user().collection().setFolderName('rodneyfool', 3, 'New Name');
 });
 
@@ -62,7 +62,7 @@ test.serial('Collection: Delete folder', async t => {
             return res(ctx.status(204));
         })
     );
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.user().collection().deleteFolder('rodneyfool', 3);
 });
 
@@ -74,7 +74,7 @@ test.serial('Collection: Get instances of release in collection', async t => {
             return res(ctx.status(200));
         })
     );
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.user().collection().getReleaseInstances('susan.salkeld', 7781525);
 });
 
@@ -92,7 +92,7 @@ test.serial('Collection: Collection items by folder', async t => {
             return res(ctx.status(200));
         })
     );
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.user().collection().getReleases('rodneyfool', 3, { sort: 'artist', sort_order: 'desc' });
 });
 
@@ -104,7 +104,7 @@ test.serial('Collection: Add release to folder', async t => {
             return res(ctx.status(201));
         })
     );
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.user().collection().addRelease('rodneyfool', 130076, 3);
 });
 
@@ -119,7 +119,7 @@ test.serial('Collection: Edit release', async t => {
             }
         )
     );
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.user().collection().editRelease('rodneyfool', 4, 130076, 1, { rating: 5, folder_id: 16 });
 });
 
@@ -134,7 +134,7 @@ test.serial('Collection: Delete release from folder', async t => {
             }
         )
     );
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.user().collection().removeRelease('rodneyfool', 3, 130076, 1);
 });
 
@@ -146,7 +146,7 @@ test.serial('Collection: Get collection note fields', async t => {
             return res(ctx.status(200));
         })
     );
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.user().collection().getFields('rodneyfool');
 });
 
@@ -161,7 +161,7 @@ test.serial('Collection: Update note on instance', async t => {
             }
         )
     );
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.user().collection().editInstanceNote('rodneyfool', 3, 130076, 1, 8, 'foo');
 });
 
@@ -173,6 +173,6 @@ test.serial('Collection: Get collection value', async t => {
             return res(ctx.status(204));
         })
     );
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.user().collection().getValue('rodneyfool');
 });
