@@ -15,7 +15,7 @@ test.serial('User: Get Identity', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.user().getIdentity();
 });
 
@@ -29,7 +29,7 @@ test.serial('User: Get Profile', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.user().getProfile('rodneyfool');
 });
 

@@ -37,3 +37,75 @@ test.serial('DiscogsClient: Test custom configuration', async t => {
     let client = new DiscogsClient().setConfig({ host: 'www.example.com' });
     await client.get({ url: '/labels/1' });
 });
+
+test.serial('DiscogsClient: Media Types (none, default)', async t => {
+    t.plan(1);
+    server.use(
+        rest.get('https://api.discogs.com', (req, res, ctx) => {
+            t.is(req.headers.get('Accept'), 'application/vnd.discogs.v2.discogs+json');
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+    let client = new DiscogsClient();
+    await client.about();
+});
+
+test.serial('DiscogsClient: Media Types (html)', async t => {
+    t.plan(1);
+    server.use(
+        rest.get('https://api.discogs.com', (req, res, ctx) => {
+            t.is(req.headers.get('Accept'), 'application/vnd.discogs.v2.html+json');
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+    let client = new DiscogsClient().setConfig({ outputFormat: 'html' });
+    await client.about();
+});
+
+test.serial('DiscogsClient: Media Types (plaintext)', async t => {
+    t.plan(1);
+    server.use(
+        rest.get('https://api.discogs.com', (req, res, ctx) => {
+            t.is(req.headers.get('Accept'), 'application/vnd.discogs.v2.plaintext+json');
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+    let client = new DiscogsClient().setConfig({ outputFormat: 'plaintext' });
+    await client.about();
+});
+
+test.serial('DiscogsClient: User Agent (default)', async t => {
+    t.plan(1);
+    server.use(
+        rest.get('https://api.discogs.com', (req, res, ctx) => {
+            t.is(req.headers.get('User-Agent'), 'DisConnectClient/1.2.2 +https://github.com/bartve/disconnect');
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+    let client = new DiscogsClient();
+    await client.about();
+});
+
+test.serial('DiscogsClient: User Agent (custom)', async t => {
+    t.plan(1);
+    server.use(
+        rest.get('https://api.discogs.com', (req, res, ctx) => {
+            t.is(req.headers.get('User-Agent'), 'MyDiscogsClient/1.0 +https://example.org');
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+    let client = new DiscogsClient({ userAgent: 'MyDiscogsClient/1.0 +https://example.org' });
+    await client.about();
+});
+
+test.serial('DiscogsClient: Auth (userToken)', async t => {
+    t.plan(1);
+    server.use(
+        rest.get('https://api.discogs.com/oauth/identity', (req, res, ctx) => {
+            t.is(req.headers.get('Authorization'), 'Discogs token=testtoken12345');
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
+    await client.getIdentity();
+});

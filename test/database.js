@@ -17,7 +17,7 @@ test.serial('Database: Test search without query but with params', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient();
+    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.database().search({ artist: 'X', title: 'Y' });
 });
 
@@ -33,7 +33,7 @@ test.serial('Database: Test search with query and params', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient();
+    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.database().search({ query: 'somequery', artist: 'X', title: 'Y' });
 });
 
@@ -46,7 +46,7 @@ test.serial('Database: Test search with query only', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient();
+    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.database().search({ query: 'somequery' });
 });
 
@@ -76,7 +76,7 @@ test.serial('Database: Test with every option', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient();
+    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.database().search({
         query: 'nirvana', // Your search query
         type: 'release', // One of 'release', 'master', 'artist', 'label'
@@ -151,7 +151,7 @@ test.serial('Database: Give release rating as current user', async t => {
         })
     );
 
-    let client = new DiscogsClient();
+    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.database().setReleaseRating(249504, 'someuser', 2);
 });
 
@@ -165,7 +165,7 @@ test.serial('Database: Remove release rating as current user', async t => {
         })
     );
 
-    let client = new DiscogsClient();
+    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     let data = await client.database().setReleaseRating(249504, 'someuser', null);
     t.is(data, '');
 });
