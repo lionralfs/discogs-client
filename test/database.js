@@ -17,7 +17,7 @@ test.serial('Database: Test search without query but with params', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient('agent', { consumerKey: 'u', consumerSecret: 'p' });
+    let client = new DiscogsClient();
     await client.database().search({ artist: 'X', title: 'Y' });
 });
 
@@ -33,7 +33,7 @@ test.serial('Database: Test search with query and params', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient('agent', { consumerKey: 'u', consumerSecret: 'p' });
+    let client = new DiscogsClient();
     await client.database().search({ query: 'somequery', artist: 'X', title: 'Y' });
 });
 
@@ -46,7 +46,7 @@ test.serial('Database: Test search with query only', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient('agent', { consumerKey: 'u', consumerSecret: 'p' });
+    let client = new DiscogsClient();
     await client.database().search({ query: 'somequery' });
 });
 
@@ -76,7 +76,7 @@ test.serial('Database: Test with every option', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient('agent', { consumerKey: 'u', consumerSecret: 'p' });
+    let client = new DiscogsClient();
     await client.database().search({
         query: 'nirvana', // Your search query
         type: 'release', // One of 'release', 'master', 'artist', 'label'
@@ -109,7 +109,7 @@ test.serial('Database: Get release', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.database().getRelease(249504);
 });
 
@@ -124,7 +124,7 @@ test.serial('Database: Get release with currency', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.database().getRelease(249504, 'USD');
 });
 
@@ -137,7 +137,7 @@ test.serial('Database: Get a users release rating', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.database().getReleaseRating(249504, 'someuser');
 });
 
@@ -151,7 +151,7 @@ test.serial('Database: Give release rating as current user', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.database().setReleaseRating(249504, 'someuser', 2);
 });
 
@@ -165,7 +165,7 @@ test.serial('Database: Remove release rating as current user', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     let data = await client.database().setReleaseRating(249504, 'someuser', null);
     t.is(data, '');
 });
@@ -180,7 +180,7 @@ test.serial('Database: Get Community Release Rating', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.database().getReleaseCommunityRating(249504);
 });
 
@@ -194,7 +194,7 @@ test.serial('Database: Get Release Stats', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.database().getReleaseStats(249504);
 });
 
@@ -208,7 +208,7 @@ test.serial('Database: Get Master Release', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.database().getMaster(1000);
 });
 
@@ -234,7 +234,7 @@ test.serial('Database: Get Master Release Versions', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.database().getMasterVersions(1000, {
         page: 2,
         per_page: 25,
@@ -257,7 +257,7 @@ test.serial('Database: Get Artist', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.database().getArtist(108713);
 });
 
@@ -278,7 +278,7 @@ test.serial('Database: Get Artist Releases', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.database().getArtistReleases(108713, { page: 2, sort: 'year', sort_order: 'asc' });
 });
 
@@ -292,7 +292,7 @@ test.serial('Database: Get Label', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.database().getLabel(1);
 });
 
@@ -312,6 +312,6 @@ test.serial('Database: Get Label Releases', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient();
     await client.database().getLabelReleases(1, { page: 3, per_page: 25 });
 });
