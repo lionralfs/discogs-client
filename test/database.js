@@ -166,8 +166,7 @@ test.serial('Database: Remove release rating as current user', async t => {
     );
 
     let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
-    let data = await client.database().setReleaseRating(249504, 'someuser', null);
-    t.is(data, '');
+    await client.database().setReleaseRating(249504, 'someuser', null);
 });
 
 test.serial('Database: Get Community Release Rating', async t => {
