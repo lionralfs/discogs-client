@@ -156,7 +156,7 @@ test.serial('Database: Give release rating as current user', async t => {
 });
 
 test.serial('Database: Remove release rating as current user', async t => {
-    t.plan(2);
+    t.plan(1);
 
     server.use(
         rest.delete('https://api.discogs.com/releases/249504/rating/someuser', (req, res, ctx) => {
