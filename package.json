@@ -25,6 +25,7 @@
     },
     "scripts": {
         "test": "ava",
+        "coverage": "c8 --reporter html ava",
         "prettier": "prettier --check **/**.{js,md,json}",
         "declaration:build": "rm -rf types && tsc -p tsconfig.json",
         "build": "rm -f commonjs/*.js && esbuild lib/index.js --format=cjs --bundle --platform=node --outfile=commonjs/index.js --target=node12"
@@ -34,6 +35,7 @@
     },
     "devDependencies": {
         "ava": "^4.0.1",
+        "c8": "^7.11.0",
         "esbuild": "^0.14.11",
         "msw": "^0.36.3",
         "prettier": "^2.5.1",
