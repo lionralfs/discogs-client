@@ -42,6 +42,23 @@ test.serial('Collection: Get folder metadata', async t => {
     await client.user().collection().getFolder('rodneyfool', 3);
 });
 
+test.serial('Collection: Get folder metadata (no auth required for public folder)', async t => {
+    t.plan(1);
+    server.use(
+        rest.get('https://api.discogs.com/users/rodneyfool/collection/folders/0', (req, res, ctx) => {
+            t.pass();
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+    let client = new DiscogsClient();
+    await client.user().collection().getFolder('rodneyfool', 0);
+});
+
+test('Collection: Get folder metadata (throws auth error)', async t => {
+    let client = new DiscogsClient();
+    await t.throwsAsync(client.user().collection().getFolder('rodneyfool', 1234));
+});
+
 test.serial('Collection: Edit folder name', async t => {
     t.plan(1);
     server.use(
@@ -94,6 +111,32 @@ test.serial('Collection: Collection items by folder', async t => {
     );
     let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.user().collection().getReleases('rodneyfool', 3, { sort: 'artist', sort_order: 'desc' });
+});
+
+test.serial('Collection: Collection items by folder (default doesnt need auth)', async t => {
+    t.plan(1);
+    server.use(
+        rest.get('https://api.discogs.com/users/rodneyfool/collection/folders/0/releases', (req, res, ctx) => {
+            t.deepEqual(
+                [...req.url.searchParams.entries()],
+                [
+                    ['sort', 'artist'],
+                    ['sort_order', 'desc'],
+                ]
+            );
+            return res(ctx.status(200));
+        })
+    );
+    let client = new DiscogsClient();
+    await client.user().collection().getReleases('rodneyfool', '0', { sort: 'artist', sort_order: 'desc' });
+});
+
+test('Collection: Collection items by folder (throws auth error)', async t => {
+    t.plan(1);
+    let client = new DiscogsClient();
+    await t.throwsAsync(
+        client.user().collection().getReleases('rodneyfool', '1234', { sort: 'artist', sort_order: 'desc' })
+    );
 });
 
 test.serial('Collection: Add release to folder', async t => {
