@@ -155,6 +155,21 @@ test.serial('Database: Give release rating as current user', async t => {
     await client.database().setReleaseRating(249504, 'someuser', 2);
 });
 
+test.serial('Database: Give release rating as current user (cap at 5)', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.put('https://api.discogs.com/releases/249504/rating/someuser', (req, res, ctx) => {
+            t.deepEqual(req.body, { rating: 5 });
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
+    // @ts-ignore
+    await client.database().setReleaseRating(249504, 'someuser', 6);
+});
+
 test.serial('Database: Remove release rating as current user', async t => {
     t.plan(1);
 
