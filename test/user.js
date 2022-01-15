@@ -100,3 +100,28 @@ test.serial('User: Get User Contributions', async t => {
     let client = new DiscogsClient('agent', { userToken: 'test-token' });
     await client.user().getContributions('rodneyfool', { page: 2, per_page: 50, sort: 'artist', sort_order: 'desc' });
 });
+
+test.serial('User: Get User Inventory', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.get('https://api.discogs.com/users/rodneyfool/inventory', (req, res, ctx) => {
+            t.deepEqual(
+                [...req.url.searchParams.entries()],
+                [
+                    ['status', 'for sale'],
+                    ['page', '3'],
+                    ['per_page', '25'],
+                    ['sort', 'status'],
+                    ['sort_order', 'asc'],
+                ]
+            );
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    await client
+        .user()
+        .getInventory('rodneyfool', { status: 'for sale', page: 3, per_page: 25, sort: 'status', sort_order: 'asc' });
+});
