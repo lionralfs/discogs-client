@@ -329,3 +329,17 @@ test.serial('Database: Get Label Releases', async t => {
     let client = new DiscogsClient();
     await client.database().getLabelReleases(1, { page: 3, per_page: 25 });
 });
+
+test.serial('Get Images', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.get('https://img.discogs.com/example.jpg', (req, res, ctx) => {
+            t.pass();
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient();
+    await client.database().getImage('https://img.discogs.com/example.jpg');
+});
