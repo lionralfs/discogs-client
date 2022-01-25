@@ -1,3 +1,5 @@
+> [#2](https://github.com/lionralfs/disconnect/pull/2) is the result of me turning this entire library into ES Modules, adding support for all endpoints, adding more tests, docs and type info via JSDoc (+ a generated types.d.ts).
+
 ## About
 
 `disconnect` is a [Node.js](http://www.nodejs.org) client library that connects with the [Discogs.com API v2.0](http://www.discogs.com/developers/).
