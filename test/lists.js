@@ -22,7 +22,7 @@ test.serial("Lists: Get user's list", async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.user().getLists('rodneyfool', { page: 3, per_page: 25 });
 });
 
@@ -36,6 +36,6 @@ test.serial("Lists: Get items from user's list", async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.user().list().getItems(123);
 });
