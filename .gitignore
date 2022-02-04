@@ -1,6 +1,6 @@
 node_modules/
 *.log
 types/
-commonjs/*
-!commonjs/package.json
+commonjs/index.js
+browser/index.js
 coverage/
