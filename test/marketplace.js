@@ -71,3 +71,17 @@ test.serial('Marketplace: Edit a listing', async t => {
         format_quantity: 'auto',
     });
 });
+
+test.serial('Marketplace: Delete a listing', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.delete('https://api.discogs.com/marketplace/listings/172723812', (req, res, ctx) => {
+            t.pass();
+            return res(ctx.status(204), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    await client.marketplace().deleteListing(172723812);
+});
