@@ -123,3 +123,17 @@ test.serial('Marketplace: Add a listing', async t => {
         format_quantity: 'auto',
     });
 });
+
+test.serial('Marketplace: Get an order', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.get('https://api.discogs.com/marketplace/orders/1', (req, res, ctx) => {
+            t.pass();
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    await client.marketplace().getOrder(1);
+});
