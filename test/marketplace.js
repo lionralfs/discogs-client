@@ -33,3 +33,41 @@ test.serial('Marketplace: Get a listing (with currency arg)', async t => {
     let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().getListing(172723812, 'USD');
 });
+
+test.serial('Marketplace: Edit a listing', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.post('https://api.discogs.com/marketplace/listings/172723812', (req, res, ctx) => {
+            t.deepEqual(req.body, {
+                release_id: 1,
+                condition: 'Mint (M)',
+                sleeve_condition: 'Fair (F)',
+                price: 10,
+                comments: 'This item is wonderful',
+                allow_offers: true,
+                status: 'Draft',
+                external_id: '1234321',
+                location: 'top shelf',
+                weight: 200,
+                format_quantity: 'auto',
+            });
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    await client.marketplace().editListing(172723812, {
+        release_id: 1,
+        condition: 'Mint (M)',
+        sleeve_condition: 'Fair (F)',
+        price: 10,
+        comments: 'This item is wonderful',
+        allow_offers: true,
+        status: 'Draft',
+        external_id: '1234321',
+        location: 'top shelf',
+        weight: 200,
+        format_quantity: 'auto',
+    });
+});
