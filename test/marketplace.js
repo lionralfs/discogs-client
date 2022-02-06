@@ -52,7 +52,7 @@ test.serial('Marketplace: Edit a listing', async t => {
                 weight: 200,
                 format_quantity: 'auto',
             });
-            return res(ctx.status(200), ctx.json({}));
+            return res(ctx.status(204), ctx.json({}));
         })
     );
 
