@@ -13,6 +13,7 @@
     "license": "MIT",
     "author": "Bart van Eijck <voodoo107@hotmail.com>",
     "main": "lib/index.js",
+    "browser": "browser/index.js",
     "module": "lib/index.js",
     "type": "module",
     "directories": {
@@ -53,5 +54,11 @@
     },
     "lint-staged": {
         "*.{js,md,json}": "prettier --write"
-    }
+    },
+    "files": [
+        "lib",
+        "browser",
+        "commonjs",
+        "types"
+    ]
 }
