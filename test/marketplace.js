@@ -137,3 +137,92 @@ test.serial('Marketplace: Get an order', async t => {
     let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().getOrder(1);
 });
+
+test.serial('Marketplace: Edit an order', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.post('https://api.discogs.com/marketplace/orders/1', (req, res, ctx) => {
+            t.deepEqual(req.body, {
+                status: 'Shipped',
+                shipping: 10,
+            });
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    await client.marketplace().editOrder(1, { status: 'Shipped', shipping: 10 });
+});
+
+test.serial('Marketplace: Get orders', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.get('https://api.discogs.com/marketplace/orders', (req, res, ctx) => {
+            t.deepEqual(
+                [...req.url.searchParams.entries()],
+                [
+                    ['status', "Cancelled (Per Buyer's Request)"],
+                    ['created_after', '2019-06-24T20:58:58Z'],
+                    ['created_before', '2019-06-25T20:58:58Z'],
+                    ['archived', 'true'],
+                    ['sort', 'last_activity'],
+                    ['sort_order', 'desc'],
+                    ['page', '2'],
+                    ['per_page', '50'],
+                ]
+            );
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    await client.marketplace().getOrders({
+        status: "Cancelled (Per Buyer's Request)",
+        created_after: '2019-06-24T20:58:58Z',
+        created_before: '2019-06-25T20:58:58Z',
+        archived: true,
+        sort: 'last_activity',
+        sort_order: 'desc',
+        page: 2,
+        per_page: 50,
+    });
+});
+
+test.serial('Marketplace: Get order messages', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.get('https://api.discogs.com/marketplace/orders/1/messages', (req, res, ctx) => {
+            t.deepEqual(
+                [...req.url.searchParams.entries()],
+                [
+                    ['page', '2'],
+                    ['per_page', '50'],
+                ]
+            );
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    await client.marketplace().getOrderMessages(1, { page: 2, per_page: 50 });
+});
+
+test.serial('Marketplace: Add message to order', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.post('https://api.discogs.com/marketplace/orders/1/messages', (req, res, ctx) => {
+            t.deepEqual(req.body, {
+                message: 'hello world',
+                status: 'New Order',
+            });
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    await client.marketplace().addOrderMessage(1, { message: 'hello world', status: 'New Order' });
+});
