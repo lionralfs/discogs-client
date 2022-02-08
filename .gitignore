@@ -3,4 +3,5 @@ node_modules/
 types/
 commonjs/index.js
 browser/index.js
+node-esm/index.js
 coverage/

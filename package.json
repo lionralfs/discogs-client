@@ -12,13 +12,10 @@
     "bugs": "https://github.com/bartve/disconnect/issues",
     "license": "MIT",
     "author": "Bart van Eijck <voodoo107@hotmail.com>",
-    "main": "lib/index.js",
+    "main": "node-esm/index.js",
     "browser": "browser/index.js",
-    "module": "lib/index.js",
+    "module": "node-esm/index.js",
     "type": "module",
-    "directories": {
-        "lib": "./lib"
-    },
     "types": "types/index.d.ts",
     "repository": {
         "type": "git",
@@ -29,9 +26,9 @@
         "coverage": "c8 --reporter html ava",
         "prettier": "prettier --check **/**.{js,md,json}",
         "declaration:build": "rm -rf types && tsc -p tsconfig.json",
-        "build": "npm run declaration:build && npm run build:node && npm run build:browser",
-        "build:node": "rm -f commonjs/index.js && esbuild lib/index.js --format=cjs --bundle --platform=node --outfile=commonjs/index.js --target=node12",
-        "build:browser": "rm -f browser/index.js && node build-browser.js",
+        "clean": "rm -f commonjs/index.js && rm -f browser/index.js && rm -f node-esm/index.js",
+        "build": "npm run declaration:build && npm run clean && npm run build:all",
+        "build:all": "node build.js",
         "prepare": "husky install"
     },
     "dependencies": {
@@ -56,10 +53,10 @@
         "*.{js,md,json}": "prettier --write"
     },
     "files": [
-        "lib",
         "browser",
         "commonjs",
-        "types"
+        "types",
+        "node-esm"
     ],
     "publishConfig": {
         "access": "public",

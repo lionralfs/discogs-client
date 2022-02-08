@@ -16,11 +16,6 @@
 -   Includes OAuth 1.0a tools. Just plug in your consumer key and secret and do the OAuth dance
 -   API functions grouped in their own namespace for easy access and isolation
 
-## Todo
-
--   Add [rate limiting](http://www.discogs.com/developers/accessing.html#rate-limiting) support
--   Add tests
-
 ## Installation
 
 `$ npm install disconnect`
