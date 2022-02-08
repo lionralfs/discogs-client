@@ -199,6 +199,7 @@ db.getRelease(176126, function (err, data) {
 -   [Discogs API documentation](http://www.discogs.com/developers/)
 -   [The OAuth Bible](http://oauthbible.com/)
 
-## License
+## License - [MIT](./LICENSE)
 
-MIT
+-   MIT 2022 Lion Ralfs
+-   MIT 2014-2022 B. van Eijck
