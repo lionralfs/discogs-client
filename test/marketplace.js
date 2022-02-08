@@ -254,3 +254,17 @@ test.serial('Marketplace: Get fee with currency', async t => {
     let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().getFee(10, 'EUR');
 });
+
+test.serial('Marketplace: Get price suggestion', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.get('https://api.discogs.com/marketplace/price_suggestions/1', (req, res, ctx) => {
+            t.deepEqual([...req.url.searchParams.entries()], []);
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    await client.marketplace().getPriceSuggestions(1);
+});
