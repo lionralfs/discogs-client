@@ -268,3 +268,31 @@ test.serial('Marketplace: Get price suggestion', async t => {
     let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().getPriceSuggestions(1);
 });
+
+test.serial('Marketplace: Get Release Stats without currency', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.get('https://api.discogs.com/marketplace/stats/1', (req, res, ctx) => {
+            t.deepEqual([...req.url.searchParams.entries()], []);
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    await client.marketplace().getReleaseStats(1);
+});
+
+test.serial('Marketplace: Get Release Stats with currency', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.get('https://api.discogs.com/marketplace/stats/1', (req, res, ctx) => {
+            t.deepEqual([...req.url.searchParams.entries()], [['curr_abbr', 'EUR']]);
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    await client.marketplace().getReleaseStats(1, 'EUR');
+});
