@@ -226,3 +226,31 @@ test.serial('Marketplace: Add message to order', async t => {
     let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().addOrderMessage(1, { message: 'hello world', status: 'New Order' });
 });
+
+test.serial('Marketplace: Get fee without currency', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.get('https://api.discogs.com/marketplace/fee/10.00', (req, res, ctx) => {
+            t.deepEqual([...req.url.searchParams.entries()], []);
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    await client.marketplace().getFee(10);
+});
+
+test.serial('Marketplace: Get fee with currency', async t => {
+    t.plan(1);
+
+    server.use(
+        rest.get('https://api.discogs.com/marketplace/fee/10.00/EUR', (req, res, ctx) => {
+            t.deepEqual([...req.url.searchParams.entries()], []);
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    await client.marketplace().getFee(10, 'EUR');
+});
