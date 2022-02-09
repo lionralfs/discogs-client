@@ -4,8 +4,6 @@
 
 `disconnect` is a [Node.js](http://www.nodejs.org) client library that connects with the [Discogs.com API v2.0](http://www.discogs.com/developers/).
 
-[![NPM version](https://badge.fury.io/js/disconnect.svg)](http://badge.fury.io/js/disconnect) [![Dependency Status](https://david-dm.org/bartve/disconnect.png)](https://david-dm.org/bartve/disconnect)
-
 ## Features
 
 -   Covers all API endpoints

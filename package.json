@@ -8,10 +8,10 @@
         "client",
         "oauth"
     ],
-    "homepage": "https://github.com/bartve/disconnect",
-    "bugs": "https://github.com/bartve/disconnect/issues",
+    "homepage": "https://github.com/lionralfs/disconnect",
+    "bugs": "https://github.com/lionralfs/disconnect/issues",
     "license": "MIT",
-    "author": "Bart van Eijck <voodoo107@hotmail.com>",
+    "author": "Lion Ralfs <lion.ralfs@gmail.com> (https://lionralfs.dev/)",
     "main": "node-esm/index.js",
     "browser": "browser/index.js",
     "module": "node-esm/index.js",
@@ -19,7 +19,7 @@
     "types": "types/index.d.ts",
     "repository": {
         "type": "git",
-        "url": "https://github.com/bartve/disconnect.git"
+        "url": "https://github.com/lionralfs/disconnect.git"
     },
     "scripts": {
         "test": "ava",
