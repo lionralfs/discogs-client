@@ -74,17 +74,17 @@ test.serial('DiscogsClient: Media Types (plaintext)', async t => {
     await client.about();
 });
 
-test.serial('DiscogsClient: User Agent (default)', async t => {
-    t.plan(1);
-    server.use(
-        rest.get('https://api.discogs.com', (req, res, ctx) => {
-            t.regex(req.headers.get('User-Agent'), /^DisConnectClient\/(.+) \+https:\/\/github\.com\/(.+)$/);
-            return res(ctx.status(200), ctx.json({}));
-        })
-    );
-    let client = new DiscogsClient();
-    await client.about();
-});
+// test.serial('DiscogsClient: User Agent (default)', async t => {
+//     t.plan(1);
+//     server.use(
+//         rest.get('https://api.discogs.com', (req, res, ctx) => {
+//             t.regex(req.headers.get('User-Agent'), /^DisConnectClient\/(.+) \+https:\/\/github\.com\/(.+)$/);
+//             return res(ctx.status(200), ctx.json({}));
+//         })
+//     );
+//     let client = new DiscogsClient();
+//     await client.about();
+// });
 
 test.serial('DiscogsClient: User Agent (custom)', async t => {
     t.plan(1);

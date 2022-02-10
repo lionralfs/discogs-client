@@ -49,7 +49,7 @@ test.serial('User: Edit Profile', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.user().editProfile('rodneyfool', {
         name: 'Nicolas Cage',
         home_page: 'www.discogs.com',
@@ -75,7 +75,7 @@ test.serial('User: Get User Submissions', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.user().getSubmissions('rodneyfool', { page: 4, per_page: 48 });
 });
 
@@ -97,7 +97,7 @@ test.serial('User: Get User Contributions', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.user().getContributions('rodneyfool', { page: 2, per_page: 50, sort: 'artist', sort_order: 'desc' });
 });
 
@@ -120,7 +120,7 @@ test.serial('User: Get User Inventory', async t => {
         })
     );
 
-    let client = new DiscogsClient('agent', { userToken: 'test-token' });
+    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client
         .user()
         .getInventory('rodneyfool', { status: 'for sale', page: 3, per_page: 25, sort: 'status', sort_order: 'asc' });

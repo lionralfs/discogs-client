@@ -13,7 +13,7 @@ test('Queue: Test setConfig()', t => {
 });
 
 test('Queue: Test add() + getLength() + clear()', async t => {
-    await new Promise(resolve => {
+    await new Promise<void>(resolve => {
         let queue = new Queue();
         let customConfig = {
             maxStack: 2, // Max 1 call queued in the stack
@@ -26,12 +26,12 @@ test('Queue: Test add() + getLength() + clear()', async t => {
         function dummy() {
             return true;
         }
-        function t1(err, remainingFree, remainingStack) {
+        function t1(err: any, remainingFree: any, remainingStack: any) {
             t.is(remainingFree, 0, 'Remaining free positions === 0');
             t.is(remainingStack, 2, 'Remaining stack positions === 2');
         }
 
-        function t2(err, remainingFree, remainingStack) {
+        function t2(err: any, remainingFree: any, remainingStack: any) {
             t.is(err.statusCode, 429, 'Too many requests, err.statusCode === 429');
             resolve();
         }
@@ -43,8 +43,8 @@ test('Queue: Test add() + getLength() + clear()', async t => {
         queue.add(dummy); //  6 (first in the stack)
         queue.add(dummy); //  7 (second in the stack)
         queue.add(t2); // 8! Overflow
-        t.is(queue._stack.length, 2, 'Stack is full');
+        t.is(queue.stack.length, 2, 'Stack is full');
         queue.clear(); // Empty stack
-        t.is(queue._stack.length, 0, 'Stack has been cleared');
+        t.is(queue.stack.length, 0, 'Stack has been cleared');
     });
 });

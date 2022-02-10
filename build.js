@@ -7,7 +7,7 @@ const PACKAGE = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
 
 // build for browser, esm
 build({
-    entryPoints: ['./lib/index.js'],
+    entryPoints: ['./lib/index.ts'],
     bundle: true,
     outfile: 'browser/index.js',
     format: 'esm',
@@ -24,7 +24,7 @@ build({
 
 // build for node, esm
 build({
-    entryPoints: ['./lib/index.js'],
+    entryPoints: ['./lib/index.ts'],
     bundle: true,
     outfile: 'node-esm/index.js',
     format: 'esm',
@@ -37,7 +37,7 @@ build({
 
 // build for node, commonjs
 build({
-    entryPoints: ['./lib/index.js'],
+    entryPoints: ['./lib/index.ts'],
     bundle: true,
     outfile: 'commonjs/index.js',
     format: 'cjs',

@@ -1,19 +1,18 @@
-/**
- * Discogs generic error
- * @param {number} [statusCode] - A HTTP status code
- * @param {string} [message] - The error message
- * @returns {DiscogsError}
- */
 export class DiscogsError extends Error {
-    constructor(statusCode = 404, message) {
-        message = message || 'Unknown error.';
-        super(message);
+    statusCode: number;
+
+    /**
+     * Discogs generic error
+     * @param {number} [statusCode] - A HTTP status code
+     * @param {string} [message] - The error message
+     */
+    constructor(statusCode: number = 404, message: string) {
+        super(message || 'Unknown error.');
         this.name = this.constructor.name;
         if (typeof Error.captureStackTrace === 'function') {
             Error.captureStackTrace(this, this.constructor);
         }
         this.statusCode = statusCode;
-        this.message = message;
     }
 
     toString() {
@@ -23,7 +22,6 @@ export class DiscogsError extends Error {
 
 /**
  * Discogs authorization error
- * @returns {AuthError}
  */
 export class AuthError extends DiscogsError {
     constructor() {

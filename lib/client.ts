@@ -7,51 +7,33 @@ import Queue from './queue.js';
 import database from './database.js';
 import marketplace from './marketplace.js';
 import user from './user.js';
+import {
+    type Auth,
+    type GetIdentityResponse,
+    type RateLimit,
+    type RateLimitedResponse,
+    type RequestCallback,
+    type RequestOptions,
+    type ClientConfig,
+} from './types.js';
 
 const version = process.env.VERSION_NUMBER || 'dev';
 const homepage = 'https://github.com/lionralfs/disconnect';
 
 /**
- * @template ResponseData
- * @typedef {{data: ResponseData; rateLimit: RateLimit}} RateLimitedResponse<ResponseData>
- */
-
-/**
- * @typedef {{host: string; port: number; userAgent: string; apiVersion: string; outputFormat: 'discogs' | 'plaintext' | 'html'; requestLimit: number; requestLimitAuth: number; requestLimitInterval: number }} ClientConfig
- * @typedef {{method: 'discogs' | 'oauth'; level: number; consumerKey: string; consumerSecret: string; userToken: string}} Auth
- * @typedef {{limit: number; used: number; remaining: number}} RateLimit
- * @typedef {(err?: Error, data?: unknown, rateLimit?: RateLimit) => any} RequestCallback
- * @typedef {{url: string, method?: 'GET'|'POST'|'PUT'|'DELETE', data?: Record<string, any>, queue?: boolean, json?: boolean; authLevel?: number }} RequestOptions
- * @typedef {{pagination: {per_page: number; pages: number; page: number; items: number; urls: {next: string; last: string; first?: string; prev?: string}}}} PaginationResponse
- */
-
-/**
  * Default configuration
- * @type {ClientConfig}
  */
-let defaultConfig = {
+let defaultConfig: ClientConfig = {
     host: 'api.discogs.com',
     port: 443,
     userAgent: `DisConnectClient/${version} +${homepage}`,
     apiVersion: 'v2',
-    outputFormat: 'discogs', // Possible values: 'discogs' / 'plaintext' / 'html'
+    // Possible values: 'discogs' / 'plaintext' / 'html'
+    outputFormat: 'discogs',
     requestLimit: 25, // Maximum number of requests to the Discogs API per interval
     requestLimitAuth: 60, // Maximum number of requests to the Discogs API per interval when authenticated
     requestLimitInterval: 60000, // Request interval in milliseconds
 };
-
-/**
- * Some resources represent collections of objects and may be paginated. By default, 50 items per page are shown.
- * To browse different pages, or change the number of items per page (up to 100), use the page and per_page parameters
- * @typedef {Partial<{ page: number; per_page: number }>} PaginationParameters
- *
- * @typedef {'asc'|'desc'} SortOrder
- */
-
-/**
- * @template K
- * @typedef {Partial<{ sort: K; sort_order: SortOrder }>} SortParameters<K>
- */
 
 /**
  * The request queue, shared by all DiscogsClient instances
@@ -62,15 +44,14 @@ let queue = new Queue({
 });
 
 export class DiscogsClient {
+    private config: ClientConfig;
+    private auth: Partial<Auth> | undefined;
+
     /**
      * @param {Partial<{userAgent: string; auth: Partial<Auth>}>} [options]
      */
-    constructor(options = {}) {
+    constructor(options: Partial<{ userAgent: string; auth: Partial<Auth> }> = {}) {
         // Set the default configuration
-        /**
-         * @type {ClientConfig}
-         * @private
-         */
         this.config = Object.assign({}, defaultConfig);
 
         // Set the custom User Agent when provided
@@ -78,17 +59,12 @@ export class DiscogsClient {
             this.config.userAgent = options.userAgent;
         }
 
-        /**
-         * @type {Partial<Auth> | undefined}
-         * @private
-         */
         this.auth = undefined;
 
         // Set auth data when provided
         if (typeof options.auth === 'object') {
             this.auth = {};
-            /** @type {Partial<Auth>} */
-            let auth = Object.assign({}, options.auth);
+            let auth: Partial<Auth> = Object.assign({}, options.auth);
 
             queue.setConfig({ maxCalls: this.config.requestLimitAuth });
             // use 'discogs' as default method
@@ -117,7 +93,7 @@ export class DiscogsClient {
      * @param {Partial<ClientConfig>} customConfig - Custom configuration object for Browserify/CORS/Proxy use cases
      * @returns {DiscogsClient}
      */
-    setConfig(customConfig) {
+    setConfig(customConfig: Partial<ClientConfig>): DiscogsClient {
         merge(this.config, customConfig);
         queue.setConfig({
             maxCalls: this.authenticated() ? this.config.requestLimitAuth : this.config.requestLimit,
@@ -131,19 +107,20 @@ export class DiscogsClient {
      * @param {number} [level] - Optional authentication level
      * @returns {boolean}
      */
-    authenticated(level = 0) {
+    authenticated(level: number = 0): boolean {
         return typeof this.auth === 'object' && this.auth.level !== undefined && this.auth.level >= level;
     }
 
     /**
      * Test authentication by getting the identity resource for the authenticated user
-     * @typedef {{id: number; username: string; resource_url: string; consumer_name: string}} GetIdentityResponse
      * @returns {Promise<RateLimitedResponse<GetIdentityResponse>>}
      *
      * @see https://www.discogs.com/developers/#page:user-identity,header:user-identity-identity-get
      *
+     * @example
+     * await client.user().getIdentity();
      */
-    getIdentity = () => {
+    getIdentity = (): Promise<RateLimitedResponse<GetIdentityResponse>> => {
         // @ts-ignore
         return this.get({ url: '/oauth/identity', authLevel: 2 });
     };
@@ -177,7 +154,7 @@ export class DiscogsClient {
      * @param {RequestCallback} callback - Callback function receiving the data
      * @private
      */
-    _rawRequest(options, callback) {
+    _rawRequest(options: RequestOptions, callback: RequestCallback) {
         let data = options.data || null;
         let method = options.method || 'GET';
         let requestURL = new URL(options.url, `https://${this.config.host}`);
@@ -190,7 +167,7 @@ export class DiscogsClient {
         });
 
         /** @type {import('node-fetch').RequestInit} */
-        let requestOptions = {
+        let requestOptions: import('node-fetch').RequestInit = {
             method: method,
             headers: headers,
         };
@@ -229,9 +206,9 @@ export class DiscogsClient {
                 let statusCode = res.status;
 
                 /** @type {RateLimit | undefined} */
-                let rateLimit = undefined;
+                let rateLimit: RateLimit | undefined = undefined;
                 /** @type {Error | undefined} */
-                let err = undefined;
+                let err: Error | undefined = undefined;
 
                 // Find and add rate limiting when present
                 if (res.headers.get('x-discogs-ratelimit')) {
@@ -244,7 +221,7 @@ export class DiscogsClient {
 
                 // try parsing JSON response
                 /** @type {any} */ // @ts-ignore
-                let data = await res.json().catch(() => {});
+                let data: any = await res.json().catch(() => {});
 
                 if (statusCode > 399) {
                     // Unsuccessful HTTP status? Then pass an error to the callback
@@ -263,7 +240,7 @@ export class DiscogsClient {
      * @param {RequestOptions} options - Request options
      * @returns {Promise<{data: unknown; rateLimit?: RateLimit}>}
      */
-    async _request(options) {
+    async _request(options: RequestOptions): Promise<{ data: unknown; rateLimit?: RateLimit }> {
         // By default, queue requests
         if (!options.hasOwnProperty('queue')) {
             options.queue = true;
@@ -287,7 +264,7 @@ export class DiscogsClient {
 
             if (options.queue) {
                 // Add API request to the execution queue
-                queue.add(err => {
+                queue.add((err: any) => {
                     if (!err) {
                         doRequest();
                     } else {
@@ -307,7 +284,7 @@ export class DiscogsClient {
      *
      * @param {string | Pick<RequestOptions, 'url'>} options - Request options object or an url
      */
-    get(options) {
+    get(options: string | Pick<RequestOptions, 'url'>) {
         if (typeof options === 'string') {
             options = { url: options };
         }
@@ -320,7 +297,7 @@ export class DiscogsClient {
      * @param {object} data - POST data
      * @returns {Promise<unknown>}
      */
-    post(options, data) {
+    post(options: string | RequestOptions, data: RequestOptions['data']): Promise<unknown> {
         if (typeof options === 'string') {
             options = { url: options };
         }
@@ -335,7 +312,7 @@ export class DiscogsClient {
      * @param {object} data - PUT data
      * @returns {Promise<unknown>}
      */
-    put(options, data) {
+    put(options: string | RequestOptions, data: object): Promise<unknown> {
         if (typeof options === 'string') {
             options = { url: options };
         }
@@ -349,7 +326,7 @@ export class DiscogsClient {
      * @param {string | RequestOptions} options - Request options object or an url
      * @returns {Promise<unknown>}
      */
-    delete(options) {
+    delete(options: string | RequestOptions): Promise<unknown> {
         if (typeof options === 'string') {
             options = { url: options };
         }
@@ -367,9 +344,9 @@ export class DiscogsClient {
 
     /**
      * Expose the database functions and pass the current instance
-     * @returns {ReturnType<database>}
+     * @returns {ReturnType<typeof database>}
      */
-    database() {
+    database(): ReturnType<typeof database> {
         return database(this);
     }
 
@@ -377,15 +354,15 @@ export class DiscogsClient {
      * Expose the marketplace functions and pass the current instance
      * @returns {ReturnType<marketplace>}
      */
-    marketplace() {
+    marketplace(): ReturnType<typeof marketplace> {
         return marketplace(this);
     }
 
     /**
      * Expose the user functions and pass the current instance
-     * @returns {ReturnType<user>}
+     * @returns {ReturnType<typeof user>}
      */
-    user() {
+    user(): ReturnType<typeof user> {
         return user(this);
     }
 }

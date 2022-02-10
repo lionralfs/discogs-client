@@ -1,12 +1,16 @@
 {
-    "include": ["lib/*"],
-    "exclude": ["test/**/*.js"],
+    "include": ["lib/**/*"],
+    "exclude": ["test/**/*"],
     "compilerOptions": {
+        "module": "esnext",
+        "moduleResolution": "node",
         "outDir": "types",
-        "allowJs": true,
+        "allowJs": false,
         "declaration": true,
-        "noEmit": false,
         "emitDeclarationOnly": true,
-        "strict": true
+        "strict": true,
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "downlevelIteration": true,
+        "typeRoots": ["./test/@types", "./node_modules/@types"]
     }
 }

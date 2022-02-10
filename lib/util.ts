@@ -3,7 +3,7 @@
  * @param {string} name - The Discogs artist name
  * @returns {string}
  */
-export function stripVariation(name) {
+export function stripVariation(name: string): string {
     return name.replace(/\s\(\d+\)$/, '');
 }
 
@@ -12,7 +12,7 @@ export function stripVariation(name) {
  * @param {Record<string, string | number>} data - Data object containing the params
  * @returns {string}
  */
-export function toQueryString(data) {
+export function toQueryString(data?: Record<string, string | number | boolean>): string {
     if (!data) {
         return '';
     }
@@ -29,7 +29,7 @@ export function toQueryString(data) {
  * @param {string} str - The string to escape
  * @returns {string}
  */
-export function escape(str) {
+export function escape(str: string): string {
     return encodeURIComponent(str);
 }
 
@@ -39,7 +39,7 @@ export function escape(str) {
  * @param {object} source - The source object
  * @returns {object}
  */
-export function merge(target, source) {
+export function merge(target: Record<any, any>, source: Record<any, any>): Record<any, any> {
     for (let key in source) {
         if (source[key] && typeof source[key] === 'object') {
             target[key] = merge(Array.isArray(source[key]) ? [] : {}, source[key]);

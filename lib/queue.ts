@@ -1,41 +1,53 @@
 import { DiscogsError } from './error.js';
 import { merge } from './util.js';
 
+type QueueConfig = {
+    maxStack: number;
+    maxCalls: number;
+    interval: number;
+};
+
 /**
  * Default configuration
- * @type {object}
  */
-let defaultConfig = {
+let defaultConfig: QueueConfig = {
     maxStack: 20, // Max 20 calls queued in the stack
     maxCalls: 60, // Max 60 calls per interval
     interval: 60000, // 1 minute interval
 };
 
-/**
- * Object constructor
- * @param {object} [customConfig] - Optional custom configuration object
- * @returns {Queue}
- */
 export default class Queue {
-    constructor(customConfig) {
+    config: QueueConfig;
+    stack: Array<{ callback: Function; timeout: NodeJS.Timeout }>;
+    firstCall: number;
+    callCount: number;
+
+    /**
+     * Object constructor
+     * @param {QueueConfig} [customConfig] - Optional custom configuration object
+     */
+    constructor(customConfig?: Partial<QueueConfig>) {
         // Set the default configuration
+        // @ts-ignore
         this.config = merge({}, defaultConfig);
         if (customConfig && typeof customConfig === 'object') {
             this.setConfig(customConfig);
         }
-        this._stack = [];
-        this._firstCall = 0;
-        this._callCount = 0;
+        this.stack = [];
+        this.firstCall = 0;
+        this.callCount = 0;
     }
+
     /**
      * Override the default configuration
-     * @param {object} customConfig - Custom configuration object
+     * @param {Partial<QueueConfig>} customConfig - Custom configuration object
      * @returns {object}
      */
-    setConfig(customConfig) {
+    setConfig(customConfig: Partial<QueueConfig>): object {
         merge(this.config, customConfig);
         return this;
     }
+
     /**
      * Add a function to the queue. Usage:
      *
@@ -49,21 +61,21 @@ export default class Queue {
      * @param {(err: Error | null, freeCallsRemaining: number, freeStackPositionsRemaining: number) => any} callback - The function to schedule for execution
      * @returns {object}
      */
-    add(callback) {
-        if (this._stack.length === 0) {
+    add(callback: (err: Error | null, freeCallsRemaining: number, freeStackPositionsRemaining: number) => any): object {
+        if (this.stack.length === 0) {
             let now = Date.now();
             // Within call interval limits: Just execute the callback
-            if (this._callCount < this.config.maxCalls) {
-                this._callCount++;
-                if (this._callCount === 1) {
-                    this._firstCall = now;
+            if (this.callCount < this.config.maxCalls) {
+                this.callCount++;
+                if (this.callCount === 1) {
+                    this.firstCall = now;
                 }
-                setTimeout(callback, 0, null, this.config.maxCalls - this._callCount, this.config.maxStack);
+                setTimeout(callback, 0, null, this.config.maxCalls - this.callCount, this.config.maxStack);
                 // Upon reaching the next interval: Execute callback and reset
-            } else if (now - this._firstCall > this.config.interval) {
-                this._callCount = 1;
-                this._firstCall = now;
-                setTimeout(callback, 0, null, this.config.maxCalls - this._callCount, this.config.maxStack);
+            } else if (now - this.firstCall > this.config.interval) {
+                this.callCount = 1;
+                this.firstCall = now;
+                setTimeout(callback, 0, null, this.config.maxCalls - this.callCount, this.config.maxStack);
                 // Within the interval exceeding call limit: Queue the call
             } else {
                 this._pushStack(callback);
@@ -74,20 +86,21 @@ export default class Queue {
         }
         return this;
     }
+
     /**
      * Push a callback on the callback stack to be executed
-     * @param {function} callback
+     * @param {Function} callback
      */
-    _pushStack(callback) {
-        if (this._stack.length < this.config.maxStack) {
-            let factor = Math.ceil(this._stack.length / this.config.maxCalls),
+    _pushStack(callback: Function) {
+        if (this.stack.length < this.config.maxStack) {
+            let factor = Math.ceil(this.stack.length / this.config.maxCalls),
                 timeout =
-                    this._firstCall +
+                    this.firstCall +
                     this.config.interval * factor -
                     Date.now() +
-                    (this._stack.length % this.config.maxCalls) +
+                    (this.stack.length % this.config.maxCalls) +
                     1;
-            this._stack.push({
+            this.stack.push({
                 callback: callback,
                 timeout: setTimeout(this._callStack, timeout, this),
             });
@@ -96,22 +109,23 @@ export default class Queue {
             setTimeout(callback, 0, new DiscogsError(429, 'Too many requests'), 0, 0);
         }
     }
+
     /**
      * Shift a function from the callback stack and call it
      * @param {Queue} [queue] - Async calls need the queue instance
      */
-    _callStack(queue) {
+    _callStack(queue?: Queue) {
         queue = queue || this;
-        queue._stack.shift().callback.call(queue, null, 0, queue.config.maxStack - queue._stack.length);
-        queue._callCount++;
+        queue.stack.shift()?.callback.call(queue, null, 0, queue.config.maxStack - queue.stack.length);
+        queue.callCount++;
     }
+
     /**
      * Clear the request stack. All queued requests/callbacks will be cancelled!
-     * @returns {object}
      */
     clear() {
         let item;
-        while ((item = this._stack.shift())) {
+        while ((item = this.stack.shift())) {
             clearTimeout(item.timeout);
         }
         return this;
