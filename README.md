@@ -1,10 +1,19 @@
-> [#2](https://github.com/lionralfs/disconnect/pull/2) is the result of me turning this entire library into ES Modules, adding support for all endpoints, adding more tests, docs and type info via JSDoc (+ a generated types.d.ts).
+[#2](https://github.com/lionralfs/disconnect/pull/2) is a giant refactor of the [origial library](https://github.com/bartve/disconnect) by doing the following:
+
+- using ES Modules
+- using TypeScript (and generating type declarations) for typed parameters and API results
+- removing callbacks in favor of Promises
+- using Esbuild to provide a bundle that is consumable by either:
+	- node via ESM
+	- node via CommonJS
+	- browsers (where node-fetch is replaced with native window.fetch)
+- adding support for all remaining Discogs endpoints
+- adding more tests
+- adding docs and type info via JSDoc (for non-TypeScript users)
 
 ## About
 
 `disconnect` is a [Node.js](http://www.nodejs.org) client library that connects with the [Discogs.com API v2.0](http://www.discogs.com/developers/).
-
-[![Dependency Status](https://david-dm.org/bartve/disconnect.png)](https://david-dm.org/bartve/disconnect)
 
 ## Features
 
@@ -15,10 +24,6 @@
   * Easy access to protected endpoints with `Discogs Auth`
   * Includes OAuth 1.0a tools. Just plug in your consumer key and secret and do the OAuth dance
   * API functions grouped in their own namespace for easy access and isolation
-  
-## Todo
-
-  * Add more tests
 
 ## Installation
 
