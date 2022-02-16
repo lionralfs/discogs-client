@@ -6,13 +6,13 @@ export class DiscogsError extends Error {
      * @param {number} [statusCode] - A HTTP status code
      * @param {string} [message] - The error message
      */
-    constructor(statusCode: number = 404, message: string) {
+    constructor(statusCode?: number, message?: string) {
         super(message || 'Unknown error.');
         this.name = this.constructor.name;
         if (typeof Error.captureStackTrace === 'function') {
             Error.captureStackTrace(this, this.constructor);
         }
-        this.statusCode = statusCode;
+        this.statusCode = statusCode || 404;
     }
 
     toString() {
