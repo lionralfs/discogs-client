@@ -103,23 +103,48 @@ type GetLabelReleasesResponse = {
         year: number;
     }>;
 };
+interface SearchResult {
+    id: number;
+    type: string;
+    user_data: UserData;
+    master_id?: number;
+    master_url?: string;
+    uri: string;
+    title: string;
+    thumb: string;
+    cover_image: string;
+    resource_url: string;
+    country?: string;
+    year?: string;
+    format?: string[];
+    label?: string[];
+    genre?: string[];
+    style?: string[];
+    barcode?: string[];
+    catno?: string;
+    community?: Community;
+    format_quantity?: number;
+    formats?: Format[];
+}
+
+interface UserData {
+    in_wantlist: boolean;
+    in_collection: boolean;
+}
+
+interface Community {
+    want: number;
+    have: number;
+}
+
+interface Format {
+    name: string;
+    qty: string;
+    descriptions?: string[];
+}
+
 type SearchResponse = {
-    results: Array<{
-        style: Array<string>;
-        thumb: string;
-        title: string;
-        country: string;
-        format: Array<string>;
-        uri: string;
-        community: { want: number; have: number };
-        label: Array<string>;
-        catno: string;
-        year: string;
-        genre: Array<string>;
-        resource_url: string;
-        type: string;
-        id: number;
-    }>;
+    results: Array<SearchResult>;
 };
 type SearchParameters = {
     query: string;
@@ -149,6 +174,7 @@ type SearchParameters = {
 export default function (client: DiscogsClient) {
     return {
         /**
+         * @TODO possible turn this into an enum and use it in 'status' type definitions instead of `status: string`
          * Expose Discogs database status constants
          */
         status: { accepted: 'Accepted', draft: 'Draft', deleted: 'Deleted', rejected: 'Rejected' },
@@ -181,7 +207,7 @@ export default function (client: DiscogsClient) {
          */
         getArtistReleases: function (
             artist: number | string,
-            params: PaginationParameters & SortParameters<'year' | 'title' | 'format'>
+            params?: PaginationParameters & SortParameters<'year' | 'title' | 'format'>
         ): Promise<RateLimitedResponse<GetArtistReleasesResponses & PaginationResponse>> {
             let path = `/artists/${artist}/releases?${toQueryString(params)}`;
             // @ts-ignore
@@ -336,7 +362,7 @@ export default function (client: DiscogsClient) {
          */
         getMasterVersions: function (
             master: number | string,
-            params: PaginationParameters &
+            params?: PaginationParameters &
                 Partial<
                     { format: string; label: string; released: string; country: string } & SortParameters<
                         'released' | 'title' | 'format' | 'label' | 'catno' | 'country'
@@ -376,7 +402,7 @@ export default function (client: DiscogsClient) {
          */
         getLabelReleases: function (
             label: number | string,
-            params: PaginationParameters
+            params?: PaginationParameters
         ): Promise<RateLimitedResponse<GetLabelReleasesResponse & PaginationResponse>> {
             let path = `/labels/${label}/releases?${toQueryString(params)}`;
             // @ts-ignore
