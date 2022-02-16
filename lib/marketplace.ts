@@ -218,7 +218,7 @@ export default function (client: DiscogsClient) {
          * });
          */
         getOrders: function (
-            params: Partial<{ status: OrderStatus; created_after: string; created_before: string; archived: boolean }> &
+            params?: Partial<{ status: OrderStatus; created_after: string; created_before: string; archived: boolean }> &
                 PaginationParameters &
                 SortParameters<'id' | 'buyer' | 'created' | 'status' | 'last_activity'>
         ): Promise<RateLimitedResponse<PaginationResponse & { orders: Array<GetOrderResponse> }>> {
@@ -274,7 +274,7 @@ export default function (client: DiscogsClient) {
          */
         getOrderMessages: function (
             order: number,
-            params: PaginationParameters
+            params?: PaginationParameters
         ): Promise<RateLimitedResponse<PaginationResponse & { messages: Array<OrderMessage> }>> {
             let path = `/marketplace/orders/${order}/messages?${toQueryString(params)}`;
             // @ts-ignore
