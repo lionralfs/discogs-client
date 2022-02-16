@@ -174,7 +174,7 @@ export default function (client: DiscogsClient) {
         getReleases: function (
             user: string,
             folder: number | string,
-            params: PaginationParameters &
+            params?: PaginationParameters &
                 SortParameters<'label' | 'artist' | 'title' | 'catno' | 'format' | 'rating' | 'added' | 'year'>
         ): Promise<RateLimitedResponse<GetReleasesResponse & PaginationResponse>> {
             if (client.authenticated(2) || Number(folder) === 0) {
