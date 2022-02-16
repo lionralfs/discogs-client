@@ -105,7 +105,7 @@ export default function (client: DiscogsClient) {
         /**
          * Edit a user's profile data.
          * @param {string} username - The user name
-         * @param {Partial<{ name: string; home_page: string; location: string; profile: string; curr_abbr: Currency}>} [data] - The profile data
+         * @param {Partial<{ name: string; home_page: string; location: string; profile: string; curr_abbr: Currency}>} data - The profile data
          * @returns {Promise<RateLimitedResponse<GetProfileResponse>>}
          *
          * @see https://www.discogs.com/developers/#page:user-identity,header:user-identity-profile-post
@@ -140,7 +140,7 @@ export default function (client: DiscogsClient) {
          */
         getInventory: function (
             user: string,
-            params: Partial<{ status: string }> &
+            params?: Partial<{ status: string }> &
                 PaginationParameters &
                 SortParameters<
                     'listed' | 'price' | 'item' | 'artist' | 'label' | 'catno' | 'audio' | 'status' | 'location'
@@ -198,7 +198,7 @@ export default function (client: DiscogsClient) {
          */
         getContributions: function (
             user: string,
-            params: PaginationParameters &
+            params?: PaginationParameters &
                 SortParameters<'label' | 'artist' | 'title' | 'catno' | 'format' | 'rating' | 'year' | 'added'>
         ): Promise<RateLimitedResponse<GetContributionsResponse & PaginationResponse>> {
             let path = `/users/${escape(user)}/contributions?${toQueryString(params)}`;
@@ -210,7 +210,7 @@ export default function (client: DiscogsClient) {
          * Get the submissions for the given user
          * @param {string} user - The user name
          * @param {PaginationParameters} [params] - Optional pagination params
-         * @returns {Promise<RateLimitedResponse<PaginationResponse & GetSubmissionsResponse}>>}
+         * @returns {Promise<RateLimitedResponse<PaginationResponse & GetSubmissionsResponse>>}
          *
          * @see https://www.discogs.com/developers/#page:user-identity,header:user-identity-user-submissions-get
          *
@@ -219,7 +219,7 @@ export default function (client: DiscogsClient) {
          */
         getSubmissions: function (
             user: string,
-            params: PaginationParameters
+            params?: PaginationParameters
         ): Promise<RateLimitedResponse<PaginationResponse & GetSubmissionsResponse>> {
             let path = `/users/${escape(user)}/submissions?${toQueryString(params)}`;
             // @ts-ignore
@@ -239,7 +239,7 @@ export default function (client: DiscogsClient) {
          */
         getLists: function (
             user: string,
-            params: PaginationParameters
+            params?: PaginationParameters
         ): Promise<RateLimitedResponse<PaginationResponse & GetListsResponse>> {
             let path = `/users/${escape(user)}/lists?${toQueryString(params)}`;
             // @ts-ignore
