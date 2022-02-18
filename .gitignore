@@ -1,2 +1,8 @@
 node_modules/
 *.log
+types/
+commonjs/index.js
+browser/index.js
+node-esm/index.js
+coverage/
+.DS_Store

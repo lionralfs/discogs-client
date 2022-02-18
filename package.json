@@ -1,31 +1,81 @@
 {
-  "name": "disconnect",
-  "description": "A full-featured Discogs API v2.0 client library",
-  "version": "1.2.2",
-  "keywords": ["discogs", "api", "client", "oauth"],
-  "homepage": "https://github.com/bartve/disconnect",
-  "bugs": "https://github.com/bartve/disconnect/issues",
-  "license": "MIT",
-  "author": "Bart van Eijck <voodoo107@hotmail.com>",
-  "main": "index.js",
-  "directories": {
-    "lib": "./lib"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bartve/disconnect.git"
-  },
-  "scripts": {
-    "test": "node test/all.js"
-  },
-  "dependencies": {
-    "oauth-1.0a": "2.x.x"
-  },
-  "devDependencies": {
-    "nock": "2.x.x",
-    "wru": "0.x.x"
-  },
-  "engines": {
-    "node": ">= 0.12.0"
-  }
+    "name": "@lionralfs/discogs-client",
+    "description": "A full-featured Discogs API v2.0 client library",
+    "version": "2.0.0-alpha.5",
+    "keywords": [
+        "discogs",
+        "api",
+        "client",
+        "oauth"
+    ],
+    "homepage": "https://github.com/lionralfs/discogs-client",
+    "bugs": "https://github.com/lionralfs/discogs-client/issues",
+    "license": "MIT",
+    "author": "Lion Ralfs <lion.ralfs@gmail.com> (https://lionralfs.dev/)",
+    "main": "node-esm/index.js",
+    "browser": "browser/index.js",
+    "module": "node-esm/index.js",
+    "type": "module",
+    "types": "types/index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/lionralfs/discogs-client.git"
+    },
+    "scripts": {
+        "test": "ava",
+        "coverage": "c8 --reporter html ava",
+        "prettier": "prettier --check **/**.{js,md,json}",
+        "declaration:build": "rm -rf types && tsc -p tsconfig.json",
+        "clean": "rm -f commonjs/index.js && rm -f browser/index.js && rm -f node-esm/index.js",
+        "build": "npm run declaration:build && npm run clean && npm run build:all",
+        "build:all": "node build.js",
+        "prepare": "husky install"
+    },
+    "dependencies": {
+        "node-fetch": "^3.2.0",
+        "oauth-1.0a": "2.x.x"
+    },
+    "devDependencies": {
+        "ava": "^4.0.1",
+        "c8": "^7.11.0",
+        "esbuild": "^0.14.11",
+        "esbuild-plugin-alias": "^0.2.1",
+        "husky": "^7.0.4",
+        "lint-staged": "^12.1.7",
+        "msw": "^0.36.8",
+        "prettier": "^2.5.1",
+        "ts-node": "^10.5.0",
+        "typescript": "^4.5.4"
+    },
+    "engines": {
+        "node": ">=12"
+    },
+    "lint-staged": {
+        "*.{js,md,json}": "prettier --write"
+    },
+    "files": [
+        "browser",
+        "commonjs",
+        "types",
+        "node-esm"
+    ],
+    "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.org/"
+    },
+    "ava": {
+        "files": [
+            "test/**/*",
+            "!test/**/*.d.ts"
+        ],
+        "concurrency": 1,
+        "failFast": true,
+        "timeout": "30s",
+        "extensions": {
+            "ts": "module"
+        },
+        "nodeArguments": [
+            "--loader=ts-node/esm"
+        ]
+    }
 }
