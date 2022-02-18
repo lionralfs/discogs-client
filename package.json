@@ -68,7 +68,9 @@
             "test/**/*",
             "!test/**/*.d.ts"
         ],
-        "concurrency": 10,
+        "concurrency": 1,
+        "failFast": true,
+        "timeout": "30s",
         "extensions": {
             "ts": "module"
         },
