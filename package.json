@@ -8,8 +8,8 @@
         "client",
         "oauth"
     ],
-    "homepage": "https://github.com/lionralfs/disconnect",
-    "bugs": "https://github.com/lionralfs/disconnect/issues",
+    "homepage": "https://github.com/lionralfs/discogs-client",
+    "bugs": "https://github.com/lionralfs/discogs-client/issues",
     "license": "MIT",
     "author": "Lion Ralfs <lion.ralfs@gmail.com> (https://lionralfs.dev/)",
     "main": "node-esm/index.js",
@@ -19,7 +19,7 @@
     "types": "types/index.d.ts",
     "repository": {
         "type": "git",
-        "url": "https://github.com/lionralfs/disconnect.git"
+        "url": "https://github.com/lionralfs/discogs-client.git"
     },
     "scripts": {
         "test": "ava",
@@ -68,7 +68,7 @@
             "test/**/*",
             "!test/**/*.d.ts"
         ],
-        "concurrency": 5,
+        "concurrency": 10,
         "extensions": {
             "ts": "module"
         },

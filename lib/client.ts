@@ -18,7 +18,7 @@ import {
 } from './types.js';
 
 const version = process.env.VERSION_NUMBER || 'dev';
-const homepage = 'https://github.com/lionralfs/disconnect';
+const homepage = 'https://github.com/lionralfs/discogs-client';
 
 /**
  * Default configuration
@@ -26,7 +26,7 @@ const homepage = 'https://github.com/lionralfs/disconnect';
 let defaultConfig: ClientConfig = {
     host: 'api.discogs.com',
     port: 443,
-    userAgent: `DisConnectClient/${version} +${homepage}`,
+    userAgent: `@lionralfs/discogs-client/${version} +${homepage}`,
     apiVersion: 'v2',
     // Possible values: 'discogs' / 'plaintext' / 'html'
     outputFormat: 'discogs',
