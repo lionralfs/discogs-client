@@ -54,10 +54,10 @@
         "*.{js,md,json}": "prettier --write"
     },
     "files": [
-        "browser",
-        "commonjs",
+        "browser/index.js",
+        "commonjs/index.js",
         "types",
-        "node-esm"
+        "node-esm/index.js"
     ],
     "publishConfig": {
         "access": "public",
