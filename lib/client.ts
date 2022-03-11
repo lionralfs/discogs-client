@@ -282,9 +282,9 @@ export class DiscogsClient {
     /**
      * Perform a GET request against the Discogs API
      *
-     * @param {string | Pick<RequestOptions, 'url'>} options - Request options object or an url
+     * @param {string | RequestOptions} options - Request options object or an url
      */
-    get(options: string | Pick<RequestOptions, 'url'>) {
+    get(options: string | RequestOptions) {
         if (typeof options === 'string') {
             options = { url: options };
         }
