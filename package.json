@@ -29,7 +29,8 @@
         "clean": "rm -f commonjs/index.js && rm -f browser/index.js && rm -f node-esm/index.js",
         "build": "npm run declaration:build && npm run clean && npm run build:all",
         "build:all": "node build.js",
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "release": "npm run build && np"
     },
     "dependencies": {
         "node-fetch": "^3.2.0"
@@ -42,6 +43,7 @@
         "husky": "^7.0.4",
         "lint-staged": "^12.1.7",
         "msw": "^0.36.8",
+        "np": "^7.6.1",
         "prettier": "^2.5.1",
         "ts-node": "^10.5.0",
         "typescript": "^4.5.4"
