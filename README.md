@@ -108,45 +108,40 @@ var dis = new Discogs().setConfig({ outputFormat: 'html' });
 
 ### Discogs Auth
 
-Just provide the client constructor with your preferred way of [authentication](http://www.discogs.com/developers/#page:authentication).
+Just provide the client constructor with your preferred way of [authentication](https://www.discogs.com/developers/#page:authentication).
 
-```javascript
+```js
 // Authenticate by user token
-var dis = new Discogs({ userToken: 'YOUR_USER_TOKEN' });
+let client = new DiscogsClient({ auth: { userToken: 'YOUR_USER_TOKEN' } });
 
 // Authenticate by consumer key and secret
-var dis = new Discogs({
-    consumerKey: 'YOUR_CONSUMER_KEY',
-    consumerSecret: 'YOUR_CONSUMER_SECRET',
+let client = new DiscogsClient({
+    auth: {
+        method: 'discogs',
+        consumerKey: 'YOUR_CONSUMER_KEY',
+        consumerSecret: 'YOUR_CONSUMER_SECRET',
+    },
 });
 ```
 
 The User-Agent can still be passed for authenticated calls.
 
-```javascript
-var dis = new Discogs('MyUserAgent/1.0', { userToken: 'YOUR_USER_TOKEN' });
+```js
+let client = new DiscogsClient({ userAgent: 'MyUserAgent/1.0', auth: { userToken: 'YOUR_USER_TOKEN' } });
 ```
 
 ### OAuth
 
-Below are the steps that involve getting a valid OAuth access token from Discogs. Note that in the following examples the `app` variable is an [Express instance](http://expressjs.com/starter/hello-world.html) to handle incoming HTTP requests.
+Below are the steps that involve getting a valid OAuth access token from Discogs.
 
 #### 1. Get a request token
 
-```javascript
-app.get('/authorize', function (req, res) {
-    var oAuth = new Discogs().oauth();
-    oAuth.getRequestToken(
-        'YOUR_CONSUMER_KEY',
-        'YOUR_CONSUMER_SECRET',
-        'http://your-script-url/callback',
-        function (err, requestData) {
-            // Persist "requestData" here so that the callback handler can
-            // access it later after returning from the authorize url
-            res.redirect(requestData.authorizeUrl);
-        }
-    );
-});
+```js
+let oAuth = new DiscogsOAuth('YOUR_CONSUMER_KEY', 'YOUR_CONSUMER_SECRET');
+let { token, tokenSecret, authorizeUrl } = await oAuth.getRequestToken('https://your-domain.com/callback');
+
+// store token and tokenSecret in a cookie for example
+// redirect user to authorizeUrl
 ```
 
 #### 2. Authorize
@@ -155,30 +150,29 @@ After redirection to the Discogs authorize URL in step 1, authorize the applicat
 
 #### 3. Get an access token
 
-```javascript
-app.get('/callback', function (req, res) {
-    var oAuth = new Discogs(requestData).oauth();
-    oAuth.getAccessToken(
-        req.query.oauth_verifier, // Verification code sent back by Discogs
-        function (err, accessData) {
-            // Persist "accessData" here for following OAuth calls
-            res.send('Received access token!');
-        }
-    );
-});
+```js
+// in the callback endpoint, capture the oauth_verifier query parameter
+// use the token and tokenSecret from step 1 to get an access token/secret
+let { accessToken, accessTokenSecret } = await oAuth.getAccessToken(token, tokenSecret, oauth_verifier);
 ```
 
 #### 4. Make OAuth calls
 
-Simply provide the constructor with the `accessData` object persisted in step 3.
+Instantiate a new DiscogsClient class with the required auth arguments to make requests on behalf of the authenticated user.
 
-```javascript
-app.get('/identity', function (req, res) {
-    var dis = new Discogs(accessData);
-    dis.getIdentity(function (err, data) {
-        res.send(data);
-    });
+```js
+let client = new DiscogsClient({
+    auth: {
+        method: 'oauth',
+        consumerKey: consumerKey,
+        consumerSecret: consumerSecret,
+        accessToken: accessToken,
+        accessTokenSecret: accessTokenSecret,
+    },
 });
+
+let response = await client.getIdentity();
+console.log(response.data.username);
 ```
 
 ### Images
@@ -200,8 +194,8 @@ db.getRelease(176126, function (err, data) {
 
 ## Resources
 
--   [Discogs API documentation](http://www.discogs.com/developers/)
--   [The OAuth Bible](http://oauthbible.com/)
+-   [Discogs API documentation](https://www.discogs.com/developers/)
+-   [OAuth Core 1.0 Revision A](https://oauth.net/core/1.0a/)
 
 ## License
 

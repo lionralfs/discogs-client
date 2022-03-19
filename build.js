@@ -17,6 +17,7 @@ build({
     plugins: [
         alias({
             'node-fetch': resolve('./browser/fetch.js'),
+            crypto: resolve('./browser/crypto.js'),
         }),
     ],
     define: { 'process.env.VERSION_NUMBER': `'${PACKAGE.version}'` },
