@@ -15,9 +15,11 @@ import {
     type RequestOptions,
     type ClientConfig,
 } from './types.js';
+import { toAuthHeader } from './oauth.js';
 
 const version = process.env.VERSION_NUMBER || 'dev';
 const homepage = 'https://github.com/lionralfs/discogs-client';
+const userAgent = `@lionralfs/discogs-client/${version} +${homepage}`;
 
 /**
  * Default configuration
@@ -25,7 +27,7 @@ const homepage = 'https://github.com/lionralfs/discogs-client';
 let defaultConfig: ClientConfig = {
     host: 'api.discogs.com',
     port: 443,
-    userAgent: `@lionralfs/discogs-client/${version} +${homepage}`,
+    userAgent: userAgent,
     apiVersion: 'v2',
     // Possible values: 'discogs' / 'plaintext' / 'html'
     outputFormat: 'discogs',
@@ -75,16 +77,22 @@ export class DiscogsClient {
 
             if (!auth.hasOwnProperty('level')) {
                 if (auth.userToken) {
+                    // Personal access token
                     this.auth.userToken = auth.userToken;
                     this.auth.level = 2;
                 } else if (auth.consumerKey && auth.consumerSecret) {
                     this.auth.consumerKey = auth.consumerKey;
                     this.auth.consumerSecret = auth.consumerSecret;
-                    this.auth.level = 1;
-                } else if (auth.token && auth.tokenSecret) {
-                    this.auth.token = auth.token;
-                    this.auth.tokenSecret = auth.tokenSecret;
-                    this.auth.level = 2;
+
+                    if (auth.accessToken && auth.accessTokenSecret) {
+                        // Full OAuth 1.0a with access token/secret
+                        this.auth.accessToken = auth.accessToken;
+                        this.auth.accessTokenSecret = auth.accessTokenSecret;
+                        this.auth.level = 2;
+                    } else {
+                        // Only Consumer key/secret
+                        this.auth.level = 1;
+                    }
                 }
             }
         } else {
@@ -189,13 +197,21 @@ export class DiscogsClient {
         }
 
         // Add Authorization header when authenticated (or in the process of authenticating)
-        if (this.auth && (this.auth.consumerKey || this.auth.userToken || this.auth.token)) {
+        if (this.auth && (this.auth.consumerKey || this.auth.userToken)) {
             let authHeader = '';
             if (this.auth.method === 'oauth') {
-                throw new Error('Not implemented!');
-                // authHeader = ''
-                // let fullUrl = requestURL.toString();
-                // authHeader = this.oauth().toHeader(method, fullUrl);
+                // doing the full oauth requires all four:
+                // - consumer key
+                // - consumer secret
+                // - access token
+                // - access token secret
+
+                authHeader = toAuthHeader(
+                    this.auth.consumerKey!,
+                    this.auth.consumerSecret!,
+                    this.auth.accessToken!,
+                    this.auth.accessTokenSecret!
+                );
             } else if (this.auth.method === 'discogs') {
                 authHeader = 'Discogs';
                 if (this.auth.userToken) {

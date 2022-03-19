@@ -1,19 +1,11 @@
 import fetch from 'node-fetch';
 import * as crypto from 'crypto';
-import { DiscogsClient } from './client.js';
 
-/**
- * Default configuration
- */
-let defaultConfig = {
-    requestTokenUrl: 'https://api.discogs.com/oauth/request_token',
-    accessTokenUrl: 'https://api.discogs.com/oauth/access_token',
-    authorizeUrl: 'https://www.discogs.com/oauth/authorize',
-    version: '1.0',
-    signatureMethod: 'PLAINTEXT', // Or HMAC-SHA1
-};
+const version = process.env.VERSION_NUMBER || 'dev';
+const homepage = 'https://github.com/lionralfs/discogs-client';
+const userAgent = `@lionralfs/discogs-client/${version} +${homepage}`;
 
-export default class DiscogsOAuth {
+export class DiscogsOAuth {
     private consumerKey: string;
     private consumerSecret: string;
 
@@ -43,7 +35,7 @@ export default class DiscogsOAuth {
                 Authorization: `OAuth oauth_consumer_key="${consumerKey}", oauth_nonce="${nonce}", oauth_signature="${consumerSecret}&", oauth_signature_method="PLAINTEXT", oauth_timestamp="${timestamp}", oauth_callback="${encodeURIComponent(
                     callbackUrl
                 )}"`,
-                'User-Agent': 'TODO',
+                'User-Agent': userAgent,
             },
         });
 
@@ -77,7 +69,7 @@ export default class DiscogsOAuth {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 Authorization: `OAuth oauth_consumer_key="${consumerKey}", oauth_nonce="${nonce}", oauth_token="${token}", oauth_signature="${consumerSecret}&${tokenSecret}", oauth_signature_method="PLAINTEXT", oauth_timestamp="${timestamp}", oauth_verifier="${verifier}"`,
-                'User-Agent': 'TODO',
+                'User-Agent': userAgent,
             },
         });
 
@@ -85,32 +77,19 @@ export default class DiscogsOAuth {
         let responseBody = await resp.text();
         let searchParams = new URLSearchParams(responseBody);
         return {
-            token: searchParams.get('oauth_token'),
-            tokenSecret: searchParams.get('oauth_token_secret'),
+            accessToken: searchParams.get('oauth_token'),
+            accessTokenSecret: searchParams.get('oauth_token_secret'),
         };
     }
 }
 
-(async () => {
-    // let test = new DiscogsOAuth();
-    // let rt = await test.getRequestToken(
-    //     'aaa',
-    //     'bbb',
-    //     'http://localhost:3000'
-    // );
-    // console.log({ rt });
-
-    // let at = await test.getAccessToken(
-    //     'aaa',
-    //     'bbb',
-    //     'ccc',
-    //     'ddd',
-    //     'eee'
-    // );
-    // console.log({ at });
-
-    // let token = 'aa';
-    // let secret = 'bb';
-    // let client = new DiscogsClient({ auth: { method: 'oauth', token: token, tokenSecret: secret } });
-    // let resp = await client.getIdentity();
-})();
+export function toAuthHeader(
+    consumerKey: string,
+    consumerSecret: string,
+    accessToken: string,
+    accessTokenSecret: string
+) {
+    let nonce = crypto.randomBytes(64).toString('hex');
+    let timestamp = Date.now();
+    return `OAuth oauth_consumer_key="${consumerKey}", oauth_token="${accessToken}", oauth_signature_method="PLAINTEXT", oauth_signature="${consumerSecret}&${accessTokenSecret}", oauth_timestamp="${timestamp}", oauth_nonce="${nonce}", oauth_token_secret="${accessTokenSecret}", oauth_version="1.0"`;
+}
