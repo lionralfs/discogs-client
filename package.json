@@ -32,8 +32,7 @@
         "prepare": "husky install"
     },
     "dependencies": {
-        "node-fetch": "^3.2.0",
-        "oauth-1.0a": "2.x.x"
+        "node-fetch": "^3.2.0"
     },
     "devDependencies": {
         "ava": "^4.0.1",

@@ -15,6 +15,8 @@ export type Auth = {
     consumerKey: string;
     consumerSecret: string;
     userToken: string;
+    token: string;
+    tokenSecret: string;
 };
 export type RateLimit = { limit: number; used: number; remaining: number };
 export type RequestCallback = (err?: Error, data?: unknown, rateLimit?: RateLimit) => any;

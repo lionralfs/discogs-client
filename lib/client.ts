@@ -3,7 +3,6 @@ import fetch, { Headers } from 'node-fetch';
 import { DiscogsError, AuthError } from './error.js';
 import { merge } from './util.js';
 import Queue from './queue.js';
-// import OAuth from 'oauth-1.0a';
 import database from './database.js';
 import marketplace from './marketplace.js';
 import user from './user.js';
@@ -70,6 +69,8 @@ export class DiscogsClient {
             // use 'discogs' as default method
             if (!auth.hasOwnProperty('method')) {
                 this.auth.method = 'discogs';
+            } else {
+                this.auth.method = auth.method;
             }
 
             if (!auth.hasOwnProperty('level')) {
@@ -77,9 +78,13 @@ export class DiscogsClient {
                     this.auth.userToken = auth.userToken;
                     this.auth.level = 2;
                 } else if (auth.consumerKey && auth.consumerSecret) {
-                    this.auth.consumerKey = this.auth.consumerKey;
-                    this.auth.consumerSecret = this.auth.consumerSecret;
+                    this.auth.consumerKey = auth.consumerKey;
+                    this.auth.consumerSecret = auth.consumerSecret;
                     this.auth.level = 1;
+                } else if (auth.token && auth.tokenSecret) {
+                    this.auth.token = auth.token;
+                    this.auth.tokenSecret = auth.tokenSecret;
+                    this.auth.level = 2;
                 }
             }
         } else {
@@ -184,10 +189,11 @@ export class DiscogsClient {
         }
 
         // Add Authorization header when authenticated (or in the process of authenticating)
-        if (this.auth && (this.auth.consumerKey || this.auth.userToken)) {
+        if (this.auth && (this.auth.consumerKey || this.auth.userToken || this.auth.token)) {
             let authHeader = '';
             if (this.auth.method === 'oauth') {
                 throw new Error('Not implemented!');
+                // authHeader = ''
                 // let fullUrl = requestURL.toString();
                 // authHeader = this.oauth().toHeader(method, fullUrl);
             } else if (this.auth.method === 'discogs') {
