@@ -139,7 +139,10 @@ let client = new DiscogsClient({
 The User-Agent can still be passed for authenticated calls.
 
 ```js
-let client = new DiscogsClient({ userAgent: 'MyUserAgent/1.0', auth: { userToken: 'YOUR_USER_TOKEN' } });
+let client = new DiscogsClient({
+    userAgent: 'MyUserAgent/1.0',
+    auth: { userToken: 'YOUR_USER_TOKEN' },
+});
 ```
 
 ### OAuth
