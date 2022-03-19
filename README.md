@@ -115,7 +115,7 @@ Just provide the client constructor with your preferred way of [authentication](
 let client = new DiscogsClient({ auth: { userToken: 'YOUR_USER_TOKEN' } });
 
 // Authenticate by consumer key and secret
-let client = new Discogs({
+let client = new DiscogsClient({
     auth: {
         method: 'discogs',
         consumerKey: 'YOUR_CONSUMER_KEY',
@@ -127,7 +127,7 @@ let client = new Discogs({
 The User-Agent can still be passed for authenticated calls.
 
 ```js
-var dis = new Discogs({ userAgent: 'MyUserAgent/1.0', auth: { userToken: 'YOUR_USER_TOKEN' } });
+let client = new DiscogsClient({ userAgent: 'MyUserAgent/1.0', auth: { userToken: 'YOUR_USER_TOKEN' } });
 ```
 
 ### OAuth
