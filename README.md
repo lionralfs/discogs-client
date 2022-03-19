@@ -1,33 +1,45 @@
-[#2](https://github.com/lionralfs/disconnect/pull/2) is a giant refactor of the [origial library](https://github.com/bartve/disconnect) by doing the following:
+[![npm](https://img.shields.io/npm/v/@lionralfs/discogs-client)](https://www.npmjs.com/package/@lionralfs/discogs-client)
+![npm type definitions](https://img.shields.io/npm/types/@lionralfs/discogs-client)
+![node-current](https://img.shields.io/node/v/@lionralfs/discogs-client)
+![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/npm/@lionralfs/discogs-client)
+![build status](https://github.com/lionralfs/discogs-client/actions/workflows/node.js.yml/badge.svg?branch=main)
 
--   using ES Modules
--   using TypeScript (and generating type declarations) for typed parameters and API results
--   removing callbacks in favor of Promises
--   using Esbuild to provide a bundle that is consumable by either:
-    -   node via ESM
-    -   node via CommonJS
-    -   browsers (where node-fetch is replaced with native window.fetch)
--   adding support for all remaining Discogs endpoints
--   adding more tests
--   adding docs and type info via JSDoc (for non-TypeScript users)
+# `@lionralfs/discogs-client`
 
 ## About
 
-`disconnect` is a [Node.js](http://www.nodejs.org) client library that connects with the [Discogs.com API v2.0](http://www.discogs.com/developers/).
+`discogs-client` is a [Node.js](https://nodejs.org) and browser client library that connects with the [Discogs.com API v2.0](https://www.discogs.com/developers/).
+
+This library is a fork of the [origial library](https://github.com/bartve/disconnect) which does the following:
+
+-   uses ES Modules
+-   uses esbuild to provide a bundle that is consumable by either:
+    -   node via ESM
+    -   node via CommonJS
+    -   browsers (where node-fetch is replaced with native window.fetch)
+-   uses TypeScript (and generating type declarations) for typed parameters and API results
+-   adds docs and type info via JSDoc (for non-TypeScript users)
+-   removes callbacks in favor of Promises
+-   adds support for all remaining Discogs endpoints
+-   adds more tests
+
+> **Note**: Some of these docs are outdated artifacts from the fork origin.
 
 ## Features
 
 -   Covers all API endpoints
--   Supports [pagination](http://www.discogs.com/developers/#page:home,header:home-pagination), [rate limiting](http://www.discogs.com/developers/#page:home,header:home-rate-limiting), etc.
--   All database, marketplace and user functions implement a standard `function(err, data, rateLimit)` format for the callback or return a
-    native JS [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) when no callback is provided
+-   Supports [pagination](https://www.discogs.com/developers/#page:home,header:home-pagination), [rate limiting](https://www.discogs.com/developers/#page:home,header:home-rate-limiting), etc.
+-   All database, marketplace and user functions return a
+    native JS [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
 -   Easy access to protected endpoints with `Discogs Auth`
 -   Includes OAuth 1.0a tools. Just plug in your consumer key and secret and do the OAuth dance
 -   API functions grouped in their own namespace for easy access and isolation
 
 ## Installation
 
-[![NPM](https://nodei.co/npm/disconnect.png?downloads=true)](https://nodei.co/npm/disconnect/)
+```
+npm install @lionralfs/discogs-client
+```
 
 ## Structure
 
