@@ -10,7 +10,7 @@
 
 `discogs-client` is a [Node.js](https://nodejs.org) and browser client library that connects with the [Discogs.com API v2.0](https://www.discogs.com/developers/).
 
-This library is a fork of the [origial library](https://github.com/bartve/disconnect) which does the following:
+This library is a fork of the [original library](https://github.com/bartve/disconnect) which does the following:
 
 -   uses ES Modules
 -   uses esbuild to provide a bundle that is consumable by either:
