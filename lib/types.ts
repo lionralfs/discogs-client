@@ -5,9 +5,6 @@ export type ClientConfig = {
     userAgent: string;
     apiVersion: string;
     outputFormat: 'discogs' | 'plaintext' | 'html';
-    requestLimit: number;
-    requestLimitAuth: number;
-    requestLimitInterval: number;
 };
 export type Auth = {
     method: 'discogs' | 'oauth';
@@ -24,7 +21,6 @@ export type RequestOptions = {
     url: string;
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
     data?: Record<string, any>;
-    queue?: boolean;
     json?: boolean;
     authLevel?: number;
 };

@@ -2,7 +2,6 @@
 import fetch, { Headers } from 'node-fetch';
 import { DiscogsError, AuthError } from './error.js';
 import { merge } from './util.js';
-import Queue from './queue.js';
 import database from './database.js';
 import marketplace from './marketplace.js';
 import user from './user.js';
@@ -31,19 +30,7 @@ let defaultConfig: ClientConfig = {
     apiVersion: 'v2',
     // Possible values: 'discogs' / 'plaintext' / 'html'
     outputFormat: 'discogs',
-    requestLimit: 25, // Maximum number of requests to the Discogs API per interval
-    requestLimitAuth: 60, // Maximum number of requests to the Discogs API per interval when authenticated
-    requestLimitInterval: 60000, // Request interval in milliseconds
 };
-
-/**
- * The request queue, shared by all DiscogsClient instances
- */
-let queue = new Queue({
-    maxCalls: defaultConfig.requestLimit,
-    interval: defaultConfig.requestLimitInterval,
-});
-
 export class DiscogsClient {
     private config: ClientConfig;
     private auth: Partial<Auth> | undefined;
@@ -67,7 +54,6 @@ export class DiscogsClient {
             this.auth = {};
             let auth: Partial<Auth> = Object.assign({}, options.auth);
 
-            queue.setConfig({ maxCalls: this.config.requestLimitAuth });
             // use 'discogs' as default method
             if (!auth.hasOwnProperty('method')) {
                 this.auth.method = 'discogs';
@@ -95,9 +81,6 @@ export class DiscogsClient {
                     }
                 }
             }
-        } else {
-            // Unauthenticated new client instances will decrease the shared request limit
-            queue.setConfig({ maxCalls: this.config.requestLimit });
         }
     }
 
@@ -108,10 +91,6 @@ export class DiscogsClient {
      */
     setConfig(customConfig: Partial<ClientConfig>): DiscogsClient {
         merge(this.config, customConfig);
-        queue.setConfig({
-            maxCalls: this.authenticated() ? this.config.requestLimitAuth : this.config.requestLimit,
-            interval: this.config.requestLimitInterval,
-        });
         return this;
     }
 
@@ -263,10 +242,6 @@ export class DiscogsClient {
      * @returns {Promise<{data: unknown; rateLimit?: RateLimit}>}
      */
     async _request(options: RequestOptions): Promise<{ data: unknown; rateLimit?: RateLimit }> {
-        // By default, queue requests
-        if (!options.hasOwnProperty('queue')) {
-            options.queue = true;
-        }
         // By default, expect responses to be JSON
         if (!options.hasOwnProperty('json')) {
             options.json = true;
@@ -275,7 +250,8 @@ export class DiscogsClient {
         return new Promise((resolve, reject) => {
             let doRequest = () => {
                 this._rawRequest(options, function (err, data, rateLimit) {
-                    (err && reject(err)) || resolve({ data, rateLimit });
+                    if (err) return reject(err);
+                    resolve({ data, rateLimit });
                 });
             };
 
@@ -284,20 +260,7 @@ export class DiscogsClient {
                 throw new AuthError();
             }
 
-            if (options.queue) {
-                // Add API request to the execution queue
-                queue.add((err: any) => {
-                    if (!err) {
-                        doRequest();
-                    } else {
-                        // Can't add to the queue because it's full
-                        throw err;
-                    }
-                });
-            } else {
-                // Don't queue, just do the request
-                doRequest();
-            }
+            doRequest();
         });
     }
 

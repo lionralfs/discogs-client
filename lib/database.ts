@@ -422,7 +422,7 @@ export default function (client: DiscogsClient) {
          */
         getImage: function (url: string): Promise<{ data: string }> {
             // @ts-ignore
-            return client.get({ url: url, encoding: 'binary', queue: false, json: false });
+            return client.get({ url: url, encoding: 'binary', json: false });
         },
 
         /**
