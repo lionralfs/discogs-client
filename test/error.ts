@@ -1,4 +1,3 @@
-// @ts-check
 import test from 'ava';
 import { DiscogsError, AuthError } from '../lib/error.js';
 

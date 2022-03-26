@@ -1,4 +1,3 @@
-// @ts-check
 import fetch, { Headers } from 'node-fetch';
 import { DiscogsError, AuthError } from './error.js';
 import { merge } from './util.js';
