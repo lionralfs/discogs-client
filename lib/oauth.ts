@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import * as crypto from 'crypto';
+import { DiscogsError } from './error.js';
 
 const version = process.env.VERSION_NUMBER || 'dev';
 const homepage = 'https://github.com/lionralfs/discogs-client';
@@ -39,14 +40,21 @@ export class DiscogsOAuth {
             },
         });
 
-        if (resp.status !== 200) throw new Error('TODO');
+        if (resp.status !== 200) {
+            let message = 'Unknown Error.';
+            try {
+                message = await resp.text();
+            } catch (_) {}
+            console.log(message);
+            throw new DiscogsError(resp.status, message);
+        }
         let responseBody = await resp.text();
         let searchParams = new URLSearchParams(responseBody);
         let token = searchParams.get('oauth_token');
         return {
             token: token,
             tokenSecret: searchParams.get('oauth_token_secret'),
-            callbackConfirmed: searchParams.get('oauth_callback_confirmed'),
+            callbackConfirmed: searchParams.get('oauth_callback_confirmed') === 'true',
             authorizeUrl: `https://discogs.com/oauth/authorize?oauth_token=${token}`,
         };
     }
