@@ -154,3 +154,26 @@ test('DiscogsClient: Auth (OAuth without tokens)', t => {
         }
     );
 });
+
+test.serial('DiscogsClient: Sends OAuth header', async t => {
+    t.assert(1);
+
+    server.use(
+        rest.get('https://api.discogs.com/oauth/identity', (req, res, ctx) => {
+            t.true(req.headers.get('Authorization')?.startsWith('OAuth '));
+            return res(ctx.status(200), ctx.json({}));
+        })
+    );
+
+    let client = new DiscogsClient({
+        auth: {
+            method: 'oauth',
+            consumerKey: 'consumerKey',
+            consumerSecret: 'consumerSecret',
+            accessToken: 'accessToken',
+            accessTokenSecret: 'accessTokenSecret',
+        },
+    });
+
+    await client.getIdentity();
+});
