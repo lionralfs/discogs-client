@@ -1,4 +1,4 @@
-import fetch, { Headers } from 'node-fetch';
+import fetch, { Headers, RequestInit } from 'node-fetch';
 import { DiscogsError, AuthError } from './error.js';
 import { merge } from './util.js';
 import database from './database.js';
@@ -157,8 +157,7 @@ export class DiscogsClient {
             Accept: `application/vnd.discogs.${this.config.apiVersion}.${this.config.outputFormat}+json`,
         });
 
-        /** @type {import('node-fetch').RequestInit} */
-        let requestOptions: import('node-fetch').RequestInit = {
+        let requestOptions: RequestInit = {
             method: method,
             headers: headers,
         };
