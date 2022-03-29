@@ -61,35 +61,42 @@ require('disconnect') -> new Client() -> oauth()
 
 Here are some basic usage examples that connect with the public API. Error handling has been left out for demonstrational purposes.
 
-#### Init
+#### Importing the library
 
-```javascript
-var Discogs = require('disconnect').Client;
+```js
+// in modern JS/TS
+import { DiscogsClient } from '@lionralfs/discogs-client';
+
+// in commonjs environments
+const DiscogsClient = require('@lionralfs/discogs-client/commonjs');
+
+// in browser environments
+import { DiscogsClient } from '@lionralfs/discogs-client/browser';
 ```
 
 #### Go!
 
 Get the release data for a release with the id 176126.
 
-```javascript
-var db = new Discogs().database();
-db.getRelease(176126, function (err, data) {
+```js
+let db = new DiscogsClient().database();
+db.getRelease(176126).then(function ({ rateLimit, data }) {
     console.log(data);
 });
 ```
 
-Set your own custom [User-Agent](http://www.discogs.com/developers/#page:home,header:home-general-information). This is optional as when omitted `disconnect` will set a default one with the value `DisConnectClient/x.x.x` where `x.x.x` is the installed version of `disconnect`.
+Set your own custom [User-Agent](http://www.discogs.com/developers/#page:home,header:home-general-information). This is optional as when omitted it will set a default one with the value `@lionralfs/discogs-client/x.x.x` where `x.x.x` is the installed version of this library.
 
-```javascript
-var dis = new Discogs('MyUserAgent/1.0');
+```js
+let client = new DiscogsClient({ userAgent: 'MyUserAgent/1.0' });
 ```
 
 Get page 2 of USER_NAME's public collection showing 75 releases.
 The second param is the collection folder ID where 0 is always the "All" folder.
 
-```javascript
-var col = new Discogs().user().collection();
-col.getReleases('USER_NAME', 0, { page: 2, per_page: 75 }, function (err, data) {
+```js
+let col = new DiscogsClient().user().collection();
+col.getReleases('USER_NAME', 0, { page: 2, per_page: 75 }).then(function ({ data }) {
     console.log(data);
 });
 ```
@@ -212,6 +219,7 @@ db.getRelease(176126, function (err, data) {
 
 ## Resources
 
+-   [This fork's origin](https://github.com/bartve/disconnect)
 -   [Discogs API documentation](https://www.discogs.com/developers/)
 -   [OAuth Core 1.0 Revision A](https://oauth.net/core/1.0a/)
 
