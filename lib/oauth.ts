@@ -45,7 +45,6 @@ export class DiscogsOAuth {
             try {
                 message = await resp.text();
             } catch (_) {}
-            console.log(message);
             throw new DiscogsError(resp.status, message);
         }
         let responseBody = await resp.text();
