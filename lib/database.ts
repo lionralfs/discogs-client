@@ -12,6 +12,7 @@ import {
 } from './types.js';
 import { toQueryString, escape } from './util.js';
 type GetArtistResponse = {
+    name: string;
     namevariations: Array<string>;
     profile: string;
     releases_url: string;
