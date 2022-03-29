@@ -58,7 +58,8 @@
         "browser/index.js",
         "commonjs/index.js",
         "types",
-        "node-esm/index.js"
+        "node-esm/index.js",
+        "lib/*"
     ],
     "publishConfig": {
         "access": "public",
