@@ -96,16 +96,19 @@ col.getReleases('USER_NAME', 0, { page: 2, per_page: 75 }, function (err, data) 
 
 ### Promises
 
-When no callback is provided, the API functions return a native JS [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) for easy chaining.
+The API functions return a native JS [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) for easy chaining.
 
-```javascript
-var db = new Discogs().database();
-db.getRelease(1)
-    .then(function (release) {
-        return db.getArtist(release.artists[0].id);
+```js
+let db = client.database();
+db.search({ query: 'dark side of the moon', type: 'master' })
+    .then(function ({ data }) {
+        return db.getMaster(data.results[0].id);
     })
-    .then(function (artist) {
-        console.log(artist.name);
+    .then(function ({ data }) {
+        return db.getArtist(data.artists[0].id);
+    })
+    .then(function ({ data }) {
+        console.log(data.name);
     });
 ```
 
