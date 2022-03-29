@@ -2,10 +2,14 @@ import fetch from 'node-fetch';
 import * as crypto from 'crypto';
 import { DiscogsError } from './error.js';
 
+// TODO: user agent should be configurable, use the one that is passed to the discogs client
 const version = process.env.VERSION_NUMBER || 'dev';
 const homepage = 'https://github.com/lionralfs/discogs-client';
 const userAgent = `@lionralfs/discogs-client/${version} +${homepage}`;
 
+/**
+ * @see https://www.discogs.com/developers/#page:authentication,header:authentication-oauth-flow
+ */
 export class DiscogsOAuth {
     private consumerKey: string;
     private consumerSecret: string;
@@ -80,7 +84,13 @@ export class DiscogsOAuth {
             },
         });
 
-        if (resp.status !== 200) throw new Error('TODO');
+        if (resp.status !== 200) {
+            let message = 'Unknown Error.';
+            try {
+                message = await resp.text();
+            } catch (_) {}
+            throw new DiscogsError(resp.status, message);
+        }
         let responseBody = await resp.text();
         let searchParams = new URLSearchParams(responseBody);
         return {
