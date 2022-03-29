@@ -108,3 +108,49 @@ test.serial('DiscogsClient: Auth (userToken)', async t => {
     let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.getIdentity();
 });
+
+test('DiscogsClient: Auth (Full OAuth)', t => {
+    let client = new DiscogsClient({
+        auth: {
+            method: 'oauth',
+            consumerKey: 'consumerKey',
+            consumerSecret: 'consumerSecret',
+            accessToken: 'accessToken',
+            accessTokenSecret: 'accessTokenSecret',
+        },
+    });
+
+    t.deepEqual(
+        // @ts-ignore
+        client.auth,
+        {
+            method: 'oauth',
+            level: 2,
+            consumerKey: 'consumerKey',
+            consumerSecret: 'consumerSecret',
+            accessToken: 'accessToken',
+            accessTokenSecret: 'accessTokenSecret',
+        }
+    );
+});
+
+test('DiscogsClient: Auth (OAuth without tokens)', t => {
+    let client = new DiscogsClient({
+        auth: {
+            method: 'oauth',
+            consumerKey: 'consumerKey',
+            consumerSecret: 'consumerSecret',
+        },
+    });
+
+    t.deepEqual(
+        // @ts-ignore
+        client.auth,
+        {
+            method: 'oauth',
+            level: 1,
+            consumerKey: 'consumerKey',
+            consumerSecret: 'consumerSecret',
+        }
+    );
+});
