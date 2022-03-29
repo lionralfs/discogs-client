@@ -177,3 +177,39 @@ test.serial('DiscogsClient: Sends OAuth header', async t => {
 
     await client.getIdentity();
 });
+
+test.serial('DiscogsClient: Retrieves and passes rate limit info to caller', async t => {
+    t.assert(2);
+
+    server.use(
+        rest.get('https://api.discogs.com/oauth/identity', (req, res, ctx) => {
+            t.true(req.headers.get('Authorization')?.startsWith('OAuth '));
+            return res(
+                ctx.status(200),
+                ctx.json({}),
+                ctx.set({
+                    'X-Discogs-Ratelimit': '60',
+                    'X-Discogs-Ratelimit-Used': '23',
+                    'X-Discogs-Ratelimit-Remaining': '37',
+                })
+            );
+        })
+    );
+
+    let client = new DiscogsClient({
+        auth: {
+            method: 'oauth',
+            consumerKey: 'consumerKey',
+            consumerSecret: 'consumerSecret',
+            accessToken: 'accessToken',
+            accessTokenSecret: 'accessTokenSecret',
+        },
+    });
+
+    let resp = await client.getIdentity();
+    t.deepEqual(resp, {
+        rateLimit: { limit: 60, used: 23, remaining: 37 },
+        // @ts-ignore
+        data: {},
+    });
+});
