@@ -29,6 +29,9 @@ let defaultConfig: ClientConfig = {
     apiVersion: 'v2',
     // Possible values: 'discogs' / 'plaintext' / 'html'
     outputFormat: 'discogs',
+    exponentialBackoffMaxRetries: 0,
+    exponentialBackoffIntervalMs: 2000,
+    exponentialBackoffRate: 2.7,
 };
 export class DiscogsClient {
     private config: ClientConfig;
@@ -85,7 +88,7 @@ export class DiscogsClient {
 
     /**
      * Override the default configuration
-     * @param {Partial<ClientConfig>} customConfig - Custom configuration object for Browserify/CORS/Proxy use cases
+     * @param {Partial<ClientConfig>} customConfig - Custom configuration object
      * @returns {DiscogsClient}
      */
     setConfig(customConfig: Partial<ClientConfig>): DiscogsClient {
@@ -145,7 +148,7 @@ export class DiscogsClient {
      * @param {RequestCallback} callback - Callback function receiving the data
      * @private
      */
-    _rawRequest(options: RequestOptions, callback: RequestCallback) {
+    _rawRequest(options: RequestOptions, callback: RequestCallback, failedAttempts: number) {
         let data = options.data || null;
         let method = options.method || 'GET';
         let requestURL = new URL(options.url, `https://${this.config.host}`);
@@ -219,8 +222,17 @@ export class DiscogsClient {
                 }
 
                 // try parsing JSON response
-                /** @type {any} */ // @ts-ignore
                 let data: any = await res.json().catch(() => {});
+
+                if (statusCode === 429 && failedAttempts < this.config.exponentialBackoffMaxRetries) {
+                    let waitMs =
+                        this.config.exponentialBackoffIntervalMs *
+                        Math.pow(this.config.exponentialBackoffRate, failedAttempts);
+                    setTimeout(() => {
+                        this._rawRequest(options, callback, failedAttempts + 1);
+                    }, waitMs);
+                    return;
+                }
 
                 if (statusCode > 399) {
                     // Unsuccessful HTTP status? Then pass an error to the callback
@@ -247,10 +259,14 @@ export class DiscogsClient {
 
         return new Promise((resolve, reject) => {
             let doRequest = () => {
-                this._rawRequest(options, function (err, data, rateLimit) {
-                    if (err) return reject(err);
-                    resolve({ data, rateLimit });
-                });
+                this._rawRequest(
+                    options,
+                    function (err, data, rateLimit) {
+                        if (err) return reject(err);
+                        resolve({ data, rateLimit });
+                    },
+                    0
+                );
             };
 
             // Check whether authentication is required

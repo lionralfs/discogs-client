@@ -217,6 +217,18 @@ db.getRelease(176126, function (err, data) {
 });
 ```
 
+### Rate Limiting / Throttling
+
+The client implements [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) when encountering Discogs-API responses with status code `429 Too Many Requests`. The exponential backoff can be configured via the following parameters:
+
+```js
+client.setConfig({
+    exponentialBackoffIntervalMs: 2000,
+    exponentialBackoffMaxRetries: 5,
+    exponentialBackoffRate: 2.7,
+});
+```
+
 ## Resources
 
 -   [This fork's origin](https://github.com/bartve/disconnect)

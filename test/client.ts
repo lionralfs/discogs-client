@@ -213,3 +213,46 @@ test.serial('DiscogsClient: Retrieves and passes rate limit info to caller', asy
         data: {},
     });
 });
+
+test.serial('DiscogsClient: Retries when rate limited', async t => {
+    t.assert(3);
+
+    let n = 0;
+    server.use(
+        rest.get('https://api.discogs.com/oauth/identity', (req, res, ctx) => {
+            if (n++ == 0) {
+                t.pass();
+                return res(
+                    ctx.status(429),
+                    ctx.json({ message: "you're rate limited" }),
+                    ctx.set({
+                        'X-Discogs-Ratelimit': '60',
+                        'X-Discogs-Ratelimit-Used': '60',
+                        'X-Discogs-Ratelimit-Remaining': '0',
+                    })
+                );
+            } else {
+                t.pass();
+                return res(
+                    ctx.status(200),
+                    ctx.json({ message: "you're good" }),
+                    ctx.set({
+                        'X-Discogs-Ratelimit': '60',
+                        'X-Discogs-Ratelimit-Used': '59',
+                        'X-Discogs-Ratelimit-Remaining': '1',
+                    })
+                );
+            }
+        })
+    );
+
+    let client = new DiscogsClient({ auth: { userToken: 'fake-token' } });
+    client.setConfig({ exponentialBackoffMaxRetries: 1, exponentialBackoffIntervalMs: 100, exponentialBackoffRate: 2 });
+
+    let resp = await client.getIdentity();
+    t.deepEqual(
+        resp.data,
+        // @ts-ignore
+        { message: "you're good" }
+    );
+});
