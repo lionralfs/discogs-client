@@ -156,7 +156,7 @@ test('DiscogsClient: Auth (OAuth without tokens)', t => {
 });
 
 test.serial('DiscogsClient: Sends OAuth header', async t => {
-    t.assert(1);
+    t.plan(1);
 
     server.use(
         rest.get('https://api.discogs.com/oauth/identity', (req, res, ctx) => {
@@ -179,7 +179,7 @@ test.serial('DiscogsClient: Sends OAuth header', async t => {
 });
 
 test.serial('DiscogsClient: Retrieves and passes rate limit info to caller', async t => {
-    t.assert(2);
+    t.plan(2);
 
     server.use(
         rest.get('https://api.discogs.com/oauth/identity', (req, res, ctx) => {
@@ -215,7 +215,7 @@ test.serial('DiscogsClient: Retrieves and passes rate limit info to caller', asy
 });
 
 test.serial('DiscogsClient: Retries when rate limited', async t => {
-    t.assert(3);
+    t.plan(3);
 
     let n = 0;
     server.use(
