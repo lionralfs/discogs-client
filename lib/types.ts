@@ -5,6 +5,9 @@ export type ClientConfig = {
     userAgent: string;
     apiVersion: string;
     outputFormat: 'discogs' | 'plaintext' | 'html';
+    exponentialBackoffMaxRetries: number;
+    exponentialBackoffIntervalMs: number;
+    exponentialBackoffRate: number;
 };
 export type Auth = {
     method: 'discogs' | 'oauth';
