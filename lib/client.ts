@@ -209,7 +209,6 @@ export class DiscogsClient {
 
                 if (statusCode === 429) {
                     if (failedAttempts < this.config.exponentialBackoffMaxRetries) {
-                        console.log(`trying again (fails: ${failedAttempts}): ${requestURL.pathname}`);
                         let waitMs =
                             this.config.exponentialBackoffIntervalMs *
                             Math.pow(this.config.exponentialBackoffRate, failedAttempts);
