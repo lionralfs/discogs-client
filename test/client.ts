@@ -13,6 +13,27 @@ test('DiscogsClient: Test authenticated()', t => {
     t.false(new DiscogsClient().authenticated(1), 'Authentication level 1 === false');
 });
 
+test('DiscogsClient: Test setConfig with exponential backoff parameters', t => {
+    // Given
+    let client = new DiscogsClient();
+
+    // When
+    client.setConfig({
+        exponentialBackoffMaxRetries: 333,
+        exponentialBackoffIntervalMs: 444,
+        exponentialBackoffRate: 555,
+    });
+
+    // Then
+
+    // @ts-ignore
+    t.is(client.config.exponentialBackoffMaxRetries, 333);
+    // @ts-ignore
+    t.is(client.config.exponentialBackoffIntervalMs, 444);
+    // @ts-ignore
+    t.is(client.config.exponentialBackoffRate, 555);
+});
+
 test.serial('DiscogsClient: Test get()', async t => {
     t.plan(1);
     server.use(
@@ -255,4 +276,43 @@ test.serial('DiscogsClient: Retries when rate limited', async t => {
         // @ts-ignore
         { message: "you're good" }
     );
+});
+
+test.serial('DiscogsClient: Throws when retrying but end of retries is reached', async t => {
+    t.plan(4);
+
+    let n = 0;
+    server.use(
+        rest.get('https://api.discogs.com/oauth/identity', (req, res, ctx) => {
+            if (n++ == 0) {
+                t.pass();
+                return res(
+                    ctx.status(429),
+                    ctx.json({ message: "you're rate limited 1" }),
+                    ctx.set({
+                        'X-Discogs-Ratelimit': '60',
+                        'X-Discogs-Ratelimit-Used': '60',
+                        'X-Discogs-Ratelimit-Remaining': '0',
+                    })
+                );
+            } else {
+                t.pass();
+                return res(
+                    ctx.status(429),
+                    ctx.json({ message: "you're rate limited 2" }),
+                    ctx.set({
+                        'X-Discogs-Ratelimit': '60',
+                        'X-Discogs-Ratelimit-Used': '60',
+                        'X-Discogs-Ratelimit-Remaining': '0',
+                    })
+                );
+            }
+        })
+    );
+
+    let client = new DiscogsClient({ auth: { userToken: 'fake-token' } });
+    client.setConfig({ exponentialBackoffMaxRetries: 1, exponentialBackoffIntervalMs: 100, exponentialBackoffRate: 2 });
+
+    let err = await t.throwsAsync(() => client.getIdentity());
+    t.is(err?.message, "you're rate limited 2");
 });
