@@ -146,9 +146,9 @@ export class DiscogsClient {
      *		data: {} // POST/PUT data as an object
      * }
      * @param {RequestCallback} callback - Callback function receiving the data
-     * @private
+     * @param {number} failedAttempts The amounts of times this request has been attempted but failed
      */
-    _rawRequest(options: RequestOptions, callback: RequestCallback, failedAttempts: number) {
+    private rawRequest(options: RequestOptions, callback: RequestCallback, failedAttempts: number = 0) {
         let data = options.data || null;
         let method = options.method || 'GET';
         let requestURL = new URL(options.url, `https://${this.config.host}`);
@@ -207,6 +207,19 @@ export class DiscogsClient {
             .then(async res => {
                 let statusCode = res.status;
 
+                if (statusCode === 429) {
+                    if (failedAttempts < this.config.exponentialBackoffMaxRetries) {
+                        console.log(`trying again (fails: ${failedAttempts}): ${requestURL.pathname}`);
+                        let waitMs =
+                            this.config.exponentialBackoffIntervalMs *
+                            Math.pow(this.config.exponentialBackoffRate, failedAttempts);
+                        setTimeout(() => {
+                            this.rawRequest(options, callback, failedAttempts + 1);
+                        }, waitMs);
+                        return;
+                    }
+                }
+
                 /** @type {RateLimit | undefined} */
                 let rateLimit: RateLimit | undefined = undefined;
                 /** @type {Error | undefined} */
@@ -223,16 +236,6 @@ export class DiscogsClient {
 
                 // try parsing JSON response
                 let data: any = await res.json().catch(() => {});
-
-                if (statusCode === 429 && failedAttempts < this.config.exponentialBackoffMaxRetries) {
-                    let waitMs =
-                        this.config.exponentialBackoffIntervalMs *
-                        Math.pow(this.config.exponentialBackoffRate, failedAttempts);
-                    setTimeout(() => {
-                        this._rawRequest(options, callback, failedAttempts + 1);
-                    }, waitMs);
-                    return;
-                }
 
                 if (statusCode > 399) {
                     // Unsuccessful HTTP status? Then pass an error to the callback
@@ -251,7 +254,7 @@ export class DiscogsClient {
      * @param {RequestOptions} options - Request options
      * @returns {Promise<{data: unknown; rateLimit?: RateLimit}>}
      */
-    async _request(options: RequestOptions): Promise<{ data: unknown; rateLimit?: RateLimit }> {
+    async request(options: RequestOptions): Promise<{ data: unknown; rateLimit?: RateLimit }> {
         // By default, expect responses to be JSON
         if (!options.hasOwnProperty('json')) {
             options.json = true;
@@ -259,14 +262,10 @@ export class DiscogsClient {
 
         return new Promise((resolve, reject) => {
             let doRequest = () => {
-                this._rawRequest(
-                    options,
-                    function (err, data, rateLimit) {
-                        if (err) return reject(err);
-                        resolve({ data, rateLimit });
-                    },
-                    0
-                );
+                this.rawRequest(options, function (err, data, rateLimit) {
+                    if (err) return reject(err);
+                    resolve({ data, rateLimit });
+                });
             };
 
             // Check whether authentication is required
@@ -287,7 +286,7 @@ export class DiscogsClient {
         if (typeof options === 'string') {
             options = { url: options };
         }
-        return this._request(options);
+        return this.request(options);
     }
 
     /**
@@ -302,7 +301,7 @@ export class DiscogsClient {
         }
         options.method = 'POST';
         options.data = data;
-        return this._request(options);
+        return this.request(options);
     }
 
     /**
@@ -317,7 +316,7 @@ export class DiscogsClient {
         }
         options.method = 'PUT';
         options.data = data;
-        return this._request(options);
+        return this.request(options);
     }
 
     /**
@@ -330,7 +329,7 @@ export class DiscogsClient {
             options = { url: options };
         }
         options.method = 'DELETE';
-        return this._request(options);
+        return this.request(options);
     }
 
     /**
