@@ -23,8 +23,6 @@ This library is a fork of the [original library](https://github.com/bartve/disco
 -   adds support for all remaining Discogs endpoints
 -   adds more tests
 
-> **Note**: Some of these docs are outdated artifacts from the fork origin.
-
 ## Features
 
 -   Covers all API [endpoints](#structure)
