@@ -185,23 +185,6 @@ let response = await client.getIdentity();
 console.log(response.data.username);
 ```
 
-### Images
-
-Image requests themselves don't require authentication, but obtaining the image URLs through, for example, release data does.
-
-```javascript
-var db = new Discogs(accessData).database();
-db.getRelease(176126, function (err, data) {
-    var url = data.images[0].resource_url;
-    db.getImage(url, function (err, data, rateLimit) {
-        // Data contains the raw binary image data
-        require('fs').writeFile('/tmp/image.jpg', data, 'binary', function (err) {
-            console.log('Image saved!');
-        });
-    });
-});
-```
-
 ### Pagination
 
 Discogs [paginates]() certain collections, as they would otherwise be too much to return for a single API call. You may use the `page` and `per_page` options in each call to query certain pages. If you don't pass these options, they fall back to the Discogs defaults, which are `1` and `50` respectively (the first 50 results on the first page).
@@ -269,7 +252,6 @@ new DiscogsClient() -> database()
                         -> getMasterVersions
                         -> getLabel
                         -> getLabelReleases
-                        -> getImage
                         -> search
                     -> marketplace()
                         -> getInventory

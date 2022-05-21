@@ -411,22 +411,6 @@ export default function (client: DiscogsClient) {
         },
 
         /**
-         * Get an image
-         * @param {string} url - The full image url
-         * @returns {Promise<{data: string}>}
-         *
-         * @see https://www.discogs.com/developers/#page:images
-         *
-         * @example
-         * let { data: release } = await client.database().getRelease(176126);
-         * let { data: imageData } = await client.database().getImage(release.images[0].resource_url);
-         */
-        getImage: function (url: string): Promise<{ data: string }> {
-            // @ts-ignore
-            return client.get({ url: url, encoding: 'binary', json: false });
-        },
-
-        /**
          * Search the database
          * @param {PaginationParameters & Partial<SearchParameters>} [params] - Search parameters
          *
