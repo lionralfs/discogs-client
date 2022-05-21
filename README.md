@@ -106,11 +106,11 @@ db.search({ query: 'dark side of the moon', type: 'master' })
 
 ### Output format
 
-User, artist and label profiles can be formatted in different ways: `plaintext`, `html` and `discogs`. `disconnect` defaults to `discogs`, but the output format can be set for each client instance.
+User, artist and label profiles can be formatted in different ways: `plaintext`, `html` and `discogs`. The client defaults to `discogs`, but the output format can be set for each client instance.
 
-```javascript
+```js
 // Set the output format to HTML
-var dis = new Discogs().setConfig({ outputFormat: 'html' });
+let client = new DiscogsClient().setConfig({ outputFormat: 'html' });
 ```
 
 ### Discogs Auth
