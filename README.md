@@ -4,7 +4,7 @@
 ![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/npm/@lionralfs/discogs-client)
 ![build status](https://github.com/lionralfs/discogs-client/actions/workflows/node.js.yml/badge.svg?branch=main)
 
-# `@lionralfs/discogs-client`
+# `discogs-client`
 
 ## About
 
@@ -28,7 +28,7 @@ This library is a fork of the [original library](https://github.com/bartve/disco
 ## Features
 
 -   Covers all API endpoints
--   Supports [pagination](#pagination), [rate limiting](https://www.discogs.com/developers/#page:home,header:home-rate-limiting), etc.
+-   Supports [pagination](#pagination), [rate limiting](#rate-limiting) and [throttling](#throttling)
 -   API calls return a native JS [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
 -   Easy access to protected endpoints with `Discogs Auth`
 -   Includes OAuth 1.0a tools. Just plug in your consumer key and secret and do the OAuth dance
@@ -243,7 +243,16 @@ console.log(result.data.pagination);
 // }
 ```
 
-### Rate Limiting / Throttling
+### Rate Limiting
+
+The Discogs API imposes certain [rate limits](https://www.discogs.com/developers/#page:home,header:home-rate-limiting) on consumers, varying in allowed calls per minute depending on your authentication status. The API responds with your current quota in HTTP headers for each API call. These are passed to you as a `rateLimit` object on the response:
+
+```js
+let response = await client.database().getArtistReleases(108713);
+console.log(response.rateLimit); // → { limit: 25, used: 4, remaining: 21 }
+```
+
+### Throttling
 
 The client implements [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) when encountering Discogs-API responses with status code `429 Too Many Requests`. The exponential backoff can be configured via the following parameters:
 
@@ -254,6 +263,8 @@ client.setConfig({
     exponentialBackoffRate: 2.7,
 });
 ```
+
+> **Note**: By default, the `exponentialBackoffMaxRetries` is 0, essentially turning off throttling.
 
 ## Resources
 
