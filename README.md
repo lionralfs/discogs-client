@@ -27,7 +27,7 @@ This library is a fork of the [original library](https://github.com/bartve/disco
 
 ## Features
 
--   Covers all API endpoints
+-   Covers all API [endpoints](#structure)
 -   Supports [pagination](#pagination), [rate limiting](#rate-limiting) and [throttling](#throttling)
 -   API calls return a native JS [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
 -   Easy access to protected endpoints with `Discogs Auth`
@@ -38,20 +38,6 @@ This library is a fork of the [original library](https://github.com/bartve/disco
 
 ```
 npm install @lionralfs/discogs-client
-```
-
-## Structure
-
-The global structure of `disconnect` looks as follows:
-
-```
-require('disconnect') -> new Client() -> oauth()
-                                      -> database()
-                                      -> marketplace()
-                                      -> user() -> collection()
-                                                -> wantlist()
-                                                -> list()
-                      -> util
 ```
 
 ## Usage
@@ -265,6 +251,72 @@ client.setConfig({
 ```
 
 > **Note**: By default, the `exponentialBackoffMaxRetries` is 0, essentially turning off throttling.
+
+## Structure
+
+The global library structure looks as follows:
+
+```
+new DiscogsClient() -> database()
+                        -> getArtist
+                        -> getArtistReleases
+                        -> getRelease
+                        -> getReleaseRating
+                        -> setReleaseRating
+                        -> getReleaseCommunityRating
+                        -> getReleaseStats
+                        -> getMaster
+                        -> getMasterVersions
+                        -> getLabel
+                        -> getLabelReleases
+                        -> getImage
+                        -> search
+                    -> marketplace()
+                        -> getInventory
+                        -> getListing
+                        -> addListing
+                        -> editListing
+                        -> deleteListing
+                        -> getOrders
+                        -> getOrder
+                        -> editOrder
+                        -> getOrderMessages
+                        -> addOrderMessage
+                        -> getFee
+                        -> getPriceSuggestions
+                        -> getReleaseStats
+                    -> user()
+                        -> getProfile
+                        -> editProfile
+                        -> getInventory
+                        -> getIdentity
+                        -> getContributions
+                        -> getSubmissions
+                        -> getLists
+                        -> collection()
+                            -> getFolders
+                            -> getFolder
+                            -> addFolder
+                            -> setFolderName
+                            -> deleteFolder
+                            -> getReleases
+                            -> getReleaseInstances
+                            -> addRelease
+                            -> editRelease
+                            -> removeRelease
+                            -> getFields
+                            -> editInstanceNote
+                            -> getValue
+                        -> wantlist()
+                            -> getReleases
+                            -> addRelease
+                            -> editNotes
+                            -> removeRelease
+                        -> list()
+                            -> getItems
+new DiscogsOAuth()  -> getRequestToken
+                    -> getAccessToken
+```
 
 ## Resources
 
