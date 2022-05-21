@@ -1,3 +1,18 @@
+# 2.0.0 / 2022-05-21
+
+-   Initial fork release. Includes large refactoring:
+    -   uses ES Modules
+    -   uses esbuild to provide a bundle that is consumable by either:
+        -   node via ESM
+        -   node via CommonJS
+        -   browsers (where node-fetch is replaced with native window.fetch)
+    -   uses TypeScript (and generating type declarations) for typed parameters and API results
+    -   adds docs and type info via JSDoc (for non-TypeScript users)
+    -   removes callbacks in favor of Promises
+    -   adds support for all remaining Discogs endpoints
+    -   adds more tests
+    -   remove database().getImage
+
 # 1.2.2 / 2021-02-04
 
 -   Fixed accept headers for non-json data

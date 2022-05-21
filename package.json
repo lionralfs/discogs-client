@@ -59,7 +59,8 @@
         "commonjs/index.js",
         "types",
         "node-esm/index.js",
-        "lib/*"
+        "lib/*",
+        "CHANGELOG.md"
     ],
     "publishConfig": {
         "access": "public",
