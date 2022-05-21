@@ -28,9 +28,8 @@ This library is a fork of the [original library](https://github.com/bartve/disco
 ## Features
 
 -   Covers all API endpoints
--   Supports [pagination](https://www.discogs.com/developers/#page:home,header:home-pagination), [rate limiting](https://www.discogs.com/developers/#page:home,header:home-rate-limiting), etc.
--   All database, marketplace and user functions return a
-    native JS [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
+-   Supports [pagination](#pagination), [rate limiting](https://www.discogs.com/developers/#page:home,header:home-rate-limiting), etc.
+-   API calls return a native JS [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
 -   Easy access to protected endpoints with `Discogs Auth`
 -   Includes OAuth 1.0a tools. Just plug in your consumer key and secret and do the OAuth dance
 -   API functions grouped in their own namespace for easy access and isolation
@@ -215,6 +214,33 @@ db.getRelease(176126, function (err, data) {
         });
     });
 });
+```
+
+### Pagination
+
+Discogs [paginates]() certain collections, as they would otherwise be too much to return for a single API call. You may use the `page` and `per_page` options in each call to query certain pages. If you don't pass these options, they fall back to the Discogs defaults, which are `1` and `50` respectively (the first 50 results on the first page).
+
+In the `result.data` object, you'll find a `pagination` key, which contains some info returned by the Discogs API such as the total number of items and pages.
+
+Here's a short example of how to use pagination arguments:
+
+```js
+// retrieves an artist's releases (25 per page, 2nd page)
+let result = await client.database().getArtistReleases(108713, { per_page: 25, page: 2 });
+
+console.log(result.data.pagination);
+// {
+//   page: 2,
+//   pages: 54,
+//   per_page: 25,
+//   items: 1331,
+//   urls: {
+//     first: 'https://api.discogs.com/artists/108713/releases?per_page=25&page=1',
+//     last: 'https://api.discogs.com/artists/108713/releases?per_page=25&page=54',
+//     prev: 'https://api.discogs.com/artists/108713/releases?per_page=25&page=1',
+//     next: 'https://api.discogs.com/artists/108713/releases?per_page=25&page=3'
+//   }
+// }
 ```
 
 ### Rate Limiting / Throttling
