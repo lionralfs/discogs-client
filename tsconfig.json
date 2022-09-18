@@ -12,6 +12,7 @@
         "strict": true,
         "lib": ["dom", "dom.iterable", "esnext"],
         "downlevelIteration": true,
-        "typeRoots": ["./test/@types", "./node_modules/@types"]
+        "typeRoots": ["./test/@types", "./node_modules/@types"],
+        "skipLibCheck": true
     }
 }
