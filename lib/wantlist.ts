@@ -47,10 +47,11 @@ export default function (client: DiscogsClient) {
             user: string,
             params: PaginationParameters
         ): Promise<RateLimitedResponse<PaginationResponse & { wants: Array<WantlistEntryResponse> }>> {
-            let path = `/users/${escape(user)}/wants?${toQueryString(params)}`;
+            const path = `/users/${escape(user)}/wants?${toQueryString(params)}`;
 
-            // @ts-ignore
-            return client.get(path);
+            return client.get(path) as Promise<
+                RateLimitedResponse<PaginationResponse & { wants: Array<WantlistEntryResponse> }>
+            >;
         },
 
         /**
@@ -70,8 +71,9 @@ export default function (client: DiscogsClient) {
             release: number | string,
             data: { notes?: string; rating?: 0 | 1 | 2 | 3 | 4 | 5 }
         ): Promise<RateLimitedResponse<WantlistEntryResponse>> {
-            // @ts-ignore
-            return client.put({ url: `/users/${escape(user)}/wants/${release}`, authLevel: 2 }, data);
+            return client.put({ url: `/users/${escape(user)}/wants/${release}`, authLevel: 2 }, data) as Promise<
+                RateLimitedResponse<WantlistEntryResponse>
+            >;
         },
 
         /**
@@ -91,8 +93,9 @@ export default function (client: DiscogsClient) {
             release: number | string,
             data: { notes?: string; rating?: 0 | 1 | 2 | 3 | 4 | 5 }
         ): Promise<RateLimitedResponse<WantlistEntryResponse>> {
-            // @ts-ignore
-            return client.post({ url: `/users/${escape(user)}/wants/${release}`, authLevel: 2 }, data);
+            return client.post({ url: `/users/${escape(user)}/wants/${release}`, authLevel: 2 }, data) as Promise<
+                RateLimitedResponse<WantlistEntryResponse>
+            >;
         },
 
         /**
@@ -107,8 +110,9 @@ export default function (client: DiscogsClient) {
          * await client.user().wantlist().removeRelease('rodneyfool', 130076);
          */
         removeRelease: function (user: string, release: number | string): Promise<RateLimitedResponse<void>> {
-            // @ts-ignore
-            return client.delete({ url: `/users/${escape(user)}/wants/${release}`, authLevel: 2 });
+            return client.delete({ url: `/users/${escape(user)}/wants/${release}`, authLevel: 2 }) as Promise<
+                RateLimitedResponse<void>
+            >;
         },
     };
 }

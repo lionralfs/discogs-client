@@ -21,7 +21,7 @@ test.serial("Wantlist: Get releases in user's wantlist", async t => {
         })
     );
 
-    let client = new DiscogsClient();
+    const client = new DiscogsClient();
     await client.user().wantlist().getReleases('rodneyfool', { page: 2, per_page: 4 });
 });
 
@@ -38,7 +38,7 @@ test.serial('Wantlist: Add release to wantlist', async t => {
         })
     );
 
-    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
+    const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.user().wantlist().addRelease('rodneyfool', 130076, { notes: 'My favorite release', rating: 5 });
 });
 
@@ -55,7 +55,7 @@ test.serial('Wantlist: Edit wantlist notes for release', async t => {
         })
     );
 
-    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
+    const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.user().wantlist().editNotes('rodneyfool', 130076, { notes: 'My favorite release', rating: 4 });
 });
 
@@ -69,6 +69,6 @@ test.serial('Wantlist: Remove release from wantlist', async t => {
         })
     );
 
-    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
+    const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.user().wantlist().removeRelease('rodneyfool', 130076);
 });

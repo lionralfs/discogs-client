@@ -25,6 +25,7 @@
         "test": "ava",
         "coverage": "c8 --reporter html ava",
         "prettier": "prettier --check **/**.{js,md,json}",
+        "lint": "eslint ./**/*.ts",
         "declaration:build": "rm -rf types && tsc -p tsconfig.json",
         "clean": "rm -f commonjs/index.js && rm -f browser/index.js && rm -f node-esm/index.js",
         "build": "npm run declaration:build && npm run clean && npm run build:all",
@@ -36,10 +37,13 @@
         "node-fetch": "^3.2.0"
     },
     "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^5.41.0",
+        "@typescript-eslint/parser": "^5.41.0",
         "ava": "^4.0.1",
         "c8": "^7.11.0",
         "esbuild": "^0.15.9",
         "esbuild-plugin-alias": "^0.2.1",
+        "eslint": "^8.26.0",
         "husky": "^8.0.1",
         "lint-staged": "^13.0.3",
         "msw": "^0.36.8",

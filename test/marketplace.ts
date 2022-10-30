@@ -15,7 +15,7 @@ test.serial('Marketplace: Get a listing', async t => {
         })
     );
 
-    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().getListing(172723812);
 });
 
@@ -29,7 +29,7 @@ test.serial('Marketplace: Get a listing (with currency arg)', async t => {
         })
     );
 
-    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().getListing(172723812, 'USD');
 });
 
@@ -55,7 +55,7 @@ test.serial('Marketplace: Edit a listing', async t => {
         })
     );
 
-    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().editListing(172723812, {
         release_id: 1,
         condition: 'Mint (M)',
@@ -81,7 +81,7 @@ test.serial('Marketplace: Delete a listing', async t => {
         })
     );
 
-    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().deleteListing(172723812);
 });
 
@@ -107,7 +107,7 @@ test.serial('Marketplace: Add a listing', async t => {
         })
     );
 
-    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().addListing({
         release_id: 1,
         condition: 'Mint (M)',
@@ -133,7 +133,7 @@ test.serial('Marketplace: Get an order', async t => {
         })
     );
 
-    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().getOrder(1);
 });
 
@@ -150,7 +150,7 @@ test.serial('Marketplace: Edit an order', async t => {
         })
     );
 
-    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().editOrder(1, { status: 'Shipped', shipping: 10 });
 });
 
@@ -176,7 +176,7 @@ test.serial('Marketplace: Get orders', async t => {
         })
     );
 
-    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().getOrders({
         status: "Cancelled (Per Buyer's Request)",
         created_after: '2019-06-24T20:58:58Z',
@@ -205,7 +205,7 @@ test.serial('Marketplace: Get order messages', async t => {
         })
     );
 
-    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().getOrderMessages(1, { page: 2, per_page: 50 });
 });
 
@@ -222,7 +222,7 @@ test.serial('Marketplace: Add message to order', async t => {
         })
     );
 
-    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().addOrderMessage(1, { message: 'hello world', status: 'New Order' });
 });
 
@@ -236,7 +236,7 @@ test.serial('Marketplace: Get fee without currency', async t => {
         })
     );
 
-    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().getFee(10);
 });
 
@@ -250,7 +250,7 @@ test.serial('Marketplace: Get fee with currency', async t => {
         })
     );
 
-    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().getFee(10, 'EUR');
 });
 
@@ -264,7 +264,7 @@ test.serial('Marketplace: Get price suggestion', async t => {
         })
     );
 
-    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().getPriceSuggestions(1);
 });
 
@@ -278,7 +278,7 @@ test.serial('Marketplace: Get Release Stats without currency', async t => {
         })
     );
 
-    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().getReleaseStats(1);
 });
 
@@ -292,6 +292,6 @@ test.serial('Marketplace: Get Release Stats with currency', async t => {
         })
     );
 
-    let client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
+    const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
     await client.marketplace().getReleaseStats(1, 'EUR');
 });

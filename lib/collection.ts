@@ -81,8 +81,9 @@ export default function (client: DiscogsClient) {
          * await client.user().collection().getFolders('rodneyfool');
          */
         getFolders: function (user: string): Promise<RateLimitedResponse<GetFoldersResponse>> {
-            // @ts-ignore
-            return client.get(`/users/${escape(user)}/collection/folders`);
+            return client.get(`/users/${escape(user)}/collection/folders`) as Promise<
+                RateLimitedResponse<GetFoldersResponse>
+            >;
         },
 
         /**
@@ -98,8 +99,9 @@ export default function (client: DiscogsClient) {
          */
         getFolder: function (user: string, folder: number | string): Promise<RateLimitedResponse<GetFolderResponse>> {
             if (client.authenticated(2) || Number(folder) === 0) {
-                // @ts-ignore
-                return client.get(`/users/${escape(user)}/collection/folders/${folder}`);
+                return client.get(`/users/${escape(user)}/collection/folders/${folder}`) as Promise<
+                    RateLimitedResponse<GetFolderResponse>
+                >;
             }
 
             return Promise.reject(new AuthError());
@@ -117,8 +119,10 @@ export default function (client: DiscogsClient) {
          * await client.user().collection().addFolder('rodneyfool', 'My favorites');
          */
         addFolder: function (user: string, name: string): Promise<RateLimitedResponse<GetFolderResponse>> {
-            // @ts-ignore
-            return client.post({ url: `/users/${escape(user)}/collection/folders`, authLevel: 2 }, { name: name });
+            return client.post(
+                { url: `/users/${escape(user)}/collection/folders`, authLevel: 2 },
+                { name: name }
+            ) as Promise<RateLimitedResponse<GetFolderResponse>>;
         },
 
         /**
@@ -138,11 +142,10 @@ export default function (client: DiscogsClient) {
             folder: number | string,
             name: string
         ): Promise<RateLimitedResponse<GetFolderResponse>> {
-            // @ts-ignore
             return client.post(
                 { url: `/users/${escape(user)}/collection/folders/${folder}`, authLevel: 2 },
                 { name: name }
-            );
+            ) as Promise<RateLimitedResponse<GetFolderResponse>>;
         },
 
         /**
@@ -155,8 +158,10 @@ export default function (client: DiscogsClient) {
          * await client.user().collection().deleteFolder('rodneyfool', 3);
          */
         deleteFolder: function (user: string, folder: number | string): Promise<RateLimitedResponse<void>> {
-            // @ts-ignore
-            return client.delete({ url: `/users/${escape(user)}/collection/folders/${folder}`, authLevel: 2 });
+            return client.delete({
+                url: `/users/${escape(user)}/collection/folders/${folder}`,
+                authLevel: 2,
+            }) as Promise<RateLimitedResponse<void>>;
         },
 
         /**
@@ -178,9 +183,8 @@ export default function (client: DiscogsClient) {
                 SortParameters<'label' | 'artist' | 'title' | 'catno' | 'format' | 'rating' | 'added' | 'year'>
         ): Promise<RateLimitedResponse<GetReleasesResponse & PaginationResponse>> {
             if (client.authenticated(2) || Number(folder) === 0) {
-                let path = `/users/${escape(user)}/collection/folders/${folder}/releases?${toQueryString(params)}`;
-                // @ts-ignore
-                return client.get(path);
+                const path = `/users/${escape(user)}/collection/folders/${folder}/releases?${toQueryString(params)}`;
+                return client.get(path) as Promise<RateLimitedResponse<GetReleasesResponse & PaginationResponse>>;
             }
             return Promise.reject(new AuthError());
         },
@@ -200,8 +204,9 @@ export default function (client: DiscogsClient) {
             user: string,
             release: number | string
         ): Promise<RateLimitedResponse<GetReleaseInstancesResponse & PaginationResponse>> {
-            // @ts-ignore
-            return client.get(`/users/${escape(user)}/collection/releases/${release}`);
+            return client.get(`/users/${escape(user)}/collection/releases/${release}`) as Promise<
+                RateLimitedResponse<GetReleaseInstancesResponse & PaginationResponse>
+            >;
         },
 
         /**
@@ -221,11 +226,10 @@ export default function (client: DiscogsClient) {
             release: number | string,
             folder: number | string = 1
         ): Promise<RateLimitedResponse<AddReleaseResponse>> {
-            // @ts-ignore
             return client.post(
                 { url: `/users/${escape(user)}/collection/folders/${folder}/releases/${release}`, authLevel: 2 },
                 undefined
-            );
+            ) as Promise<RateLimitedResponse<AddReleaseResponse>>;
         },
 
         /**
@@ -249,7 +253,6 @@ export default function (client: DiscogsClient) {
             instance: number | string,
             data: Partial<{ rating: 1 | 2 | 3 | 4 | 5 | null; folder_id: number }>
         ): Promise<RateLimitedResponse<void>> {
-            // @ts-ignore
             return client.post(
                 {
                     url: `/users/${escape(
@@ -258,7 +261,7 @@ export default function (client: DiscogsClient) {
                     authLevel: 2,
                 },
                 data
-            );
+            ) as Promise<RateLimitedResponse<void>>;
         },
 
         /**
@@ -280,11 +283,10 @@ export default function (client: DiscogsClient) {
             release: number | string,
             instance: number | string
         ): Promise<RateLimitedResponse<void>> {
-            // @ts-ignore
             return client.delete({
                 url: `/users/${escape(user)}/collection/folders/${folder}/releases/${release}/instances/${instance}`,
                 authLevel: 2,
-            });
+            }) as Promise<RateLimitedResponse<void>>;
         },
 
         /**
@@ -299,8 +301,9 @@ export default function (client: DiscogsClient) {
          * await client.user().collection().getFields('rodneyfool');
          */
         getFields: function (user: string): Promise<RateLimitedResponse<GetFieldsResponse>> {
-            // @ts-ignore
-            return client.get(`/users/${escape(user)}/collection/fields`);
+            return client.get(`/users/${escape(user)}/collection/fields`) as Promise<
+                RateLimitedResponse<GetFieldsResponse>
+            >;
         },
 
         /**
@@ -326,11 +329,10 @@ export default function (client: DiscogsClient) {
             field: number,
             value: string
         ): Promise<RateLimitedResponse<void>> {
-            let path = `/users/${escape(
+            const path = `/users/${escape(
                 user
             )}/collection/folders/${folder}/releases/${release}/instances/${instance}/fields/${field}?value=${value}`;
-            // @ts-ignore
-            return client.post(path, null);
+            return client.post(path, undefined) as Promise<RateLimitedResponse<void>>;
         },
 
         /**
@@ -344,8 +346,9 @@ export default function (client: DiscogsClient) {
          * await client.user().collection().getValue('rodneyfool');
          */
         getValue: function (user: string): Promise<RateLimitedResponse<CollectionValueResponse>> {
-            // @ts-ignore
-            return client.get({ url: `/users/${escape(user)}/collection/value`, authLevel: 2 });
+            return client.get({ url: `/users/${escape(user)}/collection/value`, authLevel: 2 }) as Promise<
+                RateLimitedResponse<CollectionValueResponse>
+            >;
         },
     };
 }

@@ -17,8 +17,8 @@ export function toQueryString(data?: Record<string, string | number | boolean>):
         return '';
     }
 
-    let searchParams = new URLSearchParams();
-    for (let [key, value] of Object.entries(data)) {
+    const searchParams = new URLSearchParams();
+    for (const [key, value] of Object.entries(data)) {
         searchParams.set(key, value.toString());
     }
     return searchParams.toString();
@@ -40,7 +40,7 @@ export function escape(str: string): string {
  * @returns {object}
  */
 export function merge(target: Record<any, any>, source: Record<any, any>): Record<any, any> {
-    for (let key in source) {
+    for (const key in source) {
         if (source[key] && typeof source[key] === 'object') {
             target[key] = merge(Array.isArray(source[key]) ? [] : {}, source[key]);
         } else {
