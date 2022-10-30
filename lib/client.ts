@@ -22,7 +22,7 @@ const userAgent = `@lionralfs/discogs-client/${version} +${homepage}`;
 /**
  * Default configuration
  */
-let defaultConfig: ClientConfig = {
+const defaultConfig: ClientConfig = {
     host: 'api.discogs.com',
     port: 443,
     userAgent: userAgent,
@@ -54,16 +54,16 @@ export class DiscogsClient {
         // Set auth data when provided
         if (typeof options.auth === 'object') {
             this.auth = {};
-            let auth: Partial<Auth> = Object.assign({}, options.auth);
+            const auth: Partial<Auth> = Object.assign({}, options.auth);
 
             // use 'discogs' as default method
-            if (!auth.hasOwnProperty('method')) {
+            if (!Object.prototype.hasOwnProperty.call(auth, 'method')) {
                 this.auth.method = 'discogs';
             } else {
                 this.auth.method = auth.method;
             }
 
-            if (!auth.hasOwnProperty('level')) {
+            if (!Object.prototype.hasOwnProperty.call(auth, 'level')) {
                 if (auth.userToken) {
                     // Personal access token
                     this.auth.userToken = auth.userToken;
@@ -101,7 +101,7 @@ export class DiscogsClient {
      * @param {number} [level] - Optional authentication level
      * @returns {boolean}
      */
-    authenticated(level: number = 0): boolean {
+    authenticated(level = 0): boolean {
         return typeof this.auth === 'object' && this.auth.level !== undefined && this.auth.level >= level;
     }
 
@@ -115,23 +115,21 @@ export class DiscogsClient {
      * await client.user().getIdentity();
      */
     getIdentity = (): Promise<RateLimitedResponse<GetIdentityResponse>> => {
-        // @ts-ignore
-        return this.get({ url: '/oauth/identity', authLevel: 2 });
+        return this.get({ url: '/oauth/identity', authLevel: 2 }) as Promise<RateLimitedResponse<GetIdentityResponse>>;
     };
 
     /**
      * Get info about the Discogs API and this client
      */
     async about() {
-        let clientInfo = {
+        const clientInfo = {
             version: version,
             userAgent: this.config.userAgent,
             authMethod: this.auth ? this.auth.method : 'none',
             authLevel: this.auth ? this.auth.level : 0,
         };
-        let { data, rateLimit } = await this.get('');
+        const { data, rateLimit } = await this.get('');
         if (data) {
-            // @ts-ignore
             return { ...data, rateLimit, disconnect: clientInfo };
         }
         return data;
@@ -148,19 +146,19 @@ export class DiscogsClient {
      * @param {RequestCallback} callback - Callback function receiving the data
      * @param {number} failedAttempts The amounts of times this request has been attempted but failed
      */
-    private rawRequest(options: RequestOptions, callback: RequestCallback, failedAttempts: number = 0) {
-        let data = options.data || null;
-        let method = options.method || 'GET';
-        let requestURL = new URL(options.url, `https://${this.config.host}`);
+    private rawRequest(options: RequestOptions, callback: RequestCallback, failedAttempts = 0) {
+        const data = options.data || null;
+        const method = options.method || 'GET';
+        const requestURL = new URL(options.url, `https://${this.config.host}`);
         requestURL.port = this.config.port.toString();
 
         // Build request headers
-        let headers = new Headers({
+        const headers = new Headers({
             'User-Agent': this.config.userAgent,
             Accept: `application/vnd.discogs.${this.config.apiVersion}.${this.config.outputFormat}+json`,
         });
 
-        let requestOptions: RequestInit = {
+        const requestOptions: RequestInit = {
             method: method,
             headers: headers,
         };
@@ -205,11 +203,11 @@ export class DiscogsClient {
 
         fetch(requestURL.toString(), requestOptions)
             .then(async res => {
-                let statusCode = res.status;
+                const statusCode = res.status;
 
                 if (statusCode === 429) {
                     if (failedAttempts < this.config.exponentialBackoffMaxRetries) {
-                        let waitMs =
+                        const waitMs =
                             this.config.exponentialBackoffIntervalMs *
                             Math.pow(this.config.exponentialBackoffRate, failedAttempts);
                         setTimeout(() => {
@@ -234,11 +232,14 @@ export class DiscogsClient {
                 }
 
                 // try parsing JSON response
-                let data: any = await res.json().catch(() => {});
+                const data: any = await res.json().catch(
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
+                    () => {}
+                );
 
                 if (statusCode > 399) {
                     // Unsuccessful HTTP status? Then pass an error to the callback
-                    let errorMessage = (data && data.message) || '';
+                    const errorMessage: string = (data && data.message) || '';
                     err = new DiscogsError(statusCode, errorMessage);
                 }
                 callback(err, data, rateLimit);
@@ -255,12 +256,12 @@ export class DiscogsClient {
      */
     async request(options: RequestOptions): Promise<{ data: unknown; rateLimit?: RateLimit }> {
         // By default, expect responses to be JSON
-        if (!options.hasOwnProperty('json')) {
+        if (!Object.prototype.hasOwnProperty.call(options, 'json')) {
             options.json = true;
         }
 
         return new Promise((resolve, reject) => {
-            let doRequest = () => {
+            const doRequest = () => {
                 this.rawRequest(options, function (err, data, rateLimit) {
                     if (err) return reject(err);
                     resolve({ data, rateLimit });

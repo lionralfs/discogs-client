@@ -191,8 +191,7 @@ export default function (client: DiscogsClient) {
          * await client.database().getArtist(108713);
          */
         getArtist: function (artist: number | string): Promise<RateLimitedResponse<GetArtistResponse>> {
-            // @ts-ignore
-            return client.get('/artists/' + artist);
+            return client.get('/artists/' + artist) as Promise<RateLimitedResponse<GetArtistResponse>>;
         },
 
         /**
@@ -210,9 +209,8 @@ export default function (client: DiscogsClient) {
             artist: number | string,
             params?: PaginationParameters & SortParameters<'year' | 'title' | 'format'>
         ): Promise<RateLimitedResponse<GetArtistReleasesResponses & PaginationResponse>> {
-            let path = `/artists/${artist}/releases?${toQueryString(params)}`;
-            // @ts-ignore
-            return client.get(path);
+            const path = `/artists/${artist}/releases?${toQueryString(params)}`;
+            return client.get(path) as Promise<RateLimitedResponse<GetArtistReleasesResponses & PaginationResponse>>;
         },
 
         /**
@@ -237,8 +235,7 @@ export default function (client: DiscogsClient) {
             if (currency !== undefined) {
                 path += `?${toQueryString({ curr_abbr: currency })}`;
             }
-            // @ts-ignore
-            return client.get(path);
+            return client.get(path) as Promise<RateLimitedResponse<GetReleaseResponse>>;
         },
 
         /**
@@ -256,8 +253,9 @@ export default function (client: DiscogsClient) {
             release: number | string,
             user: string
         ): Promise<RateLimitedResponse<GetReleaseRatingResponse>> {
-            // @ts-ignore
-            return client.get(`/releases/${release}/rating/${escape(user)}`);
+            return client.get(`/releases/${release}/rating/${escape(user)}`) as Promise<
+                RateLimitedResponse<GetReleaseRatingResponse>
+            >;
         },
 
         /**
@@ -281,13 +279,13 @@ export default function (client: DiscogsClient) {
             user: string,
             rating: 1 | 2 | 3 | 4 | 5 | null
         ): Promise<RateLimitedResponse<GetReleaseRatingResponse | void>> {
-            let url = `/releases/${release}/rating/${escape(user)}`;
+            const url = `/releases/${release}/rating/${escape(user)}`;
             if (!rating) {
-                // @ts-ignore
-                return client.delete({ url: url, authLevel: 2 });
+                return client.delete({ url: url, authLevel: 2 }) as Promise<RateLimitedResponse<void>>;
             } else {
-                // @ts-ignore
-                return client.put({ url: url, authLevel: 2 }, { rating: rating > 5 ? 5 : rating });
+                return client.put({ url: url, authLevel: 2 }, { rating: rating > 5 ? 5 : rating }) as Promise<
+                    RateLimitedResponse<GetReleaseRatingResponse>
+                >;
             }
         },
 
@@ -304,9 +302,8 @@ export default function (client: DiscogsClient) {
         getReleaseCommunityRating: function (
             release: number | string
         ): Promise<RateLimitedResponse<GetReleaseCommunityRatingResponse>> {
-            let path = `/releases/${release}/rating`;
-            // @ts-ignore
-            return client.get(path);
+            const path = `/releases/${release}/rating`;
+            return client.get(path) as Promise<RateLimitedResponse<GetReleaseCommunityRatingResponse>>;
         },
 
         /**
@@ -321,9 +318,8 @@ export default function (client: DiscogsClient) {
          * await client.database().getReleaseStats(249504);
          */
         getReleaseStats: function (release: number | string): Promise<RateLimitedResponse<GetReleaseStatsResponse>> {
-            let path = `/releases/${release}/stats`;
-            // @ts-ignore
-            return client.get(path);
+            const path = `/releases/${release}/stats`;
+            return client.get(path) as Promise<RateLimitedResponse<GetReleaseStatsResponse>>;
         },
 
         /**
@@ -337,8 +333,7 @@ export default function (client: DiscogsClient) {
          * await client.database().getMaster(1000);
          */
         getMaster: function (master: number | string): Promise<RateLimitedResponse<GetMasterResponse>> {
-            // @ts-ignore
-            return client.get(`/masters/${master}`);
+            return client.get(`/masters/${master}`) as Promise<RateLimitedResponse<GetMasterResponse>>;
         },
 
         /**
@@ -370,9 +365,8 @@ export default function (client: DiscogsClient) {
                     >
                 >
         ): Promise<RateLimitedResponse<GetMasterVersionsResponse & PaginationResponse>> {
-            let path = `/masters/${master}/versions?${toQueryString(params)}`;
-            // @ts-ignore
-            return client.get(path);
+            const path = `/masters/${master}/versions?${toQueryString(params)}`;
+            return client.get(path) as Promise<RateLimitedResponse<GetMasterVersionsResponse & PaginationResponse>>;
         },
 
         /**
@@ -386,8 +380,7 @@ export default function (client: DiscogsClient) {
          * await client.database().getLabel(1)
          */
         getLabel: function (label: number | string): Promise<RateLimitedResponse<GetLabelResponse>> {
-            // @ts-ignore
-            return client.get(`/labels/${label}`);
+            return client.get(`/labels/${label}`) as Promise<RateLimitedResponse<GetLabelResponse>>;
         },
 
         /**
@@ -405,9 +398,8 @@ export default function (client: DiscogsClient) {
             label: number | string,
             params?: PaginationParameters
         ): Promise<RateLimitedResponse<GetLabelReleasesResponse & PaginationResponse>> {
-            let path = `/labels/${label}/releases?${toQueryString(params)}`;
-            // @ts-ignore
-            return client.get(path);
+            const path = `/labels/${label}/releases?${toQueryString(params)}`;
+            return client.get(path) as Promise<RateLimitedResponse<GetLabelReleasesResponse & PaginationResponse>>;
         },
 
         /**
@@ -443,14 +435,16 @@ export default function (client: DiscogsClient) {
         search: function (
             params: PaginationParameters & Partial<SearchParameters> = {}
         ): Promise<RateLimitedResponse<SearchResponse & PaginationResponse>> {
-            let args = { ...params };
+            const args = { ...params };
             if (args.query) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 args.q = args.query;
                 delete args.query;
             }
-            // @ts-ignore
-            return client.get({ url: `/database/search?${toQueryString(args)}`, authLevel: 1 });
+            return client.get({ url: `/database/search?${toQueryString(args)}`, authLevel: 1 }) as Promise<
+                RateLimitedResponse<SearchResponse & PaginationResponse>
+            >;
         },
     };
 }

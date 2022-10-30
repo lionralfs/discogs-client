@@ -98,8 +98,7 @@ export default function (client: DiscogsClient) {
          * await client.user().getProfile('rodneyfool');
          */
         getProfile: function (username: string): Promise<RateLimitedResponse<GetProfileResponse>> {
-            // @ts-ignore
-            return client.get(`/users/${escape(username)}`);
+            return client.get(`/users/${escape(username)}`) as Promise<RateLimitedResponse<GetProfileResponse>>;
         },
 
         /**
@@ -123,8 +122,7 @@ export default function (client: DiscogsClient) {
             username: string,
             data: Partial<{ name: string; home_page: string; location: string; profile: string; curr_abbr: Currency }>
         ): Promise<RateLimitedResponse<GetProfileResponse>> {
-            // @ts-ignore
-            return client.post(`/users/${escape(username)}`, data);
+            return client.post(`/users/${escape(username)}`, data) as Promise<RateLimitedResponse<GetProfileResponse>>;
         },
 
         /**
@@ -146,9 +144,8 @@ export default function (client: DiscogsClient) {
                     'listed' | 'price' | 'item' | 'artist' | 'label' | 'catno' | 'audio' | 'status' | 'location'
                 >
         ): Promise<RateLimitedResponse<GetInventoryResponse & PaginationResponse>> {
-            let path = `/users/${escape(user)}/inventory?${toQueryString(params)}`;
-            // @ts-ignore
-            return client.get(path);
+            const path = `/users/${escape(user)}/inventory?${toQueryString(params)}`;
+            return client.get(path) as Promise<RateLimitedResponse<GetInventoryResponse & PaginationResponse>>;
         },
 
         /**
@@ -201,9 +198,8 @@ export default function (client: DiscogsClient) {
             params?: PaginationParameters &
                 SortParameters<'label' | 'artist' | 'title' | 'catno' | 'format' | 'rating' | 'year' | 'added'>
         ): Promise<RateLimitedResponse<GetContributionsResponse & PaginationResponse>> {
-            let path = `/users/${escape(user)}/contributions?${toQueryString(params)}`;
-            // @ts-ignore
-            return client.get(path);
+            const path = `/users/${escape(user)}/contributions?${toQueryString(params)}`;
+            return client.get(path) as Promise<RateLimitedResponse<GetContributionsResponse & PaginationResponse>>;
         },
 
         /**
@@ -221,9 +217,8 @@ export default function (client: DiscogsClient) {
             user: string,
             params?: PaginationParameters
         ): Promise<RateLimitedResponse<PaginationResponse & GetSubmissionsResponse>> {
-            let path = `/users/${escape(user)}/submissions?${toQueryString(params)}`;
-            // @ts-ignore
-            return client.get(path);
+            const path = `/users/${escape(user)}/submissions?${toQueryString(params)}`;
+            return client.get(path) as Promise<RateLimitedResponse<PaginationResponse & GetSubmissionsResponse>>;
         },
 
         /**
@@ -241,9 +236,8 @@ export default function (client: DiscogsClient) {
             user: string,
             params?: PaginationParameters
         ): Promise<RateLimitedResponse<PaginationResponse & GetListsResponse>> {
-            let path = `/users/${escape(user)}/lists?${toQueryString(params)}`;
-            // @ts-ignore
-            return client.get(path);
+            const path = `/users/${escape(user)}/lists?${toQueryString(params)}`;
+            return client.get(path) as Promise<RateLimitedResponse<PaginationResponse & GetListsResponse>>;
         },
     };
 }

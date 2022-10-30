@@ -1,3 +1,11 @@
+# 2.0.2 / 2022-10-30
+
+-   Updated dependencies
+
+# 2.0.1 / 2022-09-18
+
+-   Updated dependencies
+
 # 2.0.0 / 2022-05-21
 
 -   Initial fork release. Includes large refactoring:

@@ -38,9 +38,8 @@ export default function (client: DiscogsClient) {
          * await client.user().list().getItems(123)
          */
         getItems: function (list: number | string): Promise<RateLimitedResponse<GetListItemsResponse>> {
-            let path = `/lists/${escape(list.toString())}`;
-            // @ts-ignore
-            return client.get(path);
+            const path = `/lists/${escape(list.toString())}`;
+            return client.get(path) as Promise<RateLimitedResponse<GetListItemsResponse>>;
         },
     };
 }

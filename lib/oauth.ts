@@ -27,13 +27,13 @@ export class DiscogsOAuth {
      * Get an OAuth request token from Discogs
      */
     async getRequestToken(callbackUrl: string) {
-        let consumerKey = this.consumerKey;
-        let consumerSecret = this.consumerSecret;
+        const consumerKey = this.consumerKey;
+        const consumerSecret = this.consumerSecret;
 
-        let timestamp = Date.now();
-        let nonce = crypto.randomBytes(64).toString('hex');
+        const timestamp = Date.now();
+        const nonce = crypto.randomBytes(64).toString('hex');
 
-        let resp = await fetch('https://api.discogs.com/oauth/request_token', {
+        const resp = await fetch('https://api.discogs.com/oauth/request_token', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -48,12 +48,14 @@ export class DiscogsOAuth {
             let message = 'Unknown Error.';
             try {
                 message = await resp.text();
-            } catch (_) {}
+            } catch (_) {
+                // eslint-disable-next-line no-empty
+            }
             throw new DiscogsError(resp.status, message);
         }
-        let responseBody = await resp.text();
-        let searchParams = new URLSearchParams(responseBody);
-        let token = searchParams.get('oauth_token');
+        const responseBody = await resp.text();
+        const searchParams = new URLSearchParams(responseBody);
+        const token = searchParams.get('oauth_token');
         return {
             token: token,
             tokenSecret: searchParams.get('oauth_token_secret'),
@@ -69,13 +71,13 @@ export class DiscogsOAuth {
      * @param {string} verifier - The OAuth 1.0a verification code returned by Discogs
      */
     async getAccessToken(token: string, tokenSecret: string, verifier: string) {
-        let consumerKey = this.consumerKey;
-        let consumerSecret = this.consumerSecret;
+        const consumerKey = this.consumerKey;
+        const consumerSecret = this.consumerSecret;
 
-        let timestamp = Date.now();
-        let nonce = crypto.randomBytes(64).toString('hex');
+        const timestamp = Date.now();
+        const nonce = crypto.randomBytes(64).toString('hex');
 
-        let resp = await fetch('https://api.discogs.com/oauth/access_token', {
+        const resp = await fetch('https://api.discogs.com/oauth/access_token', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -88,11 +90,13 @@ export class DiscogsOAuth {
             let message = 'Unknown Error.';
             try {
                 message = await resp.text();
-            } catch (_) {}
+            } catch (_) {
+                // eslint-disable-next-line no-empty
+            }
             throw new DiscogsError(resp.status, message);
         }
-        let responseBody = await resp.text();
-        let searchParams = new URLSearchParams(responseBody);
+        const responseBody = await resp.text();
+        const searchParams = new URLSearchParams(responseBody);
         return {
             accessToken: searchParams.get('oauth_token'),
             accessTokenSecret: searchParams.get('oauth_token_secret'),
@@ -106,7 +110,7 @@ export function toAuthHeader(
     accessToken: string,
     accessTokenSecret: string
 ) {
-    let nonce = crypto.randomBytes(64).toString('hex');
-    let timestamp = Date.now();
+    const nonce = crypto.randomBytes(64).toString('hex');
+    const timestamp = Date.now();
     return `OAuth oauth_consumer_key="${consumerKey}", oauth_token="${accessToken}", oauth_signature_method="PLAINTEXT", oauth_signature="${consumerSecret}&${accessTokenSecret}", oauth_timestamp="${timestamp}", oauth_nonce="${nonce}", oauth_token_secret="${accessTokenSecret}", oauth_version="1.0"`;
 }

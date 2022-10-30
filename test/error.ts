@@ -7,14 +7,14 @@ import { setupMockAPI } from './_setup.js';
 const server = setupMockAPI();
 
 test('Error: Test DiscogsError', t => {
-    let discogsError = new DiscogsError(403, 'Test');
+    const discogsError = new DiscogsError(403, 'Test');
     // t.true(discogsError instanceof DiscogsError, 'Instance of DiscogsError');
     t.true(discogsError instanceof Error, 'Instance of Error');
     t.is(discogsError.statusCode, 403, 'Status code === 403');
 });
 
 test('Error: Test AuthError', t => {
-    let authError = new AuthError();
+    const authError = new AuthError();
     // t.true(authError instanceof AuthError, 'Instance of AuthError');
     t.true(authError instanceof Error, 'Instance of Error');
     t.is(authError.statusCode, 401, 'Status code === 401');
@@ -30,7 +30,7 @@ test.serial('Error: Passed an instance of DiscogsError when bad status code', as
         })
     );
 
-    let client = new DiscogsClient();
+    const client = new DiscogsClient();
     try {
         await client.database().getLabelReleases(1123123123123, { page: 3, per_page: 25 });
     } catch (err: any) {
