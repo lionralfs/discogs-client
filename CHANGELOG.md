@@ -1,3 +1,7 @@
+# 3.0.0 / 2022-10-30
+
+-   Removed Node.js 12 support
+
 # 2.0.2 / 2022-10-30
 
 -   Updated dependencies
