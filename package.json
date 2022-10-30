@@ -53,7 +53,7 @@
         "typescript": "^4.5.4"
     },
     "engines": {
-        "node": ">=12"
+        "node": ">=14"
     },
     "lint-staged": {
         "*.{js,md,json}": "prettier --write"
