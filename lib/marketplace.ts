@@ -103,8 +103,7 @@ export default function (client: DiscogsClient) {
             if (currency !== undefined) {
                 path += `?${toQueryString({ curr_abbr: currency })}`;
             }
-            // @ts-ignore
-            return client.get(path);
+            return client.get(path) as Promise<RateLimitedResponse<Listing>>;
         },
 
         /**
@@ -140,8 +139,9 @@ export default function (client: DiscogsClient) {
                 format_quantity: number | 'auto';
             }>
         ): Promise<RateLimitedResponse<AddListingResponse>> {
-            // @ts-ignore
-            return client.post({ url: '/marketplace/listings', authLevel: 2 }, data);
+            return client.post({ url: '/marketplace/listings', authLevel: 2 }, data) as Promise<
+                RateLimitedResponse<AddListingResponse>
+            >;
         },
 
         /**
@@ -179,8 +179,9 @@ export default function (client: DiscogsClient) {
                 format_quantity: number | 'auto';
             }>
         ): Promise<RateLimitedResponse<void>> {
-            // @ts-ignore
-            return client.post({ url: `/marketplace/listings/${listing}`, authLevel: 2 }, data);
+            return client.post({ url: `/marketplace/listings/${listing}`, authLevel: 2 }, data) as Promise<
+                RateLimitedResponse<void>
+            >;
         },
 
         /**
@@ -194,8 +195,9 @@ export default function (client: DiscogsClient) {
          * await client.marketplace().deleteListing(172723812);
          */
         deleteListing: function (listing: number): Promise<RateLimitedResponse<void>> {
-            // @ts-ignore
-            return client.delete({ url: `/marketplace/listings/${listing}`, authLevel: 2 });
+            return client.delete({ url: `/marketplace/listings/${listing}`, authLevel: 2 }) as Promise<
+                RateLimitedResponse<void>
+            >;
         },
 
         /**
@@ -218,13 +220,19 @@ export default function (client: DiscogsClient) {
          * });
          */
         getOrders: function (
-            params?: Partial<{ status: OrderStatus; created_after: string; created_before: string; archived: boolean }> &
+            params?: Partial<{
+                status: OrderStatus;
+                created_after: string;
+                created_before: string;
+                archived: boolean;
+            }> &
                 PaginationParameters &
                 SortParameters<'id' | 'buyer' | 'created' | 'status' | 'last_activity'>
         ): Promise<RateLimitedResponse<PaginationResponse & { orders: Array<GetOrderResponse> }>> {
-            let path = `/marketplace/orders?${toQueryString(params)}`;
-            // @ts-ignore
-            return client.get({ url: path, authLevel: 2 });
+            const path = `/marketplace/orders?${toQueryString(params)}`;
+            return client.get({ url: path, authLevel: 2 }) as Promise<
+                RateLimitedResponse<PaginationResponse & { orders: Array<GetOrderResponse> }>
+            >;
         },
 
         /**
@@ -238,8 +246,9 @@ export default function (client: DiscogsClient) {
          * await client.marketplace().getOrder(1);
          */
         getOrder: function (order: number): Promise<RateLimitedResponse<GetOrderResponse>> {
-            // @ts-ignore
-            return client.get({ url: `/marketplace/orders/${order}`, authLevel: 2 });
+            return client.get({ url: `/marketplace/orders/${order}`, authLevel: 2 }) as Promise<
+                RateLimitedResponse<GetOrderResponse>
+            >;
         },
 
         /**
@@ -257,8 +266,9 @@ export default function (client: DiscogsClient) {
             order: number,
             data: Partial<{ status: OrderStatus; shipping: number }>
         ): Promise<RateLimitedResponse<GetOrderResponse>> {
-            // @ts-ignore
-            return client.post({ url: `/marketplace/orders/${order}`, authLevel: 2 }, data);
+            return client.post({ url: `/marketplace/orders/${order}`, authLevel: 2 }, data) as Promise<
+                RateLimitedResponse<GetOrderResponse>
+            >;
         },
 
         /**
@@ -276,9 +286,10 @@ export default function (client: DiscogsClient) {
             order: number,
             params?: PaginationParameters
         ): Promise<RateLimitedResponse<PaginationResponse & { messages: Array<OrderMessage> }>> {
-            let path = `/marketplace/orders/${order}/messages?${toQueryString(params)}`;
-            // @ts-ignore
-            return client.get({ url: path, authLevel: 2 });
+            const path = `/marketplace/orders/${order}/messages?${toQueryString(params)}`;
+            return client.get({ url: path, authLevel: 2 }) as Promise<
+                RateLimitedResponse<PaginationResponse & { messages: Array<OrderMessage> }>
+            >;
         },
 
         /**
@@ -296,8 +307,9 @@ export default function (client: DiscogsClient) {
             order: number,
             data: Partial<{ message: string; status: OrderStatus }>
         ): Promise<RateLimitedResponse<OrderMessage>> {
-            // @ts-ignore
-            return client.post({ url: '/marketplace/orders/' + order + '/messages', authLevel: 2 }, data);
+            return client.post({ url: '/marketplace/orders/' + order + '/messages', authLevel: 2 }, data) as Promise<
+                RateLimitedResponse<OrderMessage>
+            >;
         },
 
         /**
@@ -319,8 +331,7 @@ export default function (client: DiscogsClient) {
                 // Get the fee in a given currency
                 path += '/' + currency;
             }
-            // @ts-ignore
-            return client.get(path);
+            return client.get(path) as Promise<RateLimitedResponse<Price>>;
         },
 
         /**
@@ -334,8 +345,9 @@ export default function (client: DiscogsClient) {
          * await client.marketplace().getPriceSuggestions(10);
          */
         getPriceSuggestions: function (release: number): Promise<RateLimitedResponse<Record<Condition, Price>>> {
-            // @ts-ignore
-            return client.get({ url: `/marketplace/price_suggestions/${release}`, authLevel: 2 });
+            return client.get({ url: `/marketplace/price_suggestions/${release}`, authLevel: 2 }) as Promise<
+                RateLimitedResponse<Record<Condition, Price>>
+            >;
         },
 
         /**
@@ -360,8 +372,7 @@ export default function (client: DiscogsClient) {
             if (currency) {
                 path += `?${toQueryString({ curr_abbr: currency })}`;
             }
-            // @ts-ignore
-            return client.get({ url: path });
+            return client.get({ url: path }) as Promise<RateLimitedResponse<GetReleaseStatsResponse>>;
         },
     };
 }

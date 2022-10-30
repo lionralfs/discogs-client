@@ -13,7 +13,7 @@ test.serial('Collection: Test get all folders', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient();
+    const client = new DiscogsClient();
     await client.user().collection().getFolders('rodneyfool');
 });
 
@@ -25,7 +25,7 @@ test.serial('Collection: Test folder creation', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
+    const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.user().collection().addFolder('rodneyfool', 'My favorites');
 });
 
@@ -37,7 +37,7 @@ test.serial('Collection: Get folder metadata', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
+    const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.user().collection().getFolder('rodneyfool', 3);
 });
 
@@ -49,12 +49,12 @@ test.serial('Collection: Get folder metadata (no auth required for public folder
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient();
+    const client = new DiscogsClient();
     await client.user().collection().getFolder('rodneyfool', 0);
 });
 
 test('Collection: Get folder metadata (throws auth error)', async t => {
-    let client = new DiscogsClient();
+    const client = new DiscogsClient();
     await t.throwsAsync(client.user().collection().getFolder('rodneyfool', 1234));
 });
 
@@ -66,7 +66,7 @@ test.serial('Collection: Edit folder name', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
+    const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.user().collection().setFolderName('rodneyfool', 3, 'New Name');
 });
 
@@ -78,7 +78,7 @@ test.serial('Collection: Delete folder', async t => {
             return res(ctx.status(204));
         })
     );
-    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
+    const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.user().collection().deleteFolder('rodneyfool', 3);
 });
 
@@ -90,7 +90,7 @@ test.serial('Collection: Get instances of release in collection', async t => {
             return res(ctx.status(200));
         })
     );
-    let client = new DiscogsClient();
+    const client = new DiscogsClient();
     await client.user().collection().getReleaseInstances('susan.salkeld', 7781525);
 });
 
@@ -108,7 +108,7 @@ test.serial('Collection: Collection items by folder', async t => {
             return res(ctx.status(200));
         })
     );
-    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
+    const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.user().collection().getReleases('rodneyfool', 3, { sort: 'artist', sort_order: 'desc' });
 });
 
@@ -126,13 +126,13 @@ test.serial('Collection: Collection items by folder (default doesnt need auth)',
             return res(ctx.status(200));
         })
     );
-    let client = new DiscogsClient();
+    const client = new DiscogsClient();
     await client.user().collection().getReleases('rodneyfool', '0', { sort: 'artist', sort_order: 'desc' });
 });
 
 test('Collection: Collection items by folder (throws auth error)', async t => {
     t.plan(1);
-    let client = new DiscogsClient();
+    const client = new DiscogsClient();
     await t.throwsAsync(
         client.user().collection().getReleases('rodneyfool', '1234', { sort: 'artist', sort_order: 'desc' })
     );
@@ -146,7 +146,7 @@ test.serial('Collection: Add release to folder', async t => {
             return res(ctx.status(201));
         })
     );
-    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
+    const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.user().collection().addRelease('rodneyfool', 130076, 3);
 });
 
@@ -161,7 +161,7 @@ test.serial('Collection: Edit release', async t => {
             }
         )
     );
-    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
+    const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.user().collection().editRelease('rodneyfool', 4, 130076, 1, { rating: 5, folder_id: 16 });
 });
 
@@ -176,7 +176,7 @@ test.serial('Collection: Delete release from folder', async t => {
             }
         )
     );
-    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
+    const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.user().collection().removeRelease('rodneyfool', 3, 130076, 1);
 });
 
@@ -188,22 +188,23 @@ test.serial('Collection: Get collection note fields', async t => {
             return res(ctx.status(200));
         })
     );
-    let client = new DiscogsClient();
+    const client = new DiscogsClient();
     await client.user().collection().getFields('rodneyfool');
 });
 
 test.serial('Collection: Update note on instance', async t => {
-    t.plan(1);
+    t.plan(2);
     server.use(
         rest.post(
             'https://api.discogs.com/users/rodneyfool/collection/folders/3/releases/130076/instances/1/fields/8',
             (req, res, ctx) => {
                 t.is(req.url.searchParams.get('value'), 'foo');
+                t.deepEqual(req.body, '');
                 return res(ctx.status(204));
             }
         )
     );
-    let client = new DiscogsClient();
+    const client = new DiscogsClient();
     await client.user().collection().editInstanceNote('rodneyfool', 3, 130076, 1, 8, 'foo');
 });
 
@@ -215,6 +216,6 @@ test.serial('Collection: Get collection value', async t => {
             return res(ctx.status(204));
         })
     );
-    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
+    const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.user().collection().getValue('rodneyfool');
 });

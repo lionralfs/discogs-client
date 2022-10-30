@@ -15,7 +15,7 @@ test('DiscogsClient: Test authenticated()', t => {
 
 test('DiscogsClient: Test setConfig with exponential backoff parameters', t => {
     // Given
-    let client = new DiscogsClient();
+    const client = new DiscogsClient();
 
     // When
     client.setConfig({
@@ -26,12 +26,9 @@ test('DiscogsClient: Test setConfig with exponential backoff parameters', t => {
 
     // Then
 
-    // @ts-ignore
-    t.is(client.config.exponentialBackoffMaxRetries, 333);
-    // @ts-ignore
-    t.is(client.config.exponentialBackoffIntervalMs, 444);
-    // @ts-ignore
-    t.is(client.config.exponentialBackoffRate, 555);
+    t.is(client['config'].exponentialBackoffMaxRetries, 333);
+    t.is(client['config'].exponentialBackoffIntervalMs, 444);
+    t.is(client['config'].exponentialBackoffRate, 555);
 });
 
 test.serial('DiscogsClient: Test get()', async t => {
@@ -42,7 +39,7 @@ test.serial('DiscogsClient: Test get()', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient();
+    const client = new DiscogsClient();
     await client.get({ url: '/labels/1' });
 });
 
@@ -54,7 +51,7 @@ test.serial('DiscogsClient: Test custom configuration', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient().setConfig({ host: 'www.example.com' });
+    const client = new DiscogsClient().setConfig({ host: 'www.example.com' });
     await client.get({ url: '/labels/1' });
 });
 
@@ -66,7 +63,7 @@ test.serial('DiscogsClient: Media Types (none, default)', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient();
+    const client = new DiscogsClient();
     await client.about();
 });
 
@@ -78,7 +75,7 @@ test.serial('DiscogsClient: Media Types (html)', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient().setConfig({ outputFormat: 'html' });
+    const client = new DiscogsClient().setConfig({ outputFormat: 'html' });
     await client.about();
 });
 
@@ -90,7 +87,7 @@ test.serial('DiscogsClient: Media Types (plaintext)', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient().setConfig({ outputFormat: 'plaintext' });
+    const client = new DiscogsClient().setConfig({ outputFormat: 'plaintext' });
     await client.about();
 });
 
@@ -114,7 +111,7 @@ test.serial('DiscogsClient: User Agent (custom)', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient({ userAgent: 'MyDiscogsClient/1.0 +https://example.org' });
+    const client = new DiscogsClient({ userAgent: 'MyDiscogsClient/1.0 +https://example.org' });
     await client.about();
 });
 
@@ -126,12 +123,12 @@ test.serial('DiscogsClient: Auth (userToken)', async t => {
             return res(ctx.status(200), ctx.json({}));
         })
     );
-    let client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
+    const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     await client.getIdentity();
 });
 
 test('DiscogsClient: Auth (Full OAuth)', t => {
-    let client = new DiscogsClient({
+    const client = new DiscogsClient({
         auth: {
             method: 'oauth',
             consumerKey: 'consumerKey',
@@ -141,22 +138,18 @@ test('DiscogsClient: Auth (Full OAuth)', t => {
         },
     });
 
-    t.deepEqual(
-        // @ts-ignore
-        client.auth,
-        {
-            method: 'oauth',
-            level: 2,
-            consumerKey: 'consumerKey',
-            consumerSecret: 'consumerSecret',
-            accessToken: 'accessToken',
-            accessTokenSecret: 'accessTokenSecret',
-        }
-    );
+    t.deepEqual(client['auth'], {
+        method: 'oauth',
+        level: 2,
+        consumerKey: 'consumerKey',
+        consumerSecret: 'consumerSecret',
+        accessToken: 'accessToken',
+        accessTokenSecret: 'accessTokenSecret',
+    });
 });
 
 test('DiscogsClient: Auth (OAuth without tokens)', t => {
-    let client = new DiscogsClient({
+    const client = new DiscogsClient({
         auth: {
             method: 'oauth',
             consumerKey: 'consumerKey',
@@ -164,16 +157,12 @@ test('DiscogsClient: Auth (OAuth without tokens)', t => {
         },
     });
 
-    t.deepEqual(
-        // @ts-ignore
-        client.auth,
-        {
-            method: 'oauth',
-            level: 1,
-            consumerKey: 'consumerKey',
-            consumerSecret: 'consumerSecret',
-        }
-    );
+    t.deepEqual(client['auth'], {
+        method: 'oauth',
+        level: 1,
+        consumerKey: 'consumerKey',
+        consumerSecret: 'consumerSecret',
+    });
 });
 
 test.serial('DiscogsClient: Sends OAuth header', async t => {
@@ -186,7 +175,7 @@ test.serial('DiscogsClient: Sends OAuth header', async t => {
         })
     );
 
-    let client = new DiscogsClient({
+    const client = new DiscogsClient({
         auth: {
             method: 'oauth',
             consumerKey: 'consumerKey',
@@ -217,7 +206,7 @@ test.serial('DiscogsClient: Retrieves and passes rate limit info to caller', asy
         })
     );
 
-    let client = new DiscogsClient({
+    const client = new DiscogsClient({
         auth: {
             method: 'oauth',
             consumerKey: 'consumerKey',
@@ -227,12 +216,8 @@ test.serial('DiscogsClient: Retrieves and passes rate limit info to caller', asy
         },
     });
 
-    let resp = await client.getIdentity();
-    t.deepEqual(resp, {
-        rateLimit: { limit: 60, used: 23, remaining: 37 },
-        // @ts-ignore
-        data: {},
-    });
+    const resp = await client.getIdentity();
+    t.deepEqual(resp.rateLimit, { limit: 60, used: 23, remaining: 37 });
 });
 
 test.serial('DiscogsClient: Retries when rate limited', async t => {
@@ -267,15 +252,17 @@ test.serial('DiscogsClient: Retries when rate limited', async t => {
         })
     );
 
-    let client = new DiscogsClient({ auth: { userToken: 'fake-token' } });
+    const client = new DiscogsClient({ auth: { userToken: 'fake-token' } });
     client.setConfig({ exponentialBackoffMaxRetries: 1, exponentialBackoffIntervalMs: 100, exponentialBackoffRate: 2 });
 
-    let resp = await client.getIdentity();
-    t.deepEqual(
-        resp.data,
-        // @ts-ignore
-        { message: "you're good" }
-    );
+    type FakeResponse = {
+        data: {
+            message: string;
+        };
+    };
+
+    const resp = (await client.getIdentity()) as unknown as FakeResponse;
+    t.deepEqual(resp.data, { message: "you're good" });
 });
 
 test.serial('DiscogsClient: Throws when retrying but end of retries is reached', async t => {
@@ -310,9 +297,9 @@ test.serial('DiscogsClient: Throws when retrying but end of retries is reached',
         })
     );
 
-    let client = new DiscogsClient({ auth: { userToken: 'fake-token' } });
+    const client = new DiscogsClient({ auth: { userToken: 'fake-token' } });
     client.setConfig({ exponentialBackoffMaxRetries: 1, exponentialBackoffIntervalMs: 100, exponentialBackoffRate: 2 });
 
-    let err = await t.throwsAsync(() => client.getIdentity());
+    const err = await t.throwsAsync(() => client.getIdentity());
     t.is(err?.message, "you're rate limited 2");
 });

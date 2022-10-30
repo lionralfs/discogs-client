@@ -12,7 +12,7 @@ test.serial('OAuth: Get a request token', async t => {
     server.use(
         rest.get('https://api.discogs.com/oauth/request_token', (req, res, ctx) => {
             t.is(req.headers.get('Content-Type'), 'application/x-www-form-urlencoded');
-            let authHeader = req.headers.get('Authorization');
+            const authHeader = req.headers.get('Authorization');
             t.regex(
                 authHeader as string,
                 /^OAuth oauth_consumer_key="consumer_key", oauth_nonce=".+", oauth_signature="consumer_secret&", oauth_signature_method="PLAINTEXT", oauth_timestamp="\d+", oauth_callback="https%3A%2F%2Fexample.com%2Foauth_callback_endpoint"$/
@@ -25,8 +25,8 @@ test.serial('OAuth: Get a request token', async t => {
         })
     );
 
-    let oauth = new DiscogsOAuth('consumer_key', 'consumer_secret');
-    let response = await oauth.getRequestToken('https://example.com/oauth_callback_endpoint');
+    const oauth = new DiscogsOAuth('consumer_key', 'consumer_secret');
+    const response = await oauth.getRequestToken('https://example.com/oauth_callback_endpoint');
     t.deepEqual(response, {
         token: 'some-token',
         tokenSecret: 'some-token-secret',
@@ -44,7 +44,7 @@ test.serial('OAuth: Get a request token (error)', async t => {
         })
     );
 
-    let oauth = new DiscogsOAuth('invalid_key', 'invalid_secret');
+    const oauth = new DiscogsOAuth('invalid_key', 'invalid_secret');
 
     await t.throwsAsync(() => oauth.getRequestToken('https://example.com/oauth_callback_endpoint'), {
         instanceOf: DiscogsError,
@@ -58,7 +58,7 @@ test.serial('OAuth: Get an access token', async t => {
     server.use(
         rest.post('https://api.discogs.com/oauth/access_token', (req, res, ctx) => {
             t.is(req.headers.get('Content-Type'), 'application/x-www-form-urlencoded');
-            let authHeader = req.headers.get('Authorization');
+            const authHeader = req.headers.get('Authorization');
             t.regex(
                 authHeader as string,
                 /^OAuth oauth_consumer_key="consumer_key", oauth_nonce=".+", oauth_token="oauth_token_received_from_step_2", oauth_signature="consumer_secret&token_secret", oauth_signature_method="PLAINTEXT", oauth_timestamp="\d+", oauth_verifier="users_verifier"$/
@@ -68,8 +68,8 @@ test.serial('OAuth: Get an access token', async t => {
         })
     );
 
-    let oauth = new DiscogsOAuth('consumer_key', 'consumer_secret');
-    let response = await oauth.getAccessToken('oauth_token_received_from_step_2', 'token_secret', 'users_verifier');
+    const oauth = new DiscogsOAuth('consumer_key', 'consumer_secret');
+    const response = await oauth.getAccessToken('oauth_token_received_from_step_2', 'token_secret', 'users_verifier');
     t.deepEqual(response, {
         accessToken: 'abc123',
         accessTokenSecret: 'xyz789',
@@ -85,7 +85,7 @@ test.serial('OAuth: Get an access token (error)', async t => {
         })
     );
 
-    let oauth = new DiscogsOAuth('consumer_key', 'consumer_secret');
+    const oauth = new DiscogsOAuth('consumer_key', 'consumer_secret');
     await t.throwsAsync(
         () => oauth.getAccessToken('oauth_token_received_from_step_2', 'token_secret', 'users_verifier'),
         {
