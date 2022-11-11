@@ -1,6 +1,6 @@
 import fetch, { Headers, RequestInit } from 'node-fetch';
 import { DiscogsError, AuthError } from './error.js';
-import { hasProperty, merge } from './util.js';
+import { merge } from './util.js';
 import database from './database.js';
 import marketplace from './marketplace.js';
 import user from './user.js';
@@ -14,6 +14,7 @@ import {
     type ClientConfig,
 } from './types.js';
 import { toAuthHeader } from './oauth.js';
+import { hasProperty } from './helpers-internal.js';
 
 const version = process.env.VERSION_NUMBER || 'dev';
 const homepage = 'https://github.com/lionralfs/discogs-client';
