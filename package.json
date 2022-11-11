@@ -37,12 +37,12 @@
         "node-fetch": "^3.2.0"
     },
     "devDependencies": {
+        "@esbuild-kit/esm-loader": "^2.5.0",
         "@typescript-eslint/eslint-plugin": "^5.41.0",
         "@typescript-eslint/parser": "^5.41.0",
         "ava": "^4.0.1",
         "c8": "^7.11.0",
         "esbuild": "^0.15.9",
-        "esbuild-node-loader": "^0.8.0",
         "esbuild-plugin-alias": "^0.2.1",
         "eslint": "^8.26.0",
         "husky": "^8.0.1",
@@ -82,7 +82,7 @@
             "ts": "module"
         },
         "nodeArguments": [
-            "--loader=esbuild-node-loader",
+            "--loader=@esbuild-kit/esm-loader",
             "--experimental-specifier-resolution=node"
         ]
     }
