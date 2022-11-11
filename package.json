@@ -25,7 +25,7 @@
         "test": "ava",
         "coverage": "c8 --reporter html ava",
         "prettier": "prettier --check **/**.{js,md,json}",
-        "lint": "eslint ./**/*.ts",
+        "lint": "eslint ./lib/**/*.ts",
         "declaration:build": "rm -rf types && tsc -p tsconfig.json",
         "clean": "rm -f commonjs/index.js && rm -f browser/index.js && rm -f node-esm/index.js",
         "build": "npm run declaration:build && npm run clean && npm run build:all",

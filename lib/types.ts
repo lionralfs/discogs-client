@@ -19,11 +19,11 @@ export type Auth = {
     accessTokenSecret: string;
 };
 export type RateLimit = { limit: number; used: number; remaining: number };
-export type RequestCallback = (err?: Error, data?: unknown, rateLimit?: RateLimit) => any;
+export type RequestCallback = (err?: Error, data?: unknown, rateLimit?: RateLimit) => void;
 export type RequestOptions = {
     url: string;
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
-    data?: Record<string, any>;
+    data?: Record<string, unknown>;
     json?: boolean;
     authLevel?: number;
 };

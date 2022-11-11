@@ -1,6 +1,6 @@
 import fetch, { Headers, RequestInit } from 'node-fetch';
 import { DiscogsError, AuthError } from './error.js';
-import { merge } from './util.js';
+import { hasProperty, merge } from './util.js';
 import database from './database.js';
 import marketplace from './marketplace.js';
 import user from './user.js';
@@ -185,9 +185,13 @@ export class DiscogsClient {
                 // - access token secret
 
                 authHeader = toAuthHeader(
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     this.auth.consumerKey!,
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     this.auth.consumerSecret!,
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     this.auth.accessToken!,
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     this.auth.accessTokenSecret!
                 );
             } else if (this.auth.method === 'discogs') {
@@ -232,15 +236,16 @@ export class DiscogsClient {
                 }
 
                 // try parsing JSON response
-                const data: any = await res.json().catch(
+                const data: unknown = await res.json().catch(
                     // eslint-disable-next-line @typescript-eslint/no-empty-function
                     () => {}
                 );
 
                 if (statusCode > 399) {
                     // Unsuccessful HTTP status? Then pass an error to the callback
-                    const errorMessage: string = (data && data.message) || '';
-                    err = new DiscogsError(statusCode, errorMessage);
+                    const message =
+                        hasProperty(data, 'message') && typeof data.message === 'string' ? data.message : '';
+                    err = new DiscogsError(statusCode, message);
                 }
                 callback(err, data, rateLimit);
             })
@@ -292,7 +297,7 @@ export class DiscogsClient {
     /**
      * Perform a POST request against the Discogs API
      * @param {string | RequestOptions} options - Request options object or an url
-     * @param {object} data - POST data
+     * @param {RequestOptions['data']} data - POST data
      * @returns {Promise<unknown>}
      */
     post(options: string | RequestOptions, data: RequestOptions['data']): Promise<unknown> {
@@ -307,10 +312,10 @@ export class DiscogsClient {
     /**
      * Perform a PUT request against the Discogs API
      * @param {string | RequestOptions} options - Request options object or an url
-     * @param {object} data - PUT data
+     * @param {RequestOptions['data']} data - PUT data
      * @returns {Promise<unknown>}
      */
-    put(options: string | RequestOptions, data: object): Promise<unknown> {
+    put(options: string | RequestOptions, data: RequestOptions['data']): Promise<unknown> {
         if (typeof options === 'string') {
             options = { url: options };
         }
@@ -331,14 +336,6 @@ export class DiscogsClient {
         options.method = 'DELETE';
         return this.request(options);
     }
-
-    /**
-     * Get an instance of the Discogs OAuth class
-     * @returns {DiscogsOAuth}
-     */
-    // oauth() {
-    //     return new OAuth(this.auth);
-    // }
 
     /**
      * Expose the database functions and pass the current instance

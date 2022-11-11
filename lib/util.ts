@@ -39,6 +39,8 @@ export function escape(str: string): string {
  * @param {object} source - The source object
  * @returns {object}
  */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function merge(target: Record<any, any>, source: Record<any, any>): Record<any, any> {
     for (const key in source) {
         if (source[key] && typeof source[key] === 'object') {
@@ -48,4 +50,8 @@ export function merge(target: Record<any, any>, source: Record<any, any>): Recor
         }
     }
     return target;
+}
+
+export function hasProperty<Property extends PropertyKey>(obj: unknown, prop: Property): obj is Record<Property, unknown> {
+    return typeof obj === 'object' && obj !== null && prop in obj;
 }
