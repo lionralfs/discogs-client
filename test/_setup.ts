@@ -1,6 +1,5 @@
-
 import test from 'ava';
-import { setupServer } from 'msw/node/lib/index.js';
+import { setupServer } from 'msw/node';
 
 export function setupMockAPI() {
     const server = setupServer();
