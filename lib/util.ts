@@ -8,11 +8,11 @@ export function stripVariation(name: string): string {
 }
 
 /**
- * Turns a sinple key-value object into a query string
+ * Turns a simple key-value object into a query string
  * @param {Record<string, string | number>} data - Data object containing the params
  * @returns {string}
  */
-export function toQueryString(data?: Record<string, string | number | boolean>): string {
+export function toQueryString(data?: Record<PropertyKey, string | number | boolean>): string {
     if (!data) {
         return '';
     }
@@ -50,8 +50,4 @@ export function merge(target: Record<any, any>, source: Record<any, any>): Recor
         }
     }
     return target;
-}
-
-export function hasProperty<Property extends PropertyKey>(obj: unknown, prop: Property): obj is Record<Property, unknown> {
-    return typeof obj === 'object' && obj !== null && prop in obj;
 }
