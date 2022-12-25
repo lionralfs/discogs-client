@@ -82,8 +82,7 @@
             "ts": "module"
         },
         "nodeArguments": [
-            "--loader=@esbuild-kit/esm-loader",
-            "--experimental-specifier-resolution=node"
+            "--loader=@esbuild-kit/esm-loader"
         ]
     }
 }
