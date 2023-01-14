@@ -7,6 +7,7 @@ import {
     type PaginationResponse,
     type Price,
     type Listing,
+    type SaleStatus,
 } from './types.js';
 import user from './user.js';
 import { toQueryString } from './util.js';
@@ -21,7 +22,6 @@ type Condition =
     | 'Fair (F)'
     | 'Poor (P)';
 type SleeveCondition = Condition | 'Generic' | 'Not Graded' | 'No Cover';
-type Status = 'Draft' | 'For Sale' | 'Expired';
 type OrderStatus =
     | 'New Order'
     | 'Buyer Contacted'
@@ -108,7 +108,7 @@ export default function (client: DiscogsClient) {
 
         /**
          * Create a marketplace listing
-         * @param {{release_id: number; condition: Condition; price: number; status: Status;} & Partial<{sleeve_condition: SleeveCondition; comments: string; allow_offers: boolean; external_id: string; location: string; weight: number | 'auto'; format_quantity: number | 'auto'}>} data - The data for the listing
+         * @param {{release_id: number; condition: Condition; price: number; status: SaleStatus;} & Partial<{sleeve_condition: SleeveCondition; comments: string; allow_offers: boolean; external_id: string; location: string; weight: number | 'auto'; format_quantity: number | 'auto'}>} data - The data for the listing
          * @returns {Promise<RateLimitedResponse<AddListingResponse>>}
          *
          * @see https://www.discogs.com/developers/#page:marketplace,header:marketplace-new-listing-post
@@ -129,7 +129,7 @@ export default function (client: DiscogsClient) {
          * });
          */
         addListing: function (
-            data: { release_id: number; condition: Condition; price: number; status: Status } & Partial<{
+            data: { release_id: number; condition: Condition; price: number; status: SaleStatus } & Partial<{
                 sleeve_condition: SleeveCondition;
                 comments: string;
                 allow_offers: boolean;
@@ -147,7 +147,7 @@ export default function (client: DiscogsClient) {
         /**
          * Edit a marketplace listing
          * @param {number} listing - The listing ID
-         * @param {{release_id: number; condition: Condition; price: number; status: Status} & Partial<{sleeve_condition: SleeveCondition; comments: string; allow_offers: boolean; external_id: string; location: string; weight: number | 'auto'; format_quantity: number | 'auto'}>} data - The data for the listing
+         * @param {{release_id: number; condition: Condition; price: number; status: SaleStatus} & Partial<{sleeve_condition: SleeveCondition; comments: string; allow_offers: boolean; external_id: string; location: string; weight: number | 'auto'; format_quantity: number | 'auto'}>} data - The data for the listing
          * @returns {Promise<RateLimitedResponse<void>>}
          *
          * @see https://www.discogs.com/developers/#page:marketplace,header:marketplace-listing-post
@@ -169,7 +169,7 @@ export default function (client: DiscogsClient) {
          */
         editListing: function (
             listing: number,
-            data: { release_id: number; condition: Condition; price: number; status: Status } & Partial<{
+            data: { release_id: number; condition: Condition; price: number; status: SaleStatus } & Partial<{
                 sleeve_condition: SleeveCondition;
                 comments: string;
                 allow_offers: boolean;
