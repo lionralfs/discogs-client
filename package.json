@@ -42,7 +42,7 @@
         "@typescript-eslint/parser": "^5.41.0",
         "ava": "^4.0.1",
         "c8": "^7.11.0",
-        "esbuild": "^0.15.9",
+        "esbuild": "^0.17.2",
         "esbuild-plugin-alias": "^0.2.1",
         "eslint": "^8.26.0",
         "husky": "^8.0.1",
