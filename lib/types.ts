@@ -66,7 +66,7 @@ export type Listing = {
     external_id?: number;
     location?: string;
     in_cart?: boolean;
-    status: string;
+    status: SaleStatus;
     price: Price;
     original_price: OriginalPrice;
     shipping_price: Price;
@@ -114,7 +114,7 @@ export type GetReleaseResponse = {
         data_quality: string;
         have: number;
         rating: { average: number; count: number };
-        status: string;
+        status: Status;
         submitter: { resource_url: string; username: string };
         want: number;
     }>;
@@ -154,7 +154,7 @@ export type GetReleaseResponse = {
         resource_url: string;
         thumbnail_url: string;
     }>;
-    status: string;
+    status: Status;
     styles: Array<string>;
     tracklist: Array<Tracklisting>;
     uri: string;
@@ -185,3 +185,15 @@ export type Tracklisting = {
     type_: string;
     extraartists?: Array<Artist>;
 };
+
+/**
+ * The Discogs database status constants
+ */
+export enum Status {
+    Accepted = 'Accepted',
+    Draft = 'Draft',
+    Deleted = 'Deleted',
+    Rejected = 'Rejected',
+}
+
+export type SaleStatus = 'Draft' | 'For Sale' | 'Expired';

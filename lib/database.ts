@@ -7,8 +7,9 @@ import {
     type Tracklisting,
     type PaginationParameters,
     type Currency,
-    SortParameters,
-    PaginationResponse,
+    type SortParameters,
+    type PaginationResponse,
+    type Status,
 } from './types.js';
 import { toQueryString, escape } from './util.js';
 type GetArtistResponse = {
@@ -61,7 +62,7 @@ type GetMasterResponse = {
 };
 type GetMasterVersionsResponse = {
     versions: Array<{
-        status: string;
+        status: Status;
         stats: {
             user: { in_collection: number; in_wantlist: number };
             community: { in_collection: number; in_wantlist: number };
@@ -98,7 +99,7 @@ type GetLabelReleasesResponse = {
         format: string;
         id: number;
         resource_url: string;
-        status: string;
+        status: Status;
         thumb: string;
         title: string;
         year: number;
@@ -175,8 +176,8 @@ type SearchParameters = {
 export default function (client: DiscogsClient) {
     return {
         /**
-         * @TODO possible turn this into an enum and use it in 'status' type definitions instead of `status: string`
          * Expose Discogs database status constants
+         * @deprecated Use the `Status` enum instead
          */
         status: { accepted: 'Accepted', draft: 'Draft', deleted: 'Deleted', rejected: 'Rejected' },
 
