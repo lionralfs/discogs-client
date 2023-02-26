@@ -348,7 +348,7 @@ export class DiscogsClient {
 
     /**
      * Expose the marketplace functions and pass the current instance
-     * @returns {ReturnType<marketplace>}
+     * @returns {ReturnType<typeof marketplace>}
      */
     marketplace(): ReturnType<typeof marketplace> {
         return marketplace(this);
