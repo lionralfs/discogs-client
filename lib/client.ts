@@ -1,4 +1,5 @@
-import fetch, { Headers, RequestInit } from 'node-fetch';
+import type { RequestInit } from 'node-fetch';
+import fetch, { Headers } from 'node-fetch';
 import { DiscogsError, AuthError } from './error.js';
 import { merge } from './util.js';
 import database from './database.js';
