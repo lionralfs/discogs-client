@@ -1,10 +1,11 @@
 import { escape, toQueryString } from './util.js';
 import { AuthError } from './error.js';
+import type {
+    SortParameters} from './types.js';
 import {
     type RateLimitedResponse,
     type PaginationParameters,
-    type PaginationResponse,
-    SortParameters,
+    type PaginationResponse
 } from './types.js';
 import { type DiscogsClient } from './client.js';
 

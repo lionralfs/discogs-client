@@ -1,5 +1,5 @@
 import { type DiscogsClient } from './client.js';
-import { RateLimitedResponse } from './types.js';
+import type { RateLimitedResponse } from './types.js';
 import { escape } from './util.js';
 
 type GetListItemsResponse = {
