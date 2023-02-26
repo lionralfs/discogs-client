@@ -12,5 +12,7 @@ module.exports = {
         sourceType: 'module',
     },
     plugins: ['@typescript-eslint'],
-    rules: {},
+    rules: {
+        '@typescript-eslint/consistent-type-imports': 'error',
+    },
 };
