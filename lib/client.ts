@@ -4,6 +4,7 @@ import { DiscogsError, AuthError } from './error.js';
 import { merge } from './util.js';
 import database from './database.js';
 import marketplace from './marketplace.js';
+import inventory from './inventory.js';
 import user from './user.js';
 import {
     type Auth,
@@ -353,6 +354,14 @@ export class DiscogsClient {
      */
     marketplace(): ReturnType<typeof marketplace> {
         return marketplace(this);
+    }
+
+    /**
+     * Exposes the interface to interact with one's inventory (import/export)
+     * @returns {ReturnType<inventory>}
+     */
+    inventory(): ReturnType<typeof inventory> {
+        return inventory(this);
     }
 
     /**
