@@ -13,7 +13,6 @@ updates:
       schedule:
           interval: 'weekly'
           day: 'wednesday'
-      reviewers:
-          - 'lionralfs'
-      allow:
-          - dependency-type: 'all'
+      ignore:
+          - dependency-name: '*'
+            update-types: ['version-update:semver-patch']
