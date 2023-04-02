@@ -32,13 +32,17 @@ export default function (client: DiscogsClient) {
          * await discogs.inventory().exportInventory();
          */
         exportInventory: function (): Promise<RateLimitedResponse<void>> {
-            return client.post('/inventory/export', {}) as Promise<RateLimitedResponse<void>>;
+            const response = client.post('/inventory/export', {}) as Promise<RateLimitedResponse<unknown>>;
+            return response.then(response => ({
+                rateLimit: response.rateLimit,
+                data: undefined,
+            }));
         },
 
         /**
          * Get a list of all recent exports of your inventory.
          *
-         * @param {PaginationParameters} params
+         * @param {PaginationParameters} [params]
          * @returns {Promise<RateLimitedResponse<GetInventoryExportsResponse & PaginationResponse>>}
          *
          * @see https://www.discogs.com/developers#page:inventory-export,header:inventory-export-get-recent-exports-get
@@ -47,7 +51,7 @@ export default function (client: DiscogsClient) {
          * await discogs.inventory().getExports();
          */
         getExports: function (
-            params: PaginationParameters
+            params?: PaginationParameters
         ): Promise<RateLimitedResponse<GetInventoryExportsResponse & PaginationResponse>> {
             return client.get(`/inventory/export${toQueryString(params)}`) as Promise<
                 RateLimitedResponse<GetInventoryExportsResponse & PaginationResponse>
