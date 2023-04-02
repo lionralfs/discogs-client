@@ -2,7 +2,7 @@ import test from 'ava';
 import { rest } from 'msw';
 import { DiscogsError } from '@lib/error.js';
 import { DiscogsOAuth } from '@lib/oauth.js';
-import { setupMockAPI } from './_setup.js';
+import { setupMockAPI } from './_setup.test.js';
 
 const server = setupMockAPI();
 
