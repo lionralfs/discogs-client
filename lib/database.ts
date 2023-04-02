@@ -210,7 +210,7 @@ export default function (client: DiscogsClient) {
             artist: number | string,
             params?: PaginationParameters & SortParameters<'year' | 'title' | 'format'>
         ): Promise<RateLimitedResponse<GetArtistReleasesResponses & PaginationResponse>> {
-            const path = `/artists/${artist}/releases?${toQueryString(params)}`;
+            const path = `/artists/${artist}/releases${toQueryString(params)}`;
             return client.get(path) as Promise<RateLimitedResponse<GetArtistReleasesResponses & PaginationResponse>>;
         },
 
@@ -234,7 +234,7 @@ export default function (client: DiscogsClient) {
         ): Promise<RateLimitedResponse<GetReleaseResponse>> {
             let path = `/releases/${release}`;
             if (currency !== undefined) {
-                path += `?${toQueryString({ curr_abbr: currency })}`;
+                path += `${toQueryString({ curr_abbr: currency })}`;
             }
             return client.get(path) as Promise<RateLimitedResponse<GetReleaseResponse>>;
         },
@@ -366,7 +366,7 @@ export default function (client: DiscogsClient) {
                     >
                 >
         ): Promise<RateLimitedResponse<GetMasterVersionsResponse & PaginationResponse>> {
-            const path = `/masters/${master}/versions?${toQueryString(params)}`;
+            const path = `/masters/${master}/versions${toQueryString(params)}`;
             return client.get(path) as Promise<RateLimitedResponse<GetMasterVersionsResponse & PaginationResponse>>;
         },
 
@@ -399,7 +399,7 @@ export default function (client: DiscogsClient) {
             label: number | string,
             params?: PaginationParameters
         ): Promise<RateLimitedResponse<GetLabelReleasesResponse & PaginationResponse>> {
-            const path = `/labels/${label}/releases?${toQueryString(params)}`;
+            const path = `/labels/${label}/releases${toQueryString(params)}`;
             return client.get(path) as Promise<RateLimitedResponse<GetLabelReleasesResponse & PaginationResponse>>;
         },
 
@@ -436,14 +436,9 @@ export default function (client: DiscogsClient) {
         search: function (
             params: PaginationParameters & Partial<SearchParameters> = {}
         ): Promise<RateLimitedResponse<SearchResponse & PaginationResponse>> {
-            const args = { ...params };
-            if (args.query) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                args.q = args.query;
-                delete args.query;
-            }
-            return client.get({ url: `/database/search?${toQueryString(args)}`, authLevel: 1 }) as Promise<
+            const { query, ...inputArgs } = params;
+            const args = query ? Object.assign(inputArgs, { q: query }) : inputArgs;
+            return client.get({ url: `/database/search${toQueryString(args)}`, authLevel: 1 }) as Promise<
                 RateLimitedResponse<SearchResponse & PaginationResponse>
             >;
         },

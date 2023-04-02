@@ -13,5 +13,5 @@ test('Util: Test escape()', t => {
 
 test('Util: Test toQueryString()', t => {
     t.is(toQueryString(), '');
-    t.is(toQueryString({ foo: 'bar', baz: 1 }), 'foo=bar&baz=1');
+    t.is(toQueryString({ foo: 'bar', baz: 1 }), '?foo=bar&baz=1');
 });
