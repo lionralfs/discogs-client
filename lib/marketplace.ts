@@ -372,7 +372,7 @@ export default function (client: DiscogsClient) {
             if (currency) {
                 path += `?${toQueryString({ curr_abbr: currency })}`;
             }
-            return client.get({ url: path }) as Promise<RateLimitedResponse<GetReleaseStatsResponse>>;
+            return client.get(path) as Promise<RateLimitedResponse<GetReleaseStatsResponse>>;
         },
     };
 }
