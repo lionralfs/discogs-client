@@ -1,3 +1,20 @@
+# 3.0.4 / 2023-04-02
+
+-   Fix: Exclude questionmark from URL when not sending request params
+-   For more details see https://github.com/lionralfs/discogs-client/releases/tag/v3.0.4
+
+# 3.0.3 / 2022-11-23
+
+-   See https://github.com/lionralfs/discogs-client/releases/tag/v3.0.3
+
+# 3.0.2 / 2022-11-16
+
+-   See https://github.com/lionralfs/discogs-client/releases/tag/v3.0.2
+
+# 3.0.1 / 2022-11-11
+
+-   See https://github.com/lionralfs/discogs-client/releases/tag/v3.0.1
+
 # 3.0.0 / 2022-10-30
 
 -   Removed Node.js 12 support
