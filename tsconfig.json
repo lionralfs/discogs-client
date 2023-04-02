@@ -13,6 +13,10 @@
         "lib": ["dom", "dom.iterable", "esnext"],
         "downlevelIteration": true,
         "typeRoots": ["./test/@types", "./node_modules/@types"],
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "baseUrl": ".",
+        "paths": {
+            "@lib/*": ["lib/*"]
+        }
     }
 }

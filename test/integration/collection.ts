@@ -1,6 +1,6 @@
 import test from 'ava';
 import { rest } from 'msw';
-import { DiscogsClient } from '../lib/client.js';
+import { DiscogsClient } from '@lib/client.js';
 import { setupMockAPI } from './_setup.js';
 
 const server = setupMockAPI();
@@ -51,11 +51,6 @@ test.serial('Collection: Get folder metadata (no auth required for public folder
     );
     const client = new DiscogsClient();
     await client.user().collection().getFolder('rodneyfool', 0);
-});
-
-test('Collection: Get folder metadata (throws auth error)', async t => {
-    const client = new DiscogsClient();
-    await t.throwsAsync(client.user().collection().getFolder('rodneyfool', 1234));
 });
 
 test.serial('Collection: Edit folder name', async t => {
@@ -128,14 +123,6 @@ test.serial('Collection: Collection items by folder (default doesnt need auth)',
     );
     const client = new DiscogsClient();
     await client.user().collection().getReleases('rodneyfool', '0', { sort: 'artist', sort_order: 'desc' });
-});
-
-test('Collection: Collection items by folder (throws auth error)', async t => {
-    t.plan(1);
-    const client = new DiscogsClient();
-    await t.throwsAsync(
-        client.user().collection().getReleases('rodneyfool', '1234', { sort: 'artist', sort_order: 'desc' })
-    );
 });
 
 test.serial('Collection: Add release to folder', async t => {

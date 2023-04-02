@@ -1,5 +1,5 @@
 import test from 'ava';
-import { stripVariation, escape, toQueryString } from '../lib/util.js';
+import { stripVariation, escape, toQueryString } from '@lib/util.js';
 
 test('Util: Test stripVariation()', t => {
     const stripped = stripVariation('Artist (2)');
