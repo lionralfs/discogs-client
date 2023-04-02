@@ -184,7 +184,7 @@ export default function (client: DiscogsClient) {
                 SortParameters<'label' | 'artist' | 'title' | 'catno' | 'format' | 'rating' | 'added' | 'year'>
         ): Promise<RateLimitedResponse<GetReleasesResponse & PaginationResponse>> {
             if (client.authenticated(2) || Number(folder) === 0) {
-                const path = `/users/${escape(user)}/collection/folders/${folder}/releases?${toQueryString(params)}`;
+                const path = `/users/${escape(user)}/collection/folders/${folder}/releases${toQueryString(params)}`;
                 return client.get(path) as Promise<RateLimitedResponse<GetReleasesResponse & PaginationResponse>>;
             }
             return Promise.reject(new AuthError());

@@ -101,7 +101,7 @@ export default function (client: DiscogsClient) {
         getListing: function (listing: number, currency?: Currency): Promise<RateLimitedResponse<Listing>> {
             let path = `/marketplace/listings/${listing}`;
             if (currency !== undefined) {
-                path += `?${toQueryString({ curr_abbr: currency })}`;
+                path += `${toQueryString({ curr_abbr: currency })}`;
             }
             return client.get(path) as Promise<RateLimitedResponse<Listing>>;
         },
@@ -229,7 +229,7 @@ export default function (client: DiscogsClient) {
                 PaginationParameters &
                 SortParameters<'id' | 'buyer' | 'created' | 'status' | 'last_activity'>
         ): Promise<RateLimitedResponse<PaginationResponse & { orders: Array<GetOrderResponse> }>> {
-            const path = `/marketplace/orders?${toQueryString(params)}`;
+            const path = `/marketplace/orders${toQueryString(params)}`;
             return client.get({ url: path, authLevel: 2 }) as Promise<
                 RateLimitedResponse<PaginationResponse & { orders: Array<GetOrderResponse> }>
             >;
@@ -286,7 +286,7 @@ export default function (client: DiscogsClient) {
             order: number,
             params?: PaginationParameters
         ): Promise<RateLimitedResponse<PaginationResponse & { messages: Array<OrderMessage> }>> {
-            const path = `/marketplace/orders/${order}/messages?${toQueryString(params)}`;
+            const path = `/marketplace/orders/${order}/messages${toQueryString(params)}`;
             return client.get({ url: path, authLevel: 2 }) as Promise<
                 RateLimitedResponse<PaginationResponse & { messages: Array<OrderMessage> }>
             >;
@@ -370,9 +370,9 @@ export default function (client: DiscogsClient) {
         ): Promise<RateLimitedResponse<GetReleaseStatsResponse>> {
             let path = `/marketplace/stats/${release}`;
             if (currency) {
-                path += `?${toQueryString({ curr_abbr: currency })}`;
+                path += `${toQueryString({ curr_abbr: currency })}`;
             }
-            return client.get({ url: path }) as Promise<RateLimitedResponse<GetReleaseStatsResponse>>;
+            return client.get(path) as Promise<RateLimitedResponse<GetReleaseStatsResponse>>;
         },
     };
 }

@@ -1,5 +1,5 @@
 import test from 'ava';
-import { stripVariation, escape, toQueryString } from '../lib/util.js';
+import { stripVariation, escape, toQueryString } from '@lib/util.js';
 
 test('Util: Test stripVariation()', t => {
     const stripped = stripVariation('Artist (2)');
@@ -13,5 +13,5 @@ test('Util: Test escape()', t => {
 
 test('Util: Test toQueryString()', t => {
     t.is(toQueryString(), '');
-    t.is(toQueryString({ foo: 'bar', baz: 1 }), 'foo=bar&baz=1');
+    t.is(toQueryString({ foo: 'bar', baz: 1 }), '?foo=bar&baz=1');
 });

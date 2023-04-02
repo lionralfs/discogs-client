@@ -8,12 +8,12 @@ export function stripVariation(name: string): string {
 }
 
 /**
- * Turns a simple key-value object into a query string
+ * Turns a simple key-value object into a query string (including the leading questionmark)
  * @param {Record<string, string | number>} data - Data object containing the params
  * @returns {string}
  */
 export function toQueryString(data?: Record<PropertyKey, string | number | boolean>): string {
-    if (!data) {
+    if (!data || !Object.keys(data).length) {
         return '';
     }
 
@@ -21,7 +21,7 @@ export function toQueryString(data?: Record<PropertyKey, string | number | boole
     for (const [key, value] of Object.entries(data)) {
         searchParams.set(key, value.toString());
     }
-    return searchParams.toString();
+    return '?' + searchParams.toString();
 }
 
 /**

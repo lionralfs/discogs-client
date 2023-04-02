@@ -45,9 +45,9 @@ export default function (client: DiscogsClient) {
          */
         getReleases: function (
             user: string,
-            params: PaginationParameters
+            params?: PaginationParameters
         ): Promise<RateLimitedResponse<PaginationResponse & { wants: Array<WantlistEntryResponse> }>> {
-            const path = `/users/${escape(user)}/wants?${toQueryString(params)}`;
+            const path = `/users/${escape(user)}/wants${toQueryString(params)}`;
 
             return client.get(path) as Promise<
                 RateLimitedResponse<PaginationResponse & { wants: Array<WantlistEntryResponse> }>
