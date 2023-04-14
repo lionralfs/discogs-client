@@ -1,3 +1,7 @@
+# 3.1.0 / 2023-04-14
+
+-   See https://github.com/lionralfs/discogs-client/releases/tag/v3.1.0
+
 # 3.0.4 / 2023-04-02
 
 -   Fix: Exclude questionmark from URL when not sending request params

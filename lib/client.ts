@@ -4,6 +4,7 @@ import { DiscogsError, AuthError } from './error.js';
 import { merge } from './util.js';
 import database from './database.js';
 import marketplace from './marketplace.js';
+import inventory from './inventory.js';
 import user from './user.js';
 import {
     type Auth,
@@ -238,10 +239,15 @@ export class DiscogsClient {
                 }
 
                 // try parsing JSON response
-                const data: unknown = await res.json().catch(
-                    // eslint-disable-next-line @typescript-eslint/no-empty-function
-                    () => {}
-                );
+                let data: unknown;
+                if (options.json) {
+                    data = await res.json().catch(
+                        // eslint-disable-next-line @typescript-eslint/no-empty-function
+                        () => {}
+                    );
+                } else {
+                    data = res;
+                }
 
                 if (statusCode > 399) {
                     // Unsuccessful HTTP status? Then pass an error to the callback
@@ -353,6 +359,14 @@ export class DiscogsClient {
      */
     marketplace(): ReturnType<typeof marketplace> {
         return marketplace(this);
+    }
+
+    /**
+     * Exposes the interface to interact with one's inventory (import/export)
+     * @returns {ReturnType<inventory>}
+     */
+    inventory(): ReturnType<typeof inventory> {
+        return inventory(this);
     }
 
     /**
