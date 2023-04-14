@@ -267,9 +267,9 @@ new DiscogsClient() -> database()
                         -> getReleaseStats
                     -> inventory()
                         -> exportInventory
-                        -> getInventoryExports
-                        -> getInventoryExport
-                        -> downloadInventoryExport
+                        -> getExports
+                        -> getExport
+                        -> downloadExport
                     -> user()
                         -> getProfile
                         -> editProfile

@@ -2,6 +2,7 @@ import test from 'ava';
 import { rest } from 'msw';
 import { DiscogsClient } from '@lib/client.js';
 import { setupMockAPI } from './_setup.test.js';
+import { Response } from 'node-fetch';
 
 const server = setupMockAPI();
 
@@ -116,4 +117,17 @@ test.serial('Inventory: Should support retrieving an export by id', async t => {
     const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
     const response = await client.inventory().getExport(599632);
     t.truthy(response.data);
+});
+
+test.serial('Inventory: Should support downloading an export by id', async t => {
+    t.plan(2);
+    server.use(
+        rest.get('https://api.discogs.com/inventory/export/599632/download', (req, res, ctx) => {
+            t.pass();
+            return res(ctx.status(200), ctx.text('some,csv,here'));
+        })
+    );
+    const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
+    const response = await client.inventory().downloadExport(599632);
+    t.true(response.data instanceof Response);
 });

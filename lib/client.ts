@@ -239,10 +239,15 @@ export class DiscogsClient {
                 }
 
                 // try parsing JSON response
-                const data: unknown = await res.json().catch(
-                    // eslint-disable-next-line @typescript-eslint/no-empty-function
-                    () => {}
-                );
+                let data: unknown;
+                if (options.json) {
+                    data = await res.json().catch(
+                        // eslint-disable-next-line @typescript-eslint/no-empty-function
+                        () => {}
+                    );
+                } else {
+                    data = res;
+                }
 
                 if (statusCode > 399) {
                     // Unsuccessful HTTP status? Then pass an error to the callback

@@ -72,5 +72,29 @@ export default function (client: DiscogsClient) {
         getExport: function (id: number): Promise<RateLimitedResponse<GetInventoryExportResponse>> {
             return client.get(`/inventory/export/${id}`) as Promise<RateLimitedResponse<GetInventoryExportResponse>>;
         },
+
+        /**
+         * Get details about the status of an inventory export. Returns the raw Response in `data`,
+         * see the example below for further details.
+         *
+         * @param id Id of the export
+         * @returns {Promise<RateLimitedResponse<Response>>}
+         *
+         * @see https://www.discogs.com/developers#page:inventory-export,header:inventory-export-download-an-export-get
+         *
+         * @example
+         * // Node.js example; download an export, and save it to a file named 'export.csv'
+         * import fs from 'fs';
+         * import { pipeline } from 'stream/promises';
+         *
+         * const response = await discogs.inventory().downloadExport(4647524);
+         * const writeStream = fs.createWriteStream('export.csv');
+         * await pipeline(response.data.body, writeStream);
+         */
+        downloadExport: function (id: number): Promise<RateLimitedResponse<Response>> {
+            return client.get({ url: `/inventory/export/${id}/download`, json: false }) as Promise<
+                RateLimitedResponse<Response>
+            >;
+        },
     };
 }
