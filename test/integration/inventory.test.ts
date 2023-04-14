@@ -93,3 +93,27 @@ test.serial('Inventory: Should support retrieving recent exports (with paginatio
     const response = await client.inventory().getExports({ page: 2, per_page: 10 });
     t.truthy(response.data);
 });
+
+test.serial('Inventory: Should support retrieving an export by id', async t => {
+    t.plan(2);
+    server.use(
+        rest.get('https://api.discogs.com/inventory/export/599632', (req, res, ctx) => {
+            t.pass();
+            return res(
+                ctx.status(200),
+                ctx.json({
+                    status: 'success',
+                    created_ts: '2018-09-27T12:50:39',
+                    url: 'https://api.discogs.com/inventory/export/599632',
+                    finished_ts: '2018-09-27T12:59:02',
+                    download_url: 'https://api.discogs.com/inventory/export/599632/download',
+                    filename: 'cburmeister-inventory-20180927-1259.csv',
+                    id: 599632,
+                })
+            );
+        })
+    );
+    const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
+    const response = await client.inventory().getExport(599632);
+    t.truthy(response.data);
+});

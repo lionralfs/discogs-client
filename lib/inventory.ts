@@ -57,5 +57,20 @@ export default function (client: DiscogsClient) {
                 RateLimitedResponse<GetInventoryExportsResponse & PaginationResponse>
             >;
         },
+
+        /**
+         * Get details about the status of an inventory export.
+         *
+         * @param id Id of the export
+         * @returns {Promise<RateLimitedResponse<GetInventoryExportsResponse & PaginationResponse>>}
+         *
+         * @see https://www.discogs.com/developers#page:inventory-export,header:inventory-export-get-an-export-get
+         *
+         * @example
+         * await discogs.inventory().getExport(599632);
+         */
+        getExport: function (id: number): Promise<RateLimitedResponse<GetInventoryExportResponse>> {
+            return client.get(`/inventory/export/${id}`) as Promise<RateLimitedResponse<GetInventoryExportResponse>>;
+        },
     };
 }
