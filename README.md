@@ -51,7 +51,7 @@ Here are some basic usage examples that connect with the public API. Error handl
 import { DiscogsClient } from '@lionralfs/discogs-client';
 
 // in commonjs environments
-const DiscogsClient = require('@lionralfs/discogs-client/commonjs');
+const { DiscogsClient } = require('@lionralfs/discogs-client/commonjs');
 
 // in browser environments
 import { DiscogsClient } from '@lionralfs/discogs-client/browser';
