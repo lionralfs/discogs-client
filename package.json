@@ -61,7 +61,9 @@
     },
     "files": [
         "browser/index.js",
+        "browser/package.json",
         "commonjs/index.js",
+        "commonjs/package.json",
         "types",
         "node-esm/index.js",
         "lib/*",
