@@ -46,4 +46,5 @@ build({
     platform: 'node',
     minify: false,
     define: { 'process.env.VERSION_NUMBER': `'${PACKAGE.version}'` },
+    external: ['node-fetch'],
 }).catch(err => console.error(err) || process.exit(1));
