@@ -37,6 +37,18 @@ export type PaginationResponse = {
     };
 };
 export type GetIdentityResponse = { id: number; username: string; resource_url: string; consumer_name: string };
+export type AboutResponse = {
+    hello: string;
+    api_version: string;
+    documentation_url: string;
+    statistics: { releases: number; artists: number; labels: number };
+    clientInfo: {
+        version: string;
+        userAgent: string;
+        authMethod?: string;
+        authLevel?: number;
+    };
+};
 /**
  * Some resources represent collections of objects and may be paginated. By default, 50 items per page are shown.
  * To browse different pages, or change the number of items per page (up to 100), use the page and per_page parameters
