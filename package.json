@@ -1,7 +1,7 @@
 {
     "name": "@lionralfs/discogs-client",
     "description": "A full-featured Discogs API v2.0 client library",
-    "version": "3.1.1",
+    "version": "3.1.2",
     "keywords": [
         "discogs",
         "api",
