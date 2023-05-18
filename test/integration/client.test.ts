@@ -239,3 +239,46 @@ test.serial('DiscogsClient: Throws when retrying but end of retries is reached',
     const err = await t.throwsAsync(() => client.getIdentity());
     t.is(err?.message, "you're rate limited 2");
 });
+
+test.serial('DiscogsClient: Should return client and server info in about call', async t => {
+    t.plan(1);
+    server.use(
+        rest.get('https://api.discogs.com', (req, res, ctx) => {
+            return res(
+                ctx.status(200),
+                ctx.json({
+                    hello: 'Welcome to the Discogs API.',
+                    api_version: 'v2',
+                    documentation_url: 'http://www.discogs.com/developers/',
+                    statistics: { releases: 16327979, artists: 8602060, labels: 1991222 },
+                }),
+                ctx.set({
+                    'X-Discogs-Ratelimit': '60',
+                    'X-Discogs-Ratelimit-Used': '59',
+                    'X-Discogs-Ratelimit-Remaining': '1',
+                })
+            );
+        })
+    );
+    const client = new DiscogsClient();
+    const result = await client.about();
+    t.deepEqual(result, {
+        data: {
+            hello: 'Welcome to the Discogs API.',
+            api_version: 'v2',
+            documentation_url: 'http://www.discogs.com/developers/',
+            statistics: { releases: 16327979, artists: 8602060, labels: 1991222 },
+            clientInfo: {
+                version: 'dev',
+                userAgent: '@lionralfs/discogs-client/dev +https://github.com/lionralfs/discogs-client',
+                authMethod: 'none',
+                authLevel: 0
+            },
+        },
+        rateLimit: {
+            limit: 60,
+            used: 59,
+            remaining: 1
+        }
+    });
+});

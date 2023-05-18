@@ -14,6 +14,7 @@ import {
     type RequestCallback,
     type RequestOptions,
     type ClientConfig,
+    type AboutResponse,
 } from './types.js';
 import { toAuthHeader } from './oauth.js';
 import { hasProperty } from './helpers-internal.js';
@@ -123,19 +124,20 @@ export class DiscogsClient {
 
     /**
      * Get info about the Discogs API and this client
+     *
+     * @returns {Promise<RateLimitedResponse<AboutResponse>>}
      */
-    async about() {
-        const clientInfo = {
+    async about(): Promise<RateLimitedResponse<AboutResponse>> {
+        const clientInfo: AboutResponse['clientInfo'] = {
             version: version,
             userAgent: this.config.userAgent,
             authMethod: this.auth ? this.auth.method : 'none',
             authLevel: this.auth ? this.auth.level : 0,
         };
-        const { data, rateLimit } = await this.get('');
-        if (data) {
-            return { ...data, rateLimit, disconnect: clientInfo };
-        }
-        return data;
+        const aboutResponse = (await this.get('')) as RateLimitedResponse<AboutResponse>;
+
+        aboutResponse.data.clientInfo = clientInfo;
+        return aboutResponse;
     }
 
     /**
