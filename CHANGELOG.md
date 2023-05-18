@@ -1,3 +1,11 @@
+# 3.1.2 / 2023-05-18
+
+-   See https://github.com/lionralfs/discogs-client/releases/tag/v3.1.2
+
+# 3.1.1 / 2023-04-30
+
+-   See https://github.com/lionralfs/discogs-client/releases/tag/v3.1.1
+
 # 3.1.0 / 2023-04-14
 
 -   See https://github.com/lionralfs/discogs-client/releases/tag/v3.1.0
