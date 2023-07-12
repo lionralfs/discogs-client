@@ -50,7 +50,7 @@
         "lint-staged": "^13.0.3",
         "msw": "^1.2.2",
         "np": "^8.0.2",
-        "prettier": "^2.5.1",
+        "prettier": "^3.0.0",
         "typescript": "^5.0.2"
     },
     "engines": {
