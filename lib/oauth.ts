@@ -108,9 +108,14 @@ export function toAuthHeader(
     consumerKey: string,
     consumerSecret: string,
     accessToken: string,
-    accessTokenSecret: string
+    accessTokenSecret: string,
+    clock: { now: () => number },
+    _crypto: typeof crypto
 ) {
-    const nonce = crypto.randomBytes(64).toString('hex');
-    const timestamp = Date.now();
+    // generate 32 bytes which is a string of 64 characters in hex encoding
+    // because any request that includes a nonce string of length > 64 characters is rejected
+    const nonce = _crypto.randomBytes(32).toString('hex', 0, 64);
+    // timestamp is expected in seconds
+    const timestamp = Math.floor(clock.now() / 1000);
     return `OAuth oauth_consumer_key="${consumerKey}", oauth_token="${accessToken}", oauth_signature_method="PLAINTEXT", oauth_signature="${consumerSecret}&${accessTokenSecret}", oauth_timestamp="${timestamp}", oauth_nonce="${nonce}", oauth_token_secret="${accessTokenSecret}", oauth_version="1.0"`;
 }
