@@ -39,7 +39,7 @@
     "devDependencies": {
         "@esbuild-kit/esm-loader": "^2.5.0",
         "@fluffy-spoon/substitute": "^1.208.0",
-        "@typescript-eslint/eslint-plugin": "^5.41.0",
+        "@typescript-eslint/eslint-plugin": "^6.7.4",
         "@typescript-eslint/parser": "^5.41.0",
         "ava": "^5.0.1",
         "c8": "^8.0.0",
