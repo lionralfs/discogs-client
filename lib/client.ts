@@ -18,6 +18,7 @@ import {
 } from './types.js';
 import { toAuthHeader } from './oauth.js';
 import { hasProperty } from './helpers-internal.js';
+import * as crypto from 'crypto';
 
 const version = process.env.VERSION_NUMBER || 'dev';
 const homepage = 'https://github.com/lionralfs/discogs-client';
@@ -197,7 +198,9 @@ export class DiscogsClient {
                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     this.auth.accessToken!,
                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    this.auth.accessTokenSecret!
+                    this.auth.accessTokenSecret!,
+                    { now: () => Date.now() },
+                    crypto
                 );
             } else if (this.auth.method === 'discogs') {
                 authHeader = 'Discogs';
