@@ -1,3 +1,9 @@
+# 3.1.3 / 2023-10-30
+
+-   Fix: The OAuth backend expects the timestamp in seconds (not milliseconds) and a nonce with
+    a maximum of 64 characters
+-   See https://github.com/lionralfs/discogs-client/releases/tag/v3.1.3
+
 # 3.1.2 / 2023-05-18
 
 -   See https://github.com/lionralfs/discogs-client/releases/tag/v3.1.2
