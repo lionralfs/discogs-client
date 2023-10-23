@@ -262,7 +262,7 @@ export class DiscogsClient {
                 }
                 callback(err, data, rateLimit);
             })
-            .catch(err => {
+            .catch((err: Error) => {
                 callback(err);
             });
     }

@@ -43,11 +43,20 @@ export function escape(str: string): string {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function merge(target: Record<any, any>, source: Record<any, any>): Record<any, any> {
     for (const key in source) {
-        if (source[key] && typeof source[key] === 'object') {
-            target[key] = merge(Array.isArray(source[key]) ? [] : {}, source[key]);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const value = source[key];
+        if (isObject(value)) {
+            target[key] = merge(Array.isArray(value) ? [] : {}, value);
         } else {
-            target[key] = source[key];
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            target[key] = value;
         }
     }
     return target;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isObject(value: any): value is object {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return value && typeof value === 'object';
 }
