@@ -1,96 +1,89 @@
-import test from 'ava';
 import { rest } from 'msw';
 import { DiscogsError } from '@lib/error.js';
 import { DiscogsOAuth } from '@lib/oauth.js';
-import { setupMockAPI } from './_setup.test.js';
+import { setupMockAPI } from './setup.js';
+import { expect, test, describe } from 'vitest';
 
 const server = setupMockAPI();
 
-test.serial('OAuth: Get a request token', async t => {
-    t.plan(4);
+describe('OAuth', () => {
+    test('Get a request token', async () => {
+        server.use(
+            rest.get('https://api.discogs.com/oauth/request_token', (req, res, ctx) => {
+                expect(req.headers.get('Content-Type')).toBe('application/x-www-form-urlencoded');
+                const authHeader = req.headers.get('Authorization');
+                expect(authHeader as string).toMatch(
+                    /^OAuth oauth_consumer_key="consumer_key", oauth_nonce=".+", oauth_signature="consumer_secret&", oauth_signature_method="PLAINTEXT", oauth_timestamp="\d+", oauth_callback="https%3A%2F%2Fexample.com%2Foauth_callback_endpoint"$/
+                );
+                expect(req.headers.get('User-Agent')?.startsWith('@lionralfs/discogs-client/'));
+                return res(
+                    ctx.status(200),
+                    ctx.text(
+                        'oauth_token=some-token&oauth_token_secret=some-token-secret&oauth_callback_confirmed=true'
+                    )
+                );
+            })
+        );
 
-    server.use(
-        rest.get('https://api.discogs.com/oauth/request_token', (req, res, ctx) => {
-            t.is(req.headers.get('Content-Type'), 'application/x-www-form-urlencoded');
-            const authHeader = req.headers.get('Authorization');
-            t.regex(
-                authHeader as string,
-                /^OAuth oauth_consumer_key="consumer_key", oauth_nonce=".+", oauth_signature="consumer_secret&", oauth_signature_method="PLAINTEXT", oauth_timestamp="\d+", oauth_callback="https%3A%2F%2Fexample.com%2Foauth_callback_endpoint"$/
-            );
-            t.true(req.headers.get('User-Agent')?.startsWith('@lionralfs/discogs-client/'));
-            return res(
-                ctx.status(200),
-                ctx.text('oauth_token=some-token&oauth_token_secret=some-token-secret&oauth_callback_confirmed=true')
-            );
-        })
-    );
-
-    const oauth = new DiscogsOAuth('consumer_key', 'consumer_secret');
-    const response = await oauth.getRequestToken('https://example.com/oauth_callback_endpoint');
-    t.deepEqual(response, {
-        token: 'some-token',
-        tokenSecret: 'some-token-secret',
-        callbackConfirmed: true,
-        authorizeUrl: 'https://discogs.com/oauth/authorize?oauth_token=some-token',
+        const oauth = new DiscogsOAuth('consumer_key', 'consumer_secret');
+        const response = await oauth.getRequestToken('https://example.com/oauth_callback_endpoint');
+        expect(response).toStrictEqual({
+            token: 'some-token',
+            tokenSecret: 'some-token-secret',
+            callbackConfirmed: true,
+            authorizeUrl: 'https://discogs.com/oauth/authorize?oauth_token=some-token',
+        });
     });
-});
 
-test.serial('OAuth: Get a request token (error)', async t => {
-    t.plan(1);
+    test('Get a request token (error)', async () => {
+        server.use(
+            rest.get('https://api.discogs.com/oauth/request_token', (req, res, ctx) => {
+                return res(ctx.status(401), ctx.text('Invalid consumer.'));
+            })
+        );
 
-    server.use(
-        rest.get('https://api.discogs.com/oauth/request_token', (req, res, ctx) => {
-            return res(ctx.status(401), ctx.text('Invalid consumer.'));
-        })
-    );
+        const oauth = new DiscogsOAuth('invalid_key', 'invalid_secret');
 
-    const oauth = new DiscogsOAuth('invalid_key', 'invalid_secret');
-
-    await t.throwsAsync(() => oauth.getRequestToken('https://example.com/oauth_callback_endpoint'), {
-        instanceOf: DiscogsError,
-        message: 'Invalid consumer.',
+        await expect(oauth.getRequestToken('https://example.com/oauth_callback_endpoint')).rejects.toThrowError(
+            new DiscogsError(401, 'Invalid consumer.')
+        );
     });
-});
 
-test.serial('OAuth: Get an access token', async t => {
-    t.plan(4);
+    test('Get an access token', async () => {
+        server.use(
+            rest.post('https://api.discogs.com/oauth/access_token', (req, res, ctx) => {
+                expect(req.headers.get('Content-Type')).toBe('application/x-www-form-urlencoded');
+                const authHeader = req.headers.get('Authorization');
+                expect(authHeader as string).toMatch(
+                    /^OAuth oauth_consumer_key="consumer_key", oauth_nonce=".+", oauth_token="oauth_token_received_from_step_2", oauth_signature="consumer_secret&token_secret", oauth_signature_method="PLAINTEXT", oauth_timestamp="\d+", oauth_verifier="users_verifier"$/
+                );
+                expect(req.headers.get('User-Agent')?.startsWith('@lionralfs/discogs-client/'));
+                return res(ctx.status(200), ctx.text('oauth_token=abc123&oauth_token_secret=xyz789'));
+            })
+        );
 
-    server.use(
-        rest.post('https://api.discogs.com/oauth/access_token', (req, res, ctx) => {
-            t.is(req.headers.get('Content-Type'), 'application/x-www-form-urlencoded');
-            const authHeader = req.headers.get('Authorization');
-            t.regex(
-                authHeader as string,
-                /^OAuth oauth_consumer_key="consumer_key", oauth_nonce=".+", oauth_token="oauth_token_received_from_step_2", oauth_signature="consumer_secret&token_secret", oauth_signature_method="PLAINTEXT", oauth_timestamp="\d+", oauth_verifier="users_verifier"$/
-            );
-            t.true(req.headers.get('User-Agent')?.startsWith('@lionralfs/discogs-client/'));
-            return res(ctx.status(200), ctx.text('oauth_token=abc123&oauth_token_secret=xyz789'));
-        })
-    );
-
-    const oauth = new DiscogsOAuth('consumer_key', 'consumer_secret');
-    const response = await oauth.getAccessToken('oauth_token_received_from_step_2', 'token_secret', 'users_verifier');
-    t.deepEqual(response, {
-        accessToken: 'abc123',
-        accessTokenSecret: 'xyz789',
+        const oauth = new DiscogsOAuth('consumer_key', 'consumer_secret');
+        const response = await oauth.getAccessToken(
+            'oauth_token_received_from_step_2',
+            'token_secret',
+            'users_verifier'
+        );
+        expect(response).toStrictEqual({
+            accessToken: 'abc123',
+            accessTokenSecret: 'xyz789',
+        });
     });
-});
 
-test.serial('OAuth: Get an access token (error)', async t => {
-    t.plan(1);
+    test('Get an access token (error)', async () => {
+        server.use(
+            rest.post('https://api.discogs.com/oauth/access_token', (req, res, ctx) => {
+                return res(ctx.status(401), ctx.text('Invalid consumer.'));
+            })
+        );
 
-    server.use(
-        rest.post('https://api.discogs.com/oauth/access_token', (req, res, ctx) => {
-            return res(ctx.status(401), ctx.text('Invalid consumer.'));
-        })
-    );
-
-    const oauth = new DiscogsOAuth('consumer_key', 'consumer_secret');
-    await t.throwsAsync(
-        () => oauth.getAccessToken('oauth_token_received_from_step_2', 'token_secret', 'users_verifier'),
-        {
-            instanceOf: DiscogsError,
-            message: 'Invalid consumer.',
-        }
-    );
+        const oauth = new DiscogsOAuth('consumer_key', 'consumer_secret');
+        await expect(
+            oauth.getAccessToken('oauth_token_received_from_step_2', 'token_secret', 'users_verifier')
+        ).rejects.toThrowError(new DiscogsError(401, 'Invalid consumer.'));
+    });
 });

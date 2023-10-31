@@ -1,17 +1,19 @@
-import test from 'ava';
+import { describe, expect, test } from 'vitest';
 import { stripVariation, escape, toQueryString } from '@lib/util.js';
 
-test('Util: Test stripVariation()', t => {
-    const stripped = stripVariation('Artist (2)');
-    t.is(stripped, 'Artist', 'Strip artist variation');
-});
+describe('Util', () => {
+    test('stripVariation()', () => {
+        const stripped = stripVariation('Artist (2)');
+        expect(stripped).toBe('Artist');
+    });
 
-test('Util: Test escape()', t => {
-    const escaped = escape('!@#$%^&*()+');
-    t.is(escaped, '!%40%23%24%25%5E%26*()%2B', 'Escape string "!@#$%^&*()+"');
-});
+    test('escape()', () => {
+        const escaped = escape('!@#$%^&*()+');
+        expect(escaped).toBe('!%40%23%24%25%5E%26*()%2B');
+    });
 
-test('Util: Test toQueryString()', t => {
-    t.is(toQueryString(), '');
-    t.is(toQueryString({ foo: 'bar', baz: 1 }), '?foo=bar&baz=1');
+    test('toQueryString()', () => {
+        expect(toQueryString()).toBe('');
+        expect(toQueryString({ foo: 'bar', baz: 1 })).toBe('?foo=bar&baz=1');
+    });
 });

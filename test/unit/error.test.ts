@@ -1,16 +1,18 @@
-import test from 'ava';
 import { DiscogsError, AuthError } from '@lib/error.js';
+import { expect, test, describe } from 'vitest';
 
-test('Error: Test DiscogsError', t => {
-    const discogsError = new DiscogsError(403, 'Test');
-    // t.true(discogsError instanceof DiscogsError, 'Instance of DiscogsError');
-    t.true(discogsError instanceof Error, 'Instance of Error');
-    t.is(discogsError.statusCode, 403, 'Status code === 403');
-});
+describe('Error', () => {
+    test('Test DiscogsError', () => {
+        const discogsError = new DiscogsError(403, 'Test');
+        // t.true(discogsError instanceof DiscogsError, 'Instance of DiscogsError');
+        expect(discogsError instanceof Error);
+        expect(discogsError.statusCode).toBe(403);
+    });
 
-test('Error: Test AuthError', t => {
-    const authError = new AuthError();
-    // t.true(authError instanceof AuthError, 'Instance of AuthError');
-    t.true(authError instanceof Error, 'Instance of Error');
-    t.is(authError.statusCode, 401, 'Status code === 401');
+    test('Test AuthError', () => {
+        const authError = new AuthError();
+        // t.true(authError instanceof AuthError, 'Instance of AuthError');
+        expect(authError instanceof Error);
+        expect(authError.statusCode).toBe(401);
+    });
 });
