@@ -22,8 +22,8 @@
         "url": "https://github.com/lionralfs/discogs-client.git"
     },
     "scripts": {
-        "test": "ava",
-        "coverage": "c8 --reporter html ava",
+        "test": "vitest",
+        "coverage": "vitest run --coverage",
         "prettier": "prettier --check **/**.{js,md,json}",
         "lint": "eslint ./lib/**/*.ts",
         "declaration:build": "rm -rf types && tsc -p tsconfig.json",
@@ -37,12 +37,10 @@
         "node-fetch": "^3.2.0"
     },
     "devDependencies": {
-        "@esbuild-kit/esm-loader": "^2.5.0",
         "@fluffy-spoon/substitute": "^1.208.0",
         "@typescript-eslint/eslint-plugin": "^6.9.0",
         "@typescript-eslint/parser": "^6.9.0",
-        "ava": "^5.0.1",
-        "c8": "^8.0.0",
+        "@vitest/coverage-v8": "^0.34.6",
         "esbuild": "^0.19.0",
         "esbuild-plugin-alias": "^0.2.1",
         "eslint": "^8.26.0",
@@ -51,7 +49,8 @@
         "msw": "^1.2.2",
         "np": "^8.0.2",
         "prettier": "^3.0.0",
-        "typescript": "^5.0.2"
+        "typescript": "^5.0.2",
+        "vitest": "^0.34.6"
     },
     "engines": {
         "node": ">=14"
@@ -72,20 +71,5 @@
     "publishConfig": {
         "access": "public",
         "registry": "https://registry.npmjs.org/"
-    },
-    "ava": {
-        "files": [
-            "test/**/*",
-            "!test/**/*.d.ts"
-        ],
-        "concurrency": 1,
-        "failFast": true,
-        "timeout": "30s",
-        "extensions": {
-            "ts": "module"
-        },
-        "nodeArguments": [
-            "--loader=@esbuild-kit/esm-loader"
-        ]
     }
 }

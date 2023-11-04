@@ -1,27 +1,27 @@
-import test from 'ava';
 import { rest } from 'msw';
 import { DiscogsClient } from '@lib/client.js';
 import { DiscogsError } from '@lib/error.js';
-import { setupMockAPI } from './_setup.test.js';
+import { setupMockAPI } from './setup.js';
+import { expect, test, describe } from 'vitest';
 
 const server = setupMockAPI();
 
-test.serial('Error: Passed an instance of DiscogsError when bad status code', async t => {
-    t.plan(4);
+describe('Error', () => {
+    test('Passed an instance of DiscogsError when bad status code', async () => {
+        server.use(
+            rest.get('https://api.discogs.com/labels/1123123123123/releases', (req, res, ctx) => {
+                expect(req.method).toBeDefined();
+                return res(ctx.status(404), ctx.json({ message: 'error message' }));
+            })
+        );
 
-    server.use(
-        rest.get('https://api.discogs.com/labels/1123123123123/releases', (req, res, ctx) => {
-            t.pass();
-            return res(ctx.status(404), ctx.json({ message: 'error message' }));
-        })
-    );
-
-    const client = new DiscogsClient();
-    try {
-        await client.database().getLabelReleases(1123123123123, { page: 3, per_page: 25 });
-    } catch (err: any) {
-        t.is(err.statusCode, 404);
-        t.is(err.message, 'error message');
-        t.true(err instanceof DiscogsError);
-    }
+        const client = new DiscogsClient();
+        try {
+            await client.database().getLabelReleases(1123123123123, { page: 3, per_page: 25 });
+        } catch (err: unknown) {
+            expect((err as DiscogsError).statusCode).toBe(404);
+            expect((err as DiscogsError).message).toBe('error message');
+            expect(err instanceof DiscogsError);
+        }
+    });
 });
