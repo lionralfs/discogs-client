@@ -53,7 +53,7 @@
         "vitest": "^0.34.6"
     },
     "engines": {
-        "node": ">=14"
+        "node": ">=18"
     },
     "lint-staged": {
         "*.{js,md,json}": "prettier --write"
