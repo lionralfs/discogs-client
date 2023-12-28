@@ -45,7 +45,7 @@
         "esbuild-plugin-alias": "^0.2.1",
         "eslint": "^8.26.0",
         "husky": "^8.0.1",
-        "lint-staged": "^14.0.1",
+        "lint-staged": "^15.2.0",
         "msw": "^1.2.2",
         "np": "^8.0.2",
         "prettier": "^3.0.0",
