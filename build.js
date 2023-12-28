@@ -23,27 +23,26 @@ build({
     define: { 'process.env.VERSION_NUMBER': `'${PACKAGE.version}'` },
 }).catch(err => console.error(err) || process.exit(1));
 
-// build for node, esm
-build({
+const commonBuildOptionsForNode = {
     entryPoints: ['./lib/index.ts'],
     bundle: true,
-    outfile: 'node-esm/index.js',
-    format: 'esm',
     platform: 'node',
     target: ['node14'],
     minify: false,
     define: { 'process.env.VERSION_NUMBER': `'${PACKAGE.version}'` },
     external: ['node-fetch'],
+};
+
+// build for node, esm
+build({
+    ...commonBuildOptionsForNode,
+    outfile: 'node-esm/index.js',
+    format: 'esm',
 }).catch(err => console.error(err) || process.exit(1));
 
 // build for node, commonjs
 build({
-    entryPoints: ['./lib/index.ts'],
-    bundle: true,
+    ...commonBuildOptionsForNode,
     outfile: 'commonjs/index.js',
     format: 'cjs',
-    target: ['node14'],
-    platform: 'node',
-    minify: false,
-    define: { 'process.env.VERSION_NUMBER': `'${PACKAGE.version}'` },
 }).catch(err => console.error(err) || process.exit(1));
