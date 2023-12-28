@@ -1,3 +1,8 @@
+# 4.0.0 / 2023-12-28
+
+-   Drop node 14 & 16 support
+-   See https://github.com/lionralfs/discogs-client/releases/tag/v4.0.0
+
 # 3.1.3 / 2023-10-30
 
 -   Fix: The OAuth backend expects the timestamp in seconds (not milliseconds) and a nonce with
