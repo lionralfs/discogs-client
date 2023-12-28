@@ -27,7 +27,7 @@ const commonBuildOptionsForNode = {
     entryPoints: ['./lib/index.ts'],
     bundle: true,
     platform: 'node',
-    target: ['node14'],
+    target: ['node18'],
     minify: false,
     define: { 'process.env.VERSION_NUMBER': `'${PACKAGE.version}'` },
 };
