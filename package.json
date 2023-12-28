@@ -22,7 +22,7 @@
         "url": "https://github.com/lionralfs/discogs-client.git"
     },
     "scripts": {
-        "test": "vitest",
+        "test": "vitest run",
         "coverage": "vitest run --coverage",
         "prettier": "prettier --check **/**.{js,md,json}",
         "lint": "eslint ./lib/**/*.ts",
