@@ -1,4 +1,4 @@
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { DiscogsClient } from '@lib/client.js';
 import { DiscogsError } from '@lib/error.js';
 import { setupMockAPI } from './setup.js';
@@ -9,9 +9,9 @@ const server = setupMockAPI();
 describe('Error', () => {
     test('Passed an instance of DiscogsError when bad status code', async () => {
         server.use(
-            rest.get('https://api.discogs.com/labels/1123123123123/releases', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(404), ctx.json({ message: 'error message' }));
+            http.get('https://api.discogs.com/labels/1123123123123/releases', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return HttpResponse.json({ message: 'error message' }, { status: 404 });
             })
         );
 

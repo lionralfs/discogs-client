@@ -1,4 +1,4 @@
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { DiscogsClient } from '@lib/client.js';
 import { setupMockAPI } from './setup.js';
 import { expect, test, describe } from 'vitest';
@@ -8,9 +8,9 @@ const server = setupMockAPI();
 describe('Collection', () => {
     test('Get all folders', async () => {
         server.use(
-            rest.get('https://api.discogs.com/users/rodneyfool/collection/folders', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/users/rodneyfool/collection/folders', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return HttpResponse.json({}, { status: 200 });
             })
         );
         const client = new DiscogsClient();
@@ -19,9 +19,11 @@ describe('Collection', () => {
 
     test('Test folder creation', async () => {
         server.use(
-            rest.post('https://api.discogs.com/users/rodneyfool/collection/folders', (req, res, ctx) => {
-                expect(req.body).toStrictEqual({ name: 'My favorites' });
-                return res(ctx.status(200), ctx.json({}));
+            http.post('https://api.discogs.com/users/rodneyfool/collection/folders', async ({ request }) => {
+                const body = await request.json();
+
+                expect(body).toStrictEqual({ name: 'My favorites' });
+                return HttpResponse.json({}, { status: 200 });
             })
         );
         const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
@@ -30,9 +32,9 @@ describe('Collection', () => {
 
     test('Get folder metadata', async () => {
         server.use(
-            rest.get('https://api.discogs.com/users/rodneyfool/collection/folders/3', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(200), ctx.json({ id: 1337 }));
+            http.get('https://api.discogs.com/users/rodneyfool/collection/folders/3', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return HttpResponse.json({ id: 1337 }, { status: 200 });
             })
         );
         const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
@@ -41,9 +43,9 @@ describe('Collection', () => {
 
     test('Get folder metadata (no auth required for public folder)', async () => {
         server.use(
-            rest.get('https://api.discogs.com/users/rodneyfool/collection/folders/0', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(200), ctx.json({ id: 1337 }));
+            http.get('https://api.discogs.com/users/rodneyfool/collection/folders/0', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return HttpResponse.json({ id: 1337 }, { status: 200 });
             })
         );
         const client = new DiscogsClient();
@@ -52,9 +54,11 @@ describe('Collection', () => {
 
     test('Edit folder name', async () => {
         server.use(
-            rest.post('https://api.discogs.com/users/rodneyfool/collection/folders/3', (req, res, ctx) => {
-                expect(req.body).toStrictEqual({ name: 'New Name' });
-                return res(ctx.status(200), ctx.json({}));
+            http.post('https://api.discogs.com/users/rodneyfool/collection/folders/3', async ({ request }) => {
+                const body = await request.json();
+
+                expect(body).toStrictEqual({ name: 'New Name' });
+                return HttpResponse.json({}, { status: 200 });
             })
         );
         const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
@@ -63,9 +67,9 @@ describe('Collection', () => {
 
     test('Delete folder', async () => {
         server.use(
-            rest.delete('https://api.discogs.com/users/rodneyfool/collection/folders/3', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(204));
+            http.delete('https://api.discogs.com/users/rodneyfool/collection/folders/3', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return new Response(null, { status: 204 });
             })
         );
         const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
@@ -74,9 +78,9 @@ describe('Collection', () => {
 
     test('Get instances of release in collection', async () => {
         server.use(
-            rest.get('https://api.discogs.com/users/susan.salkeld/collection/releases/7781525', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(200));
+            http.get('https://api.discogs.com/users/susan.salkeld/collection/releases/7781525', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return HttpResponse.json(null, { status: 200 });
             })
         );
         const client = new DiscogsClient();
@@ -85,12 +89,14 @@ describe('Collection', () => {
 
     test('Collection items by folder', async () => {
         server.use(
-            rest.get('https://api.discogs.com/users/rodneyfool/collection/folders/3/releases', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()]).toStrictEqual([
+            http.get('https://api.discogs.com/users/rodneyfool/collection/folders/3/releases', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()]).toStrictEqual([
                     ['sort', 'artist'],
                     ['sort_order', 'desc'],
                 ]);
-                return res(ctx.status(200));
+                return HttpResponse.json(null, { status: 200 });
             })
         );
         const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
@@ -99,12 +105,14 @@ describe('Collection', () => {
 
     test('Collection items by folder (default doesnt need auth)', async () => {
         server.use(
-            rest.get('https://api.discogs.com/users/rodneyfool/collection/folders/0/releases', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()]).toStrictEqual([
+            http.get('https://api.discogs.com/users/rodneyfool/collection/folders/0/releases', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()]).toStrictEqual([
                     ['sort', 'artist'],
                     ['sort_order', 'desc'],
                 ]);
-                return res(ctx.status(200));
+                return HttpResponse.json(null, { status: 200 });
             })
         );
         const client = new DiscogsClient();
@@ -113,11 +121,11 @@ describe('Collection', () => {
 
     test('Add release to folder', async () => {
         server.use(
-            rest.post(
+            http.post(
                 'https://api.discogs.com/users/rodneyfool/collection/folders/3/releases/130076',
-                (req, res, ctx) => {
-                    expect(req.method).toBeDefined();
-                    return res(ctx.status(201));
+                ({ request }) => {
+                    expect(request.method).toBeDefined();
+                    return HttpResponse.json(null, { status: 201 });
                 }
             )
         );
@@ -127,11 +135,11 @@ describe('Collection', () => {
 
     test('Edit release', async () => {
         server.use(
-            rest.post(
+            http.post(
                 'https://api.discogs.com/users/rodneyfool/collection/folders/4/releases/130076/instances/1',
-                (req, res, ctx) => {
-                    expect(req.method).toBeDefined();
-                    return res(ctx.status(204));
+                ({ request }) => {
+                    expect(request.method).toBeDefined();
+                    return new Response(null, { status: 204 });
                 }
             )
         );
@@ -141,11 +149,11 @@ describe('Collection', () => {
 
     test('Delete release from folder', async () => {
         server.use(
-            rest.delete(
+            http.delete(
                 'https://api.discogs.com/users/rodneyfool/collection/folders/3/releases/130076/instances/1',
-                (req, res, ctx) => {
-                    expect(req.method).toBeDefined();
-                    return res(ctx.status(204));
+                ({ request }) => {
+                    expect(request.method).toBeDefined();
+                    return new Response(null, { status: 204 });
                 }
             )
         );
@@ -155,9 +163,9 @@ describe('Collection', () => {
 
     test('Get collection note fields', async () => {
         server.use(
-            rest.get('https://api.discogs.com/users/rodneyfool/collection/fields', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(200));
+            http.get('https://api.discogs.com/users/rodneyfool/collection/fields', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return HttpResponse.json(null, { status: 200 });
             })
         );
         const client = new DiscogsClient();
@@ -166,12 +174,15 @@ describe('Collection', () => {
 
     test('Update note on instance', async () => {
         server.use(
-            rest.post(
+            http.post(
                 'https://api.discogs.com/users/rodneyfool/collection/folders/3/releases/130076/instances/1/fields/8',
-                (req, res, ctx) => {
-                    expect(req.url.searchParams.get('value')).toBe('foo');
-                    expect(req.body).toBe('');
-                    return res(ctx.status(204));
+                async ({ request }) => {
+                    const body = await request.text();
+                    const url = new URL(request.url);
+
+                    expect(url.searchParams.get('value')).toBe('foo');
+                    expect(body).toBe('');
+                    return new Response(null, { status: 204 });
                 }
             )
         );
@@ -181,9 +192,9 @@ describe('Collection', () => {
 
     test('Get collection value', async () => {
         server.use(
-            rest.get('https://api.discogs.com/users/rodneyfool/collection/value', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(204));
+            http.get('https://api.discogs.com/users/rodneyfool/collection/value', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return new Response(null, { status: 204 });
             })
         );
         const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
