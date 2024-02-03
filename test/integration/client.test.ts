@@ -1,4 +1,4 @@
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { DiscogsClient } from '@lib/client.js';
 import { setupMockAPI } from './setup.js';
 import { expect, test, describe } from 'vitest';
@@ -8,8 +8,8 @@ const server = setupMockAPI();
 describe('DiscogsClient', () => {
     test('get()', async () => {
         server.use(
-            rest.get('https://api.discogs.com/labels/1', (req, res, ctx) => {
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/labels/1', () => {
+                return HttpResponse.json({}, { status: 200 });
             })
         );
         const client = new DiscogsClient();
@@ -19,8 +19,8 @@ describe('DiscogsClient', () => {
 
     test('Custom configuration', async () => {
         server.use(
-            rest.get('https://www.example.com/labels/1', (req, res, ctx) => {
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://www.example.com/labels/1', () => {
+                return HttpResponse.json({}, { status: 200 });
             })
         );
         const client = new DiscogsClient().setConfig({ host: 'www.example.com' });
@@ -30,9 +30,9 @@ describe('DiscogsClient', () => {
 
     test('Media Types (none, default)', async () => {
         server.use(
-            rest.get('https://api.discogs.com', (req, res, ctx) => {
-                expect(req.headers.get('Accept')).toBe('application/vnd.discogs.v2.discogs+json');
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com', ({ request }) => {
+                expect(request.headers.get('Accept')).toBe('application/vnd.discogs.v2.discogs+json');
+                return HttpResponse.json({}, { status: 200 });
             })
         );
         const client = new DiscogsClient();
@@ -41,9 +41,9 @@ describe('DiscogsClient', () => {
 
     test('Media Types (html)', async () => {
         server.use(
-            rest.get('https://api.discogs.com', (req, res, ctx) => {
-                expect(req.headers.get('Accept')).toBe('application/vnd.discogs.v2.html+json');
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com', ({ request }) => {
+                expect(request.headers.get('Accept')).toBe('application/vnd.discogs.v2.html+json');
+                return HttpResponse.json({}, { status: 200 });
             })
         );
         const client = new DiscogsClient().setConfig({ outputFormat: 'html' });
@@ -52,9 +52,9 @@ describe('DiscogsClient', () => {
 
     test('Media Types (plaintext)', async () => {
         server.use(
-            rest.get('https://api.discogs.com', (req, res, ctx) => {
-                expect(req.headers.get('Accept')).toBe('application/vnd.discogs.v2.plaintext+json');
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com', ({ request }) => {
+                expect(request.headers.get('Accept')).toBe('application/vnd.discogs.v2.plaintext+json');
+                return HttpResponse.json({}, { status: 200 });
             })
         );
         const client = new DiscogsClient().setConfig({ outputFormat: 'plaintext' });
@@ -63,11 +63,11 @@ describe('DiscogsClient', () => {
 
     test('User Agent (default)', async () => {
         server.use(
-            rest.get('https://api.discogs.com', (req, res, ctx) => {
-                expect(req.headers.get('User-Agent')).toMatch(
+            http.get('https://api.discogs.com', ({ request }) => {
+                expect(request.headers.get('User-Agent')).toMatch(
                     /^@lionralfs\/discogs-client\/dev \+https:\/\/github\.com\/(.+)$/
                 );
-                return res(ctx.status(200), ctx.json({}));
+                return HttpResponse.json({}, { status: 200 });
             })
         );
         const client = new DiscogsClient();
@@ -76,9 +76,9 @@ describe('DiscogsClient', () => {
 
     test('User Agent (custom)', async () => {
         server.use(
-            rest.get('https://api.discogs.com', (req, res, ctx) => {
-                expect(req.headers.get('User-Agent')).toBe('MyDiscogsClient/1.0 +https://example.org');
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com', ({ request }) => {
+                expect(request.headers.get('User-Agent')).toBe('MyDiscogsClient/1.0 +https://example.org');
+                return HttpResponse.json({}, { status: 200 });
             })
         );
         const client = new DiscogsClient({ userAgent: 'MyDiscogsClient/1.0 +https://example.org' });
@@ -87,9 +87,9 @@ describe('DiscogsClient', () => {
 
     test('Auth (userToken)', async () => {
         server.use(
-            rest.get('https://api.discogs.com/oauth/identity', (req, res, ctx) => {
-                expect(req.headers.get('Authorization')).toBe('Discogs token=testtoken12345');
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/oauth/identity', ({ request }) => {
+                expect(request.headers.get('Authorization')).toBe('Discogs token=testtoken12345');
+                return HttpResponse.json({}, { status: 200 });
             })
         );
         const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
@@ -98,9 +98,9 @@ describe('DiscogsClient', () => {
 
     test('Sends OAuth header', async () => {
         server.use(
-            rest.get('https://api.discogs.com/oauth/identity', (req, res, ctx) => {
-                expect(req.headers.get('Authorization')?.startsWith('OAuth '));
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/oauth/identity', ({ request }) => {
+                expect(request.headers.get('Authorization')?.startsWith('OAuth '));
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -119,16 +119,18 @@ describe('DiscogsClient', () => {
 
     test('Retrieves and passes rate limit info to caller', async () => {
         server.use(
-            rest.get('https://api.discogs.com/oauth/identity', (req, res, ctx) => {
-                expect(req.headers.get('Authorization')?.startsWith('OAuth '));
-                return res(
-                    ctx.status(200),
-                    ctx.json({}),
-                    ctx.set({
-                        'X-Discogs-Ratelimit': '60',
-                        'X-Discogs-Ratelimit-Used': '23',
-                        'X-Discogs-Ratelimit-Remaining': '37',
-                    })
+            http.get('https://api.discogs.com/oauth/identity', ({ request }) => {
+                expect(request.headers.get('Authorization')?.startsWith('OAuth '));
+                return HttpResponse.json(
+                    {},
+                    {
+                        status: 200,
+                        headers: {
+                            'X-Discogs-Ratelimit': '60',
+                            'X-Discogs-Ratelimit-Used': '23',
+                            'X-Discogs-Ratelimit-Remaining': '37',
+                        },
+                    }
                 );
             })
         );
@@ -150,26 +152,30 @@ describe('DiscogsClient', () => {
     test('Retries when rate limited', async () => {
         let n = 0;
         server.use(
-            rest.get('https://api.discogs.com/oauth/identity', (req, res, ctx) => {
+            http.get('https://api.discogs.com/oauth/identity', () => {
                 if (n++ == 0) {
-                    return res(
-                        ctx.status(429),
-                        ctx.json({ message: "you're rate limited" }),
-                        ctx.set({
-                            'X-Discogs-Ratelimit': '60',
-                            'X-Discogs-Ratelimit-Used': '60',
-                            'X-Discogs-Ratelimit-Remaining': '0',
-                        })
+                    return HttpResponse.json(
+                        { message: "you're rate limited" },
+                        {
+                            status: 429,
+                            headers: {
+                                'X-Discogs-Ratelimit': '60',
+                                'X-Discogs-Ratelimit-Used': '60',
+                                'X-Discogs-Ratelimit-Remaining': '0',
+                            },
+                        }
                     );
                 } else {
-                    return res(
-                        ctx.status(200),
-                        ctx.json({ message: "you're good" }),
-                        ctx.set({
-                            'X-Discogs-Ratelimit': '60',
-                            'X-Discogs-Ratelimit-Used': '59',
-                            'X-Discogs-Ratelimit-Remaining': '1',
-                        })
+                    return HttpResponse.json(
+                        { message: "you're good" },
+                        {
+                            status: 200,
+                            headers: {
+                                'X-Discogs-Ratelimit': '60',
+                                'X-Discogs-Ratelimit-Used': '59',
+                                'X-Discogs-Ratelimit-Remaining': '1',
+                            },
+                        }
                     );
                 }
             })
@@ -195,27 +201,11 @@ describe('DiscogsClient', () => {
     test('Throws when retrying but end of retries is reached', async () => {
         let n = 0;
         server.use(
-            rest.get('https://api.discogs.com/oauth/identity', (req, res, ctx) => {
+            http.get('https://api.discogs.com/oauth/identity', () => {
                 if (n++ == 0) {
-                    return res(
-                        ctx.status(429),
-                        ctx.json({ message: "you're rate limited 1" }),
-                        ctx.set({
-                            'X-Discogs-Ratelimit': '60',
-                            'X-Discogs-Ratelimit-Used': '60',
-                            'X-Discogs-Ratelimit-Remaining': '0',
-                        })
-                    );
+                    return HttpResponse.json({ message: "you're rate limited 1" }, { status: 429 });
                 } else {
-                    return res(
-                        ctx.status(429),
-                        ctx.json({ message: "you're rate limited 2" }),
-                        ctx.set({
-                            'X-Discogs-Ratelimit': '60',
-                            'X-Discogs-Ratelimit-Used': '60',
-                            'X-Discogs-Ratelimit-Remaining': '0',
-                        })
-                    );
+                    return HttpResponse.json({ message: "you're rate limited 2" }, { status: 429 });
                 }
             })
         );
@@ -232,20 +222,22 @@ describe('DiscogsClient', () => {
 
     test('Should return client and server info in about call', async () => {
         server.use(
-            rest.get('https://api.discogs.com', (req, res, ctx) => {
-                return res(
-                    ctx.status(200),
-                    ctx.json({
+            http.get('https://api.discogs.com', () => {
+                return HttpResponse.json(
+                    {
                         hello: 'Welcome to the Discogs API.',
                         api_version: 'v2',
                         documentation_url: 'http://www.discogs.com/developers/',
                         statistics: { releases: 16327979, artists: 8602060, labels: 1991222 },
-                    }),
-                    ctx.set({
-                        'X-Discogs-Ratelimit': '60',
-                        'X-Discogs-Ratelimit-Used': '59',
-                        'X-Discogs-Ratelimit-Remaining': '1',
-                    })
+                    },
+                    {
+                        status: 200,
+                        headers: {
+                            'X-Discogs-Ratelimit': '60',
+                            'X-Discogs-Ratelimit-Used': '59',
+                            'X-Discogs-Ratelimit-Remaining': '1',
+                        },
+                    }
                 );
             })
         );

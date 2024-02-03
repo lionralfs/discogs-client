@@ -1,4 +1,4 @@
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { DiscogsClient } from '@lib/client.js';
 import { setupMockAPI } from './setup.js';
 import { expect, test, describe } from 'vitest';
@@ -8,12 +8,14 @@ const server = setupMockAPI();
 describe('Database', () => {
     test('Test search without query but with params', async () => {
         server.use(
-            rest.get('https://api.discogs.com/database/search', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()].length).toBe(2);
-                expect(req.url.searchParams.get('artist')).toBe('X');
-                expect(req.url.searchParams.get('title')).toBe('Y');
+            http.get('https://api.discogs.com/database/search', ({ request }) => {
+                const url = new URL(request.url);
 
-                return res(ctx.status(200), ctx.json({}));
+                expect([...url.searchParams.entries()].length).toBe(2);
+                expect(url.searchParams.get('artist')).toBe('X');
+                expect(url.searchParams.get('title')).toBe('Y');
+
+                return HttpResponse.json({}, { status: 200 });
             })
         );
         const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
@@ -22,13 +24,15 @@ describe('Database', () => {
 
     test('Test search with query and params', async () => {
         server.use(
-            rest.get('https://api.discogs.com/database/search', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()].length).toBe(3);
-                expect(req.url.searchParams.get('q')).toBe('somequery');
-                expect(req.url.searchParams.get('artist')).toBe('X');
-                expect(req.url.searchParams.get('title')).toBe('Y');
+            http.get('https://api.discogs.com/database/search', ({ request }) => {
+                const url = new URL(request.url);
 
-                return res(ctx.status(200), ctx.json({}));
+                expect([...url.searchParams.entries()].length).toBe(3);
+                expect(url.searchParams.get('q')).toBe('somequery');
+                expect(url.searchParams.get('artist')).toBe('X');
+                expect(url.searchParams.get('title')).toBe('Y');
+
+                return HttpResponse.json({}, { status: 200 });
             })
         );
         const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
@@ -37,10 +41,12 @@ describe('Database', () => {
 
     test('Test search with query only', async () => {
         server.use(
-            rest.get('https://api.discogs.com/database/search', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()].length).toBe(1);
-                expect(req.url.searchParams.get('q')).toBe('somequery');
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/database/search', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()].length).toBe(1);
+                expect(url.searchParams.get('q')).toBe('somequery');
+                return HttpResponse.json({}, { status: 200 });
             })
         );
         const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
@@ -49,27 +55,29 @@ describe('Database', () => {
 
     test('Test with every option', async () => {
         server.use(
-            rest.get('https://api.discogs.com/database/search', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()].length).toBe(18);
-                expect(req.url.searchParams.get('q')).toBe('nirvana');
-                expect(req.url.searchParams.get('type')).toBe('release');
-                expect(req.url.searchParams.get('title')).toBe('nirvana - nevermind');
-                expect(req.url.searchParams.get('release_title')).toBe('nevermind');
-                expect(req.url.searchParams.get('credit')).toBe('kurt');
-                expect(req.url.searchParams.get('artist')).toBe('nirvana');
-                expect(req.url.searchParams.get('anv')).toBe('nirvana');
-                expect(req.url.searchParams.get('label')).toBe('dgc');
-                expect(req.url.searchParams.get('genre')).toBe('rock');
-                expect(req.url.searchParams.get('style')).toBe('grunge');
-                expect(req.url.searchParams.get('country')).toBe('canada');
-                expect(req.url.searchParams.get('year')).toBe('1991');
-                expect(req.url.searchParams.get('format')).toBe('album');
-                expect(req.url.searchParams.get('catno')).toBe('DGCD-24425');
-                expect(req.url.searchParams.get('barcode')).toBe('7 2064-24425-2 4');
-                expect(req.url.searchParams.get('track')).toBe('smells like teen spirit');
-                expect(req.url.searchParams.get('submitter')).toBe('milKt');
-                expect(req.url.searchParams.get('contributor')).toBe('jerome99');
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/database/search', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()].length).toBe(18);
+                expect(url.searchParams.get('q')).toBe('nirvana');
+                expect(url.searchParams.get('type')).toBe('release');
+                expect(url.searchParams.get('title')).toBe('nirvana - nevermind');
+                expect(url.searchParams.get('release_title')).toBe('nevermind');
+                expect(url.searchParams.get('credit')).toBe('kurt');
+                expect(url.searchParams.get('artist')).toBe('nirvana');
+                expect(url.searchParams.get('anv')).toBe('nirvana');
+                expect(url.searchParams.get('label')).toBe('dgc');
+                expect(url.searchParams.get('genre')).toBe('rock');
+                expect(url.searchParams.get('style')).toBe('grunge');
+                expect(url.searchParams.get('country')).toBe('canada');
+                expect(url.searchParams.get('year')).toBe('1991');
+                expect(url.searchParams.get('format')).toBe('album');
+                expect(url.searchParams.get('catno')).toBe('DGCD-24425');
+                expect(url.searchParams.get('barcode')).toBe('7 2064-24425-2 4');
+                expect(url.searchParams.get('track')).toBe('smells like teen spirit');
+                expect(url.searchParams.get('submitter')).toBe('milKt');
+                expect(url.searchParams.get('contributor')).toBe('jerome99');
+                return HttpResponse.json({}, { status: 200 });
             })
         );
         const client = new DiscogsClient({ auth: { userToken: 'testtoken12345' } });
@@ -97,10 +105,11 @@ describe('Database', () => {
 
     test('Get release', async () => {
         server.use(
-            rest.get('https://api.discogs.com/releases/249504', (req, res, ctx) => {
-                const params = req.url.searchParams;
+            http.get('https://api.discogs.com/releases/249504', ({ request }) => {
+                const url = new URL(request.url);
+                const params = url.searchParams;
                 expect([...params.entries()].length).toBe(0);
-                return res(ctx.status(200), ctx.json({}));
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -110,11 +119,12 @@ describe('Database', () => {
 
     test('Get release with currency', async () => {
         server.use(
-            rest.get('https://api.discogs.com/releases/249504', (req, res, ctx) => {
-                const params = req.url.searchParams;
+            http.get('https://api.discogs.com/releases/249504', ({ request }) => {
+                const url = new URL(request.url);
+                const params = url.searchParams;
                 expect([...params.entries()].length).toBe(1);
                 expect(params.get('curr_abbr')).toBe('USD');
-                return res(ctx.status(200), ctx.json({}));
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -124,9 +134,9 @@ describe('Database', () => {
 
     test('Get a users release rating', async () => {
         server.use(
-            rest.get('https://api.discogs.com/releases/249504/rating/someuser', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/releases/249504/rating/someuser', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -136,9 +146,11 @@ describe('Database', () => {
 
     test('Give release rating as current user', async () => {
         server.use(
-            rest.put('https://api.discogs.com/releases/249504/rating/someuser', (req, res, ctx) => {
-                expect(req.body).toStrictEqual({ rating: 2 });
-                return res(ctx.status(200), ctx.json({}));
+            http.put('https://api.discogs.com/releases/249504/rating/someuser', async ({ request }) => {
+                const body = await request.json();
+
+                expect(body).toStrictEqual({ rating: 2 });
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -148,9 +160,11 @@ describe('Database', () => {
 
     test('Give release rating as current user (cap at 5)', async () => {
         server.use(
-            rest.put('https://api.discogs.com/releases/249504/rating/someuser', (req, res, ctx) => {
-                expect(req.body).toStrictEqual({ rating: 5 });
-                return res(ctx.status(200), ctx.json({}));
+            http.put('https://api.discogs.com/releases/249504/rating/someuser', async ({ request }) => {
+                const body = await request.json();
+
+                expect(body).toStrictEqual({ rating: 5 });
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -162,9 +176,9 @@ describe('Database', () => {
 
     test('Remove release rating as current user', async () => {
         server.use(
-            rest.delete('https://api.discogs.com/releases/249504/rating/someuser', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(200));
+            http.delete('https://api.discogs.com/releases/249504/rating/someuser', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return HttpResponse.json(null, { status: 200 });
             })
         );
 
@@ -174,9 +188,9 @@ describe('Database', () => {
 
     test('Get Community Release Rating', async () => {
         server.use(
-            rest.get('https://api.discogs.com/releases/249504/rating', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/releases/249504/rating', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -186,9 +200,9 @@ describe('Database', () => {
 
     test('Get Release Stats', async () => {
         server.use(
-            rest.get('https://api.discogs.com/releases/249504/stats', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/releases/249504/stats', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -198,9 +212,9 @@ describe('Database', () => {
 
     test('Get Master Release', async () => {
         server.use(
-            rest.get('https://api.discogs.com/masters/1000', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/masters/1000', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -210,8 +224,10 @@ describe('Database', () => {
 
     test('Get Master Release Versions', async () => {
         server.use(
-            rest.get('https://api.discogs.com/masters/1000/versions', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()]).toStrictEqual([
+            http.get('https://api.discogs.com/masters/1000/versions', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()]).toStrictEqual([
                     ['page', '2'],
                     ['per_page', '25'],
                     ['format', 'Vinyl'],
@@ -221,7 +237,7 @@ describe('Database', () => {
                     ['sort', 'released'],
                     ['sort_order', 'asc'],
                 ]);
-                return res(ctx.status(200), ctx.json({}));
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -240,9 +256,9 @@ describe('Database', () => {
 
     test('Get Artist', async () => {
         server.use(
-            rest.get('https://api.discogs.com/artists/108713', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/artists/108713', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -252,13 +268,15 @@ describe('Database', () => {
 
     test('Get Artist Releases', async () => {
         server.use(
-            rest.get('https://api.discogs.com/artists/108713/releases', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()]).toStrictEqual([
+            http.get('https://api.discogs.com/artists/108713/releases', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()]).toStrictEqual([
                     ['page', '2'],
                     ['sort', 'year'],
                     ['sort_order', 'asc'],
                 ]);
-                return res(ctx.status(200), ctx.json({}));
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -268,9 +286,9 @@ describe('Database', () => {
 
     test('Get Label', async () => {
         server.use(
-            rest.get('https://api.discogs.com/labels/1', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/labels/1', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -280,12 +298,14 @@ describe('Database', () => {
 
     test('Get Label Releases', async () => {
         server.use(
-            rest.get('https://api.discogs.com/labels/1/releases', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()]).toStrictEqual([
+            http.get('https://api.discogs.com/labels/1/releases', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()]).toStrictEqual([
                     ['page', '3'],
                     ['per_page', '25'],
                 ]);
-                return res(ctx.status(200), ctx.json({}));
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 

@@ -1,4 +1,4 @@
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { DiscogsClient } from '@lib/client.js';
 import { setupMockAPI } from './setup.js';
 import { expect, test, describe } from 'vitest';
@@ -8,9 +8,11 @@ const server = setupMockAPI();
 describe('Marketplace', () => {
     test('Get a listing', async () => {
         server.use(
-            rest.get('https://api.discogs.com/marketplace/listings/172723812', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()]).toStrictEqual([]);
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/marketplace/listings/172723812', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()]).toStrictEqual([]);
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -20,9 +22,11 @@ describe('Marketplace', () => {
 
     test('Get a listing (with currency arg)', async () => {
         server.use(
-            rest.get('https://api.discogs.com/marketplace/listings/172723812', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()]).toStrictEqual([['curr_abbr', 'USD']]);
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/marketplace/listings/172723812', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()]).toStrictEqual([['curr_abbr', 'USD']]);
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -32,8 +36,10 @@ describe('Marketplace', () => {
 
     test('Edit a listing', async () => {
         server.use(
-            rest.post('https://api.discogs.com/marketplace/listings/172723812', (req, res, ctx) => {
-                expect(req.body).toStrictEqual({
+            http.post('https://api.discogs.com/marketplace/listings/172723812', async ({ request }) => {
+                const body = await request.json();
+
+                expect(body).toStrictEqual({
                     release_id: 1,
                     condition: 'Mint (M)',
                     sleeve_condition: 'Fair (F)',
@@ -46,7 +52,7 @@ describe('Marketplace', () => {
                     weight: 200,
                     format_quantity: 'auto',
                 });
-                return res(ctx.status(204), ctx.json({}));
+                return new Response(null, { status: 204 });
             })
         );
 
@@ -68,9 +74,9 @@ describe('Marketplace', () => {
 
     test('Delete a listing', async () => {
         server.use(
-            rest.delete('https://api.discogs.com/marketplace/listings/172723812', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(204), ctx.json({}));
+            http.delete('https://api.discogs.com/marketplace/listings/172723812', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return new Response(null, { status: 204 });
             })
         );
 
@@ -80,8 +86,10 @@ describe('Marketplace', () => {
 
     test('Add a listing', async () => {
         server.use(
-            rest.post('https://api.discogs.com/marketplace/listings', (req, res, ctx) => {
-                expect(req.body).toStrictEqual({
+            http.post('https://api.discogs.com/marketplace/listings', async ({ request }) => {
+                const body = await request.json();
+
+                expect(body).toStrictEqual({
                     release_id: 1,
                     condition: 'Mint (M)',
                     sleeve_condition: 'Fair (F)',
@@ -94,7 +102,7 @@ describe('Marketplace', () => {
                     weight: 200,
                     format_quantity: 'auto',
                 });
-                return res(ctx.status(201), ctx.json({}));
+                return HttpResponse.json({}, { status: 201 });
             })
         );
 
@@ -116,9 +124,9 @@ describe('Marketplace', () => {
 
     test('Get an order', async () => {
         server.use(
-            rest.get('https://api.discogs.com/marketplace/orders/1', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/marketplace/orders/1', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -128,12 +136,14 @@ describe('Marketplace', () => {
 
     test('Edit an order', async () => {
         server.use(
-            rest.post('https://api.discogs.com/marketplace/orders/1', (req, res, ctx) => {
-                expect(req.body).toStrictEqual({
+            http.post('https://api.discogs.com/marketplace/orders/1', async ({ request }) => {
+                const body = await request.json();
+
+                expect(body).toStrictEqual({
                     status: 'Shipped',
                     shipping: 10,
                 });
-                return res(ctx.status(200), ctx.json({}));
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -143,8 +153,10 @@ describe('Marketplace', () => {
 
     test('Get orders', async () => {
         server.use(
-            rest.get('https://api.discogs.com/marketplace/orders', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()]).toStrictEqual([
+            http.get('https://api.discogs.com/marketplace/orders', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()]).toStrictEqual([
                     ['status', "Cancelled (Per Buyer's Request)"],
                     ['created_after', '2019-06-24T20:58:58Z'],
                     ['created_before', '2019-06-25T20:58:58Z'],
@@ -154,7 +166,7 @@ describe('Marketplace', () => {
                     ['page', '2'],
                     ['per_page', '50'],
                 ]);
-                return res(ctx.status(200), ctx.json({}));
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -173,12 +185,14 @@ describe('Marketplace', () => {
 
     test('Get order messages', async () => {
         server.use(
-            rest.get('https://api.discogs.com/marketplace/orders/1/messages', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()]).toStrictEqual([
+            http.get('https://api.discogs.com/marketplace/orders/1/messages', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()]).toStrictEqual([
                     ['page', '2'],
                     ['per_page', '50'],
                 ]);
-                return res(ctx.status(200), ctx.json({}));
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -188,12 +202,14 @@ describe('Marketplace', () => {
 
     test('Add message to order', async () => {
         server.use(
-            rest.post('https://api.discogs.com/marketplace/orders/1/messages', (req, res, ctx) => {
-                expect(req.body).toStrictEqual({
+            http.post('https://api.discogs.com/marketplace/orders/1/messages', async ({ request }) => {
+                const body = await request.json();
+
+                expect(body).toStrictEqual({
                     message: 'hello world',
                     status: 'New Order',
                 });
-                return res(ctx.status(200), ctx.json({}));
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -203,9 +219,11 @@ describe('Marketplace', () => {
 
     test('Get fee without currency', async () => {
         server.use(
-            rest.get('https://api.discogs.com/marketplace/fee/10.00', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()]).toStrictEqual([]);
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/marketplace/fee/10.00', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()]).toStrictEqual([]);
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -215,9 +233,11 @@ describe('Marketplace', () => {
 
     test('Get fee with currency', async () => {
         server.use(
-            rest.get('https://api.discogs.com/marketplace/fee/10.00/EUR', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()]).toStrictEqual([]);
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/marketplace/fee/10.00/EUR', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()]).toStrictEqual([]);
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -227,9 +247,11 @@ describe('Marketplace', () => {
 
     test('Get price suggestion', async () => {
         server.use(
-            rest.get('https://api.discogs.com/marketplace/price_suggestions/1', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()]).toStrictEqual([]);
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/marketplace/price_suggestions/1', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()]).toStrictEqual([]);
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -239,9 +261,11 @@ describe('Marketplace', () => {
 
     test('Get Release Stats without currency', async () => {
         server.use(
-            rest.get('https://api.discogs.com/marketplace/stats/1', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()]).toStrictEqual([]);
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/marketplace/stats/1', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()]).toStrictEqual([]);
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -251,9 +275,11 @@ describe('Marketplace', () => {
 
     test('Get Release Stats with currency', async () => {
         server.use(
-            rest.get('https://api.discogs.com/marketplace/stats/1', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()]).toStrictEqual([['curr_abbr', 'EUR']]);
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/marketplace/stats/1', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()]).toStrictEqual([['curr_abbr', 'EUR']]);
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 

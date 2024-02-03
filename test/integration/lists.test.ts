@@ -1,4 +1,4 @@
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { DiscogsClient } from '@lib/client.js';
 import { setupMockAPI } from './setup.js';
 import { expect, test, describe } from 'vitest';
@@ -8,12 +8,14 @@ const server = setupMockAPI();
 describe('Lists', () => {
     test("Get user's list", async () => {
         server.use(
-            rest.get('https://api.discogs.com/users/rodneyfool/lists', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()]).toStrictEqual([
+            http.get('https://api.discogs.com/users/rodneyfool/lists', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()]).toStrictEqual([
                     ['page', '3'],
                     ['per_page', '25'],
                 ]);
-                return res(ctx.status(200), ctx.json({}));
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -23,9 +25,9 @@ describe('Lists', () => {
 
     test("Get items from user's list", async () => {
         server.use(
-            rest.get('https://api.discogs.com/lists/123', (req, res, ctx) => {
-                expect(req.method).toBeDefined()
-                return res(ctx.status(200), ctx.json({}));
+            http.get('https://api.discogs.com/lists/123', ({ request }) => {
+                expect(request.method).toBeDefined()
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 

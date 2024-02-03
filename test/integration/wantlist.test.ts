@@ -1,4 +1,4 @@
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { DiscogsClient } from '@lib/client.js';
 import { setupMockAPI } from './setup.js';
 import { expect, test, describe } from 'vitest';
@@ -8,12 +8,14 @@ const server = setupMockAPI();
 describe('Wantlist', () => {
     test("Get releases in user's wantlist", async () => {
         server.use(
-            rest.get('https://api.discogs.com/users/rodneyfool/wants', (req, res, ctx) => {
-                expect([...req.url.searchParams.entries()]).toStrictEqual([
+            http.get('https://api.discogs.com/users/rodneyfool/wants', ({ request }) => {
+                const url = new URL(request.url);
+
+                expect([...url.searchParams.entries()]).toStrictEqual([
                     ['page', '2'],
                     ['per_page', '4'],
                 ]);
-                return res(ctx.status(200), ctx.json({}));
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -23,12 +25,14 @@ describe('Wantlist', () => {
 
     test('Add release to wantlist', async () => {
         server.use(
-            rest.put('https://api.discogs.com/users/rodneyfool/wants/130076', (req, res, ctx) => {
-                expect(req.body).toStrictEqual({
+            http.put('https://api.discogs.com/users/rodneyfool/wants/130076', async ({ request }) => {
+                const body = await request.json();
+
+                expect(body).toStrictEqual({
                     notes: 'My favorite release',
                     rating: 5,
                 });
-                return res(ctx.status(201), ctx.json({}));
+                return HttpResponse.json({}, { status: 201 });
             })
         );
 
@@ -38,12 +42,14 @@ describe('Wantlist', () => {
 
     test('Edit wantlist notes for release', async () => {
         server.use(
-            rest.post('https://api.discogs.com/users/rodneyfool/wants/130076', (req, res, ctx) => {
-                expect(req.body).toStrictEqual({
+            http.post('https://api.discogs.com/users/rodneyfool/wants/130076', async ({ request }) => {
+                const body = await request.json();
+
+                expect(body).toStrictEqual({
                     notes: 'My favorite release',
                     rating: 4,
                 });
-                return res(ctx.status(200), ctx.json({}));
+                return HttpResponse.json({}, { status: 200 });
             })
         );
 
@@ -53,9 +59,9 @@ describe('Wantlist', () => {
 
     test('Remove release from wantlist', async () => {
         server.use(
-            rest.delete('https://api.discogs.com/users/rodneyfool/wants/130076', (req, res, ctx) => {
-                expect(req.method).toBeDefined();
-                return res(ctx.status(204), ctx.json({}));
+            http.delete('https://api.discogs.com/users/rodneyfool/wants/130076', ({ request }) => {
+                expect(request.method).toBeDefined();
+                return new Response(null, { status: 204 });
             })
         );
 
