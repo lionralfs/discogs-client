@@ -1,3 +1,8 @@
+# 4.1.0 / 2024-05-19
+
+-   Make discogs types available to library clients
+-   See https://github.com/lionralfs/discogs-client/releases/tag/v4.1.0
+
 # 4.0.0 / 2023-12-28
 
 -   Drop node 14 & 16 support
