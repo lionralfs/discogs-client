@@ -8,8 +8,8 @@ import {
 } from './types.js';
 import { escape, toQueryString } from './util.js';
 
-type Format = { text: string; qty: number; descriptions: Array<string>; name: string };
-type WantlistEntryResponse = {
+export type WantlistFormat = { text: string; qty: number; descriptions: Array<string>; name: string };
+export type WantlistEntryResponse = {
     resource_url: string;
     id: number;
     notes?: string;
@@ -17,7 +17,7 @@ type WantlistEntryResponse = {
     basic_information: {
         resource_url: string;
         id: number;
-        formats: Array<Format>;
+        formats: Array<WantlistFormat>;
         thumb: string;
         cover_image: string;
         title: string;

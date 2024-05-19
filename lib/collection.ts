@@ -9,7 +9,7 @@ import {
 } from './types.js';
 import { type DiscogsClient } from './client.js';
 
-type BasicReleaseInfo = {
+export type BasicReleaseInfo = {
     id: number;
     title: string;
     year: number;
@@ -30,9 +30,9 @@ type BasicReleaseInfo = {
     genres: Array<string>;
     styles: Array<string>;
 };
-type GetFoldersResponse = { folders: Array<GetFolderResponse> };
-type GetFolderResponse = { id: number; count: number; name: string; resource_url: string };
-type GetReleasesResponse = {
+export type GetFoldersResponse = { folders: Array<GetFolderResponse> };
+export type GetFolderResponse = { id: number; count: number; name: string; resource_url: string };
+export type GetReleasesResponse = {
     releases: Array<{
         id: number;
         instance_id: number;
@@ -42,7 +42,7 @@ type GetReleasesResponse = {
         notes: Array<{ field_id: number; value: string }>;
     }>;
 };
-type GetReleaseInstancesResponse = {
+export type GetReleaseInstancesResponse = {
     releases: Array<{
         id: number;
         instance_id: number;
@@ -52,8 +52,8 @@ type GetReleaseInstancesResponse = {
         date_added: string;
     }>;
 };
-type AddReleaseResponse = { instance_id: number; resource_url: string };
-type GetFieldsResponse = {
+export type AddReleaseResponse = { instance_id: number; resource_url: string };
+export type GetFieldsResponse = {
     fields: Array<{
         name: string;
         type: string;
@@ -64,7 +64,7 @@ type GetFieldsResponse = {
         lines?: number;
     }>;
 };
-type CollectionValueResponse = { maximum: string; median: string; minimum: string };
+export type CollectionValueResponse = { maximum: string; median: string; minimum: string };
 
 /**
  * @param {DiscogsClient} client

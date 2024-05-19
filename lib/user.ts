@@ -14,7 +14,7 @@ import list from './list.js';
 import { escape, toQueryString } from './util.js';
 import wantlist from './wantlist.js';
 
-type GetProfileResponse = {
+export type GetProfileResponse = {
     email?: string;
     num_unread?: number;
     activated: boolean;
@@ -52,9 +52,9 @@ type GetProfileResponse = {
     seller_num_ratings: number;
     curr_abbr: Currency;
 };
-type GetInventoryResponse = { listings: Array<Listing> };
-type GetContributionsResponse = { contributions: Array<GetReleaseResponse> };
-type GetSubmissionsResponse = {
+export type GetInventoryResponse = { listings: Array<Listing> };
+export type GetContributionsResponse = { contributions: Array<GetReleaseResponse> };
+export type GetSubmissionsResponse = {
     submissions: {
         artists: Array<{
             data_quality: string;
@@ -69,7 +69,7 @@ type GetSubmissionsResponse = {
         releases: Array<GetReleaseResponse>;
     };
 };
-type GetListsResponse = {
+export type GetListsResponse = {
     lists: Array<{
         date_added: string;
         date_changed: string;

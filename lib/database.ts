@@ -12,7 +12,7 @@ import {
     type Status,
 } from './types.js';
 import { toQueryString, escape } from './util.js';
-type GetArtistResponse = {
+export type GetArtistResponse = {
     name: string;
     namevariations: Array<string>;
     profile: string;
@@ -25,7 +25,7 @@ type GetArtistResponse = {
     images: Array<Image>;
     members: Array<{ active: boolean; id: number; name: string; resource_url: string }>;
 };
-type GetArtistReleasesResponses = {
+export type GetArtistReleasesResponses = {
     releases: Array<{
         artist: string;
         id: number;
@@ -38,10 +38,10 @@ type GetArtistReleasesResponses = {
         year: number;
     }>;
 };
-type GetReleaseRatingResponse = { username: string; release_id: number; rating: number };
-type GetReleaseCommunityRatingResponse = { rating: { count: number; average: number }; release_id: number };
-type GetReleaseStatsResponse = { num_have: number; num_want: number };
-type GetMasterResponse = {
+export type GetReleaseRatingResponse = { username: string; release_id: number; rating: number };
+export type GetReleaseCommunityRatingResponse = { rating: { count: number; average: number }; release_id: number };
+export type GetReleaseStatsResponse = { num_have: number; num_want: number };
+export type GetMasterResponse = {
     styles: Array<string>;
     genres: Array<string>;
     videos: Array<{ duration: number; description: string; embed: boolean; uri: string; title: string }>;
@@ -60,7 +60,7 @@ type GetMasterResponse = {
     lowest_price: number;
     data_quality: string;
 };
-type GetMasterVersionsResponse = {
+export type GetMasterVersionsResponse = {
     versions: Array<{
         status: Status;
         stats: {
@@ -79,7 +79,7 @@ type GetMasterVersionsResponse = {
         id: number;
     }>;
 };
-type GetLabelResponse = {
+export type GetLabelResponse = {
     profile: string;
     releases_url: string;
     name: string;
@@ -92,7 +92,7 @@ type GetLabelResponse = {
     id: number;
     data_quality: string;
 };
-type GetLabelReleasesResponse = {
+export type GetLabelReleasesResponse = {
     releases: Array<{
         artist: string;
         catno: string;
@@ -105,7 +105,7 @@ type GetLabelReleasesResponse = {
         year: number;
     }>;
 };
-interface SearchResult {
+export interface SearchResult {
     id: number;
     type: string;
     user_data: UserData;
@@ -129,26 +129,26 @@ interface SearchResult {
     formats?: Format[];
 }
 
-interface UserData {
+export interface UserData {
     in_wantlist: boolean;
     in_collection: boolean;
 }
 
-interface Community {
+export interface Community {
     want: number;
     have: number;
 }
 
-interface Format {
+export interface Format {
     name: string;
     qty: string;
     descriptions?: string[];
 }
 
-type SearchResponse = {
+export type SearchResponse = {
     results: Array<SearchResult>;
 };
-type SearchParameters = {
+export type SearchParameters = {
     query: string;
     type: 'release' | 'master' | 'artist' | 'label';
     title: string;
