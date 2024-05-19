@@ -2,7 +2,7 @@ import { type DiscogsClient } from './client.js';
 import type { RateLimitedResponse } from './types.js';
 import { escape } from './util.js';
 
-type GetListItemsResponse = {
+export type GetListItemsResponse = {
     created_ts: string;
     modified_ts: string;
     name: string;

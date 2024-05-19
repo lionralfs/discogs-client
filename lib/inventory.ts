@@ -2,10 +2,10 @@ import { type DiscogsClient } from './client.js';
 import { type PaginationParameters, type PaginationResponse, type RateLimitedResponse } from './types.js';
 import { toQueryString } from './util.js';
 
-type GetInventoryExportsResponse = {
+export type GetInventoryExportsResponse = {
     items: Array<GetInventoryExportResponse>;
 };
-type GetInventoryExportResponse = {
+export type GetInventoryExportResponse = {
     status: string;
     created_ts: string;
     url: string;

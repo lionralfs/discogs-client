@@ -12,7 +12,7 @@ import {
 import user from './user.js';
 import { toQueryString } from './util.js';
 
-type Condition =
+export type Condition =
     | 'Mint (M)'
     | 'Near Mint (NM or M-)'
     | 'Very Good Plus (VG+)'
@@ -21,8 +21,8 @@ type Condition =
     | 'Good (G)'
     | 'Fair (F)'
     | 'Poor (P)';
-type SleeveCondition = Condition | 'Generic' | 'Not Graded' | 'No Cover';
-type OrderStatus =
+export type SleeveCondition = Condition | 'Generic' | 'Not Graded' | 'No Cover';
+export type OrderStatus =
     | 'New Order'
     | 'Buyer Contacted'
     | 'Invoice Sent'
@@ -33,8 +33,8 @@ type OrderStatus =
     | 'Cancelled (Non-Paying Buyer)'
     | 'Cancelled (Item Unavailable)'
     | "Cancelled (Per Buyer's Request)";
-type Order = { resource_url: string; id: number };
-type OrderMessage = {
+export type Order = { resource_url: string; id: number };
+export type OrderMessage = {
     timestamp: string;
     message: string;
     type: string;
@@ -47,8 +47,8 @@ type OrderMessage = {
     original?: number;
     new?: number;
 };
-type AddListingResponse = { listing_id: number; resource_url: string };
-type GetOrderResponse = {
+export type AddListingResponse = { listing_id: number; resource_url: string };
+export type GetOrderResponse = {
     id: number;
     resource_url: string;
     messages_url: string;
@@ -73,7 +73,7 @@ type GetOrderResponse = {
     buyer: { resource_url: string; username: string; id: number };
     total: Price;
 };
-type GetReleaseStatsResponse = { lowest_price?: Price; num_for_sale?: number; blocked_from_sale: boolean };
+export type GetReleaseStatsResponseMarketplace = { lowest_price?: Price; num_for_sale?: number; blocked_from_sale: boolean };
 
 /**
  * @param {DiscogsClient} client
@@ -357,7 +357,7 @@ export default function (client: DiscogsClient) {
          * and whether the item is blocked for sale in the marketplace.
          * @param {number} release
          * @param {Currency} [currency]
-         * @returns {Promise<RateLimitedResponse<GetReleaseStatsResponse>>}
+         * @returns {Promise<RateLimitedResponse<GetReleaseStatsResponseMarketplace>>}
          *
          * @see https://www.discogs.com/developers/#page:marketplace,header:marketplace-release-statistics-get
          *
@@ -367,12 +367,12 @@ export default function (client: DiscogsClient) {
         getReleaseStats: function (
             release: number,
             currency?: Currency
-        ): Promise<RateLimitedResponse<GetReleaseStatsResponse>> {
+        ): Promise<RateLimitedResponse<GetReleaseStatsResponseMarketplace>> {
             let path = `/marketplace/stats/${release}`;
             if (currency) {
                 path += `${toQueryString({ curr_abbr: currency })}`;
             }
-            return client.get(path) as Promise<RateLimitedResponse<GetReleaseStatsResponse>>;
+            return client.get(path) as Promise<RateLimitedResponse<GetReleaseStatsResponseMarketplace>>;
         },
     };
 }
