@@ -1,3 +1,8 @@
+# 4.1.1 / 2024-08-08
+
+-   Type fix: GetReleaseResponse["community"] is now an object, not array
+-   See https://github.com/lionralfs/discogs-client/releases/tag/v4.1.1
+
 # 4.1.0 / 2024-05-19
 
 -   Make discogs types available to library clients
