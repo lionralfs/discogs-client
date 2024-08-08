@@ -121,7 +121,7 @@ export type GetReleaseResponse = {
     artists: Array<Artist>;
     data_quality: string;
     thumb: string;
-    community: Array<{
+    community: {
         contributors: Array<{ resource_url: string; username: string }>;
         data_quality: string;
         have: number;
@@ -129,7 +129,7 @@ export type GetReleaseResponse = {
         status: Status;
         submitter: { resource_url: string; username: string };
         want: number;
-    }>;
+    };
     companies: Array<{
         catno: string;
         entity_type: string;
