@@ -24,6 +24,8 @@ export type WantlistEntryResponse = {
         labels: Array<LabelShort>;
         year: number;
         artists: Array<Artist>;
+        genres: Array<string>;
+        styles: Array<string>;
     };
 };
 
