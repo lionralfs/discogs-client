@@ -220,7 +220,7 @@ export default function (client: DiscogsClient) {
          * @see https://www.discogs.com/developers/#page:user-collection,header:user-collection-add-to-collection-folder-post
          *
          * @example
-         * await client.user().collection().addRelease('rodneyfool', 3, 130076);
+         * await client.user().collection().addRelease('rodneyfool', 130076, 3);
          */
         addRelease: function (
             user: string,
