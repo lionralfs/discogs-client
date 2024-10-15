@@ -1,3 +1,9 @@
+# 4.1.2 / 2024-10-15
+
+-   Fix docstring in `collection().addRelease()` method
+-   Add `styles` and `genres` to `WantListEntryReponse` type (#345)
+-   See https://github.com/lionralfs/discogs-client/releases/tag/v4.1.2
+
 # 4.1.1 / 2024-08-08
 
 -   Type fix: GetReleaseResponse["community"] is now an object, not array
