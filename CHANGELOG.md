@@ -1,3 +1,7 @@
+# 4.1.3 / 2025-02-02
+
+-   Fix implementation of `user().collection().editInstanceNote()` (#376)
+
 # 4.1.2 / 2024-10-15
 
 -   Fix docstring in `collection().addRelease()` method
