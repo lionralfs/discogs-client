@@ -332,8 +332,8 @@ export default function (client: DiscogsClient) {
         ): Promise<RateLimitedResponse<void>> {
             const path = `/users/${escape(
                 user
-            )}/collection/folders/${folder}/releases/${release}/instances/${instance}/fields/${field}?value=${value}`;
-            return client.post(path, undefined) as Promise<RateLimitedResponse<void>>;
+            )}/collection/folders/${folder}/releases/${release}/instances/${instance}/fields/${field}`;
+            return client.post(path, { value }) as Promise<RateLimitedResponse<void>>;
         },
 
         /**

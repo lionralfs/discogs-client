@@ -177,11 +177,11 @@ describe('Collection', () => {
             http.post(
                 'https://api.discogs.com/users/rodneyfool/collection/folders/3/releases/130076/instances/1/fields/8',
                 async ({ request }) => {
-                    const body = await request.text();
+                    const body = await request.json();
                     const url = new URL(request.url);
 
-                    expect(url.searchParams.get('value')).toBe('foo');
-                    expect(body).toBe('');
+                    expect(url.searchParams.get('value')).toBeNull();
+                    expect(body).toStrictEqual({ value: 'foo' });
                     return new Response(null, { status: 204 });
                 }
             )
