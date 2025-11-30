@@ -49,7 +49,7 @@ export type OrderMessage = {
 };
 export type AddListingResponse = { listing_id: number; resource_url: string };
 export type GetOrderResponse = {
-    id: number;
+    id: string;
     resource_url: string;
     messages_url: string;
     uri: string;
@@ -237,15 +237,15 @@ export default function (client: DiscogsClient) {
 
         /**
          * Get details of a marketplace order
-         * @param {number} order - The order ID
+         * @param {string} order - The order ID
          * @returns {Promise<RateLimitedResponse<GetOrderResponse>>}
          *
          * @see https://www.discogs.com/developers/#page:marketplace,header:marketplace-order-get
          *
          * @example
-         * await client.marketplace().getOrder(1);
+         * await client.marketplace().getOrder('1-1');
          */
-        getOrder: function (order: number): Promise<RateLimitedResponse<GetOrderResponse>> {
+        getOrder: function (order: string): Promise<RateLimitedResponse<GetOrderResponse>> {
             return client.get({ url: `/marketplace/orders/${order}`, authLevel: 2 }) as Promise<
                 RateLimitedResponse<GetOrderResponse>
             >;
@@ -253,17 +253,17 @@ export default function (client: DiscogsClient) {
 
         /**
          * Edit a marketplace order
-         * @param {number} order - The order ID
+         * @param {string} order - The order ID
          * @param {Partial<{status: OrderStatus; shipping: number}>} data - The data for the order
          * @returns {Promise<RateLimitedResponse<GetOrderResponse>>}
          *
          * @see https://www.discogs.com/developers/#page:marketplace,header:marketplace-order-post
          *
          * @example
-         * await client.marketplace().editOrder(1, { status: 'Shipped', shipping: 10 });
+         * await client.marketplace().editOrder('1-1', { status: 'Shipped', shipping: 10 });
          */
         editOrder: function (
-            order: number,
+            order: string,
             data: Partial<{ status: OrderStatus; shipping: number }>
         ): Promise<RateLimitedResponse<GetOrderResponse>> {
             return client.post({ url: `/marketplace/orders/${order}`, authLevel: 2 }, data) as Promise<
@@ -273,17 +273,17 @@ export default function (client: DiscogsClient) {
 
         /**
          * List the messages for the given order ID
-         * @param {number} order - The order ID
+         * @param {string} order - The order ID
          * @param {PaginationParameters} [params] - Optional pagination parameters
          * @returns {Promise<RateLimitedResponse<PaginationResponse & {messages: Array<OrderMessage>}>>}
          *
          * @see https://www.discogs.com/developers/#page:marketplace,header:marketplace-list-order-messages-get
          *
          * @example
-         * await client.marketplace().getOrderMessages(1, { page: 2, per_page: 50 });
+         * await client.marketplace().getOrderMessages('1-1', { page: 2, per_page: 50 });
          */
         getOrderMessages: function (
-            order: number,
+            order: string,
             params?: PaginationParameters
         ): Promise<RateLimitedResponse<PaginationResponse & { messages: Array<OrderMessage> }>> {
             const path = `/marketplace/orders/${order}/messages${toQueryString(params)}`;
@@ -294,17 +294,17 @@ export default function (client: DiscogsClient) {
 
         /**
          * Add a message to the given order ID
-         * @param {number} order - The order ID
+         * @param {string} order - The order ID
          * @param {Partial<{message: string; status: OrderStatus}>} data - The message data
          * @returns {Promise<RateLimitedResponse<OrderMessage>>}
          *
          * @see https://www.discogs.com/developers/#page:marketplace,header:marketplace-list-order-messages-post
          *
          * @example
-         * await client.marketplace().addOrderMessage(1, { message: 'hello world', status: 'New Order' });
+         * await client.marketplace().addOrderMessage('1-1', { message: 'hello world', status: 'New Order' });
          */
         addOrderMessage: function (
-            order: number,
+            order: string,
             data: Partial<{ message: string; status: OrderStatus }>
         ): Promise<RateLimitedResponse<OrderMessage>> {
             return client.post({ url: '/marketplace/orders/' + order + '/messages', authLevel: 2 }, data) as Promise<

@@ -124,19 +124,19 @@ describe('Marketplace', () => {
 
     test('Get an order', async () => {
         server.use(
-            http.get('https://api.discogs.com/marketplace/orders/1', ({ request }) => {
+            http.get('https://api.discogs.com/marketplace/orders/1-1', ({ request }) => {
                 expect(request.method).toBeDefined();
                 return HttpResponse.json({}, { status: 200 });
             })
         );
 
         const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
-        await client.marketplace().getOrder(1);
+        await client.marketplace().getOrder('1-1');
     });
 
     test('Edit an order', async () => {
         server.use(
-            http.post('https://api.discogs.com/marketplace/orders/1', async ({ request }) => {
+            http.post('https://api.discogs.com/marketplace/orders/1-1', async ({ request }) => {
                 const body = await request.json();
 
                 expect(body).toStrictEqual({
@@ -148,7 +148,7 @@ describe('Marketplace', () => {
         );
 
         const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
-        await client.marketplace().editOrder(1, { status: 'Shipped', shipping: 10 });
+        await client.marketplace().editOrder('1-1', { status: 'Shipped', shipping: 10 });
     });
 
     test('Get orders', async () => {
@@ -185,7 +185,7 @@ describe('Marketplace', () => {
 
     test('Get order messages', async () => {
         server.use(
-            http.get('https://api.discogs.com/marketplace/orders/1/messages', ({ request }) => {
+            http.get('https://api.discogs.com/marketplace/orders/1-1/messages', ({ request }) => {
                 const url = new URL(request.url);
 
                 expect([...url.searchParams.entries()]).toStrictEqual([
@@ -197,12 +197,12 @@ describe('Marketplace', () => {
         );
 
         const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
-        await client.marketplace().getOrderMessages(1, { page: 2, per_page: 50 });
+        await client.marketplace().getOrderMessages('1-1', { page: 2, per_page: 50 });
     });
 
     test('Add message to order', async () => {
         server.use(
-            http.post('https://api.discogs.com/marketplace/orders/1/messages', async ({ request }) => {
+            http.post('https://api.discogs.com/marketplace/orders/1-1/messages', async ({ request }) => {
                 const body = await request.json();
 
                 expect(body).toStrictEqual({
@@ -214,7 +214,7 @@ describe('Marketplace', () => {
         );
 
         const client = new DiscogsClient({ userAgent: 'agent', auth: { userToken: 'test-token' } });
-        await client.marketplace().addOrderMessage(1, { message: 'hello world', status: 'New Order' });
+        await client.marketplace().addOrderMessage('1-1', { message: 'hello world', status: 'New Order' });
     });
 
     test('Get fee without currency', async () => {
