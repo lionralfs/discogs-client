@@ -33,7 +33,7 @@ export type OrderStatus =
     | 'Cancelled (Non-Paying Buyer)'
     | 'Cancelled (Item Unavailable)'
     | "Cancelled (Per Buyer's Request)";
-export type Order = { resource_url: string; id: number };
+export type Order = { resource_url: string; id: string };
 export type OrderMessage = {
     timestamp: string;
     message: string;
