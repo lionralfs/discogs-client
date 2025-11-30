@@ -1,3 +1,7 @@
+# 4.1.4 / 2025-11-30
+
+-   Fix typing of `order.id` to be string instead of number (#426)
+
 # 4.1.3 / 2025-02-02
 
 -   Fix implementation of `user().collection().editInstanceNote()` (#376)

@@ -34,10 +34,10 @@ describe('Marketplace', () => {
         const marketplace = marketplaceFactory(client);
 
         // When
-        await marketplace.getOrderMessages(1);
+        await marketplace.getOrderMessages('1-1');
 
         // Then
-        client.received().get({ url: `/marketplace/orders/1/messages`, authLevel: 2 });
+        client.received().get({ url: `/marketplace/orders/1-1/messages`, authLevel: 2 });
     });
 
     test('getReleaseStats: Should not send query params when requesting without pagination', async () => {
