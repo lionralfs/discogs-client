@@ -171,13 +171,16 @@ export class DiscogsClient {
 
         // Add content headers for POST/PUT requests that contain data
         if (data) {
-            if (typeof data === 'object') {
+            if (data instanceof FormData) {
+                // Let fetch automatically set Content-Type to multipart/form-data
+                // including the required boundary string
+                requestOptions.body = data;
+            } else if (typeof data === 'object') {
                 // Convert data to a JSON string when data is an object/array
                 requestOptions.body = JSON.stringify(data);
+                // Discogs accepts data in JSON format
+                headers.set('Content-Type', 'application/json');
             }
-
-            // Discogs accepts data in JSON format
-            headers.set('Content-Type', 'application/json');
         }
 
         // Add Authorization header when authenticated (or in the process of authenticating)

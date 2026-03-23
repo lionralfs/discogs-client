@@ -23,7 +23,7 @@ export type RequestCallback = (err?: Error, data?: unknown, rateLimit?: RateLimi
 export type RequestOptions = {
     url: string;
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
-    data?: Record<string, unknown>;
+    data?: Record<string, unknown> | FormData;
     json?: boolean;
     authLevel?: number;
 };
