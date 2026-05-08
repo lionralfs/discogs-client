@@ -12,18 +12,30 @@ import {
     type Status,
 } from './types.js';
 import { toQueryString, escape } from './util.js';
+
+export type ArtistAliasEntry = {
+    id: number; 
+    name: string; 
+    resource_url: string
+}
+export type ArtistGroupEntry = ArtistAliasEntry & {
+    active: boolean;
+}
 export type GetArtistResponse = {
     name: string;
-    namevariations: Array<string>;
+    namevariations?: Array<string>; // Only appears on existing entities; Cannot be added anymore
+    realname?: string;
     profile: string;
     releases_url: string;
     resource_url: string;
     uri: string;
-    urls: Array<string>;
+    urls?: Array<string>;
     data_quality: string;
     id: number;
     images: Array<Image>;
-    members: Array<{ active: boolean; id: number; name: string; resource_url: string }>;
+    members?: Array<ArtistGroupEntry>; // Not editable; Derived from other artists 'groups' relationships
+    groups?: Array<ArtistGroupEntry>;
+    aliases?: Array<ArtistAliasEntry>; // Replacement for namevariations?
 };
 export type GetArtistReleasesResponses = {
     releases: Array<{
