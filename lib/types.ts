@@ -195,7 +195,7 @@ export type Tracklisting = {
     position: string;
     title: string;
     type_: string;
-    extraartists?: Array<Artist>;
+    artists?: Array<Artist>;
 };
 
 /**
